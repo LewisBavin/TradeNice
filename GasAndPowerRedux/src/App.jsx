@@ -1,17 +1,9 @@
 import { useState } from "react";
 import { useDispatch } from "react-redux";
-import "./App.css";
-import { apiTokens } from "./apiTokens";
+import "./Styles/App.css";
+import { apiTokens } from "./Utilities/apiTokens";
 
-console.log(apiTokens.stockData.current())
-
-export const lStore = (key, value) => {
-  localStorage.setItem(key, value);
-};
-
-export const lGet = (key) => {
-  return localStorage.getItem(key);
-};
+console.log(apiTokens.stockData.current());
 
 function App() {
   const [state, setState] = useState(null);
