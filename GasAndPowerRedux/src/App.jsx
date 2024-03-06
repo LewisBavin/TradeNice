@@ -1,14 +1,18 @@
-import { useState } from "react";
-import { useDispatch } from "react-redux";
-import "./Styles/App.css";
+import { ToastContainer, toast } from "react-toastify";
+import { useState, useEffect } from "react";
+import { useDispatch, useSelector } from "react-redux";
+import "./Styles/App.scss";
+import "react-toastify/dist/ReactToastify.css";
+import Interface from "./Components/Interface";
 import { apiTokens } from "./Utilities/apiTokens";
 
-console.log(apiTokens.stockData.current());
-
 function App() {
-  const [state, setState] = useState(null);
-
-  return <>hi</>;
+  return (
+    <>
+      <Interface />
+      <ToastContainer />
+    </>
+  );
 }
 
 export default App;

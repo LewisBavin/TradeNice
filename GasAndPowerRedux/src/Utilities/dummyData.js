@@ -1,6 +1,7 @@
 export const users = {
   gas01: {
     id: 1,
+    password: 'password',
     inputs: {
       counterpartyBuys: {},
       marketBuys: {},
@@ -18,3 +19,4 @@ export const users = {
   gas02: {},
   gas03: {},
 };
+            

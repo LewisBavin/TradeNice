@@ -3,7 +3,7 @@ export const apiTokens = {
     one: "r5szOvtS6f49lDCGNEfUGFAgeLpJtcmpTykQF0ZS",
     two: "",
     current: function () {
-      return this.one;
+      return this.one
     },
   },
 };
