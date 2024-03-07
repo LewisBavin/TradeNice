@@ -1,34 +1,39 @@
 import React from "react";
-import Header from "./Header";
-import Footer from "./Footer";
-import Power from "./Power";
-import Gas from "./Gas";
-import Dashboard from "./Dashboard";
+import Header from "./Body/Header";
+import Footer from "./Body/Footer";
+import Dashboard from "./Dashbaord/Dashboard";
 import Login from "./Login";
-import Home from "./Home";
+import Home from "./Body/Home";
 
 import { Routes, Route } from "react-router";
 import { Link } from "react-router-dom";
 import { setStore } from "../Utilities/localStorage";
-import {
-  setAccountType,
-  readAccountType,
-  readScreen,
-} from "../Utilities/AccountSlice";
-import { useSelector, useDispatch } from "react-redux";
+import { useDispatch } from "react-redux";
+import { useNavigate } from "react-router-dom";
+import { accountActions } from "../Utilities/AccountSlice";
 
 function Interface() {
   const dispatch = useDispatch();
-  const accountType = useSelector(readAccountType);
-  const screen = useSelector(readScreen);
+  const navigate = useNavigate();
+  const toggleLogin = () => {
+    dispatch(accountActions.setLoggedIn());
+    navigate("/");
+  };
 
   return (
     <>
-      <div className="root-container flx col jc-c ai-c">
+      <div className="root-container flx col ai-c jc-c">
         <header className="flx jc-c ai-c">
-          <Header />
+          <Header toggleLogin={toggleLogin} />
         </header>
-        <main><div className="test"></div></main>
+        <main>
+          <Routes>
+            <Route
+              path="/"
+              element={<Home toggleLogin={toggleLogin} />}
+            ></Route>
+          </Routes>
+        </main>
         <footer className="flx jc-c ai-c">
           <Footer />
         </footer>

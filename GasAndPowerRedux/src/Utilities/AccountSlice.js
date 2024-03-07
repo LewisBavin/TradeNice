@@ -2,22 +2,28 @@ import { createSlice } from "@reduxjs/toolkit";
 import { setStore, getStore } from "./localStorage";
 
 setStore("manualTest", true);
-const initialState = { accountType: null, screen: null };
+const initialState = { view: 'gasBalance'};
 
 export const accountSlice = createSlice({
   name: "account",
   initialState: initialState,
   reducers: {
-    setAccountType: (state, { payload }) => {
-      state.Type = payload;
+    setType: (state, { payload }) => {
+      state.type = payload;
+      setStore("account", state)
     },
-  },
-  setScreen: (state, { payload }) => {
-    state.screen = payload;
+    setLoggedIn: (state) => {
+      state.loggedIn = !state.loggedIn;
+      setStore("account", state)
+    },
+    setView: (state, { payload }) => {
+      state.view = payload;
+      setStore("account", state)
+    },
   },
 });
 
-export const { setAccountType } = accountSlice.actions;
-export const readAccountType = (state) => state.account.Type;
-export const readScreen = (state) => state.account.screen;
+export const accountActions = accountSlice.actions;
+
+export const readAccount = (state) => state.account;
 export default accountSlice.reducer;

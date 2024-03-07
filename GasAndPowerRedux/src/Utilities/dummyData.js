@@ -1,9 +1,19 @@
-export const users = {
-  gas01: {
+export const gasUsers = {
+  1: {
     id: 1,
-    password: 'password',
+    name: "gas01",
+    password: "password",
+
     inputs: {
-      counterpartyBuys: {},
+      counterpartyBuys: {
+        noms: [
+          {
+            id: 1,
+            counterpartyId: 2,
+            amount: 100,
+          },
+        ],
+      },
       marketBuys: {},
       production: {},
       acqiasitions: {},
@@ -13,10 +23,33 @@ export const users = {
       marketSells: {},
       consumption: {},
       disposals: {},
-      gridOfftake:{},
+      gridOfftake: {},
     },
   },
-  gas02: {},
-  gas03: {},
+  2: {
+    id: 2,
+    name: "gas02",
+    password: "password",
+
+    inputs: {
+      counterpartyBuys: {},
+      marketBuys: {},
+      production: {},
+      acqiasitions: {},
+    },
+    outputs: {
+      counterpartySells: {
+        noms: [
+          {
+            counterpartyId: 1,
+            amount: 100,
+          },
+        ],
+      },
+      marketSells: {},
+      consumption: {},
+      disposals: {},
+      gridOfftake: {},
+    },
+  },
 };
-            
