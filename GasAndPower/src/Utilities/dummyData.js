@@ -1,55 +1,45 @@
-export const gasUsers = {
-  1: {
+export const userIdxOfID = (obj, id) => obj.map((user) => user.id).indexOf(id);
+export const userIdxOfName = (obj, name) =>
+  obj.map((user) => user.name).indexOf(name);
+
+export var gasUsers;
+
+gasUsers = [
+  {
+    id: 0,
+    name: "gas00",
+    password: "password",
+    noms: {
+      ins: {
+        counterparty: [{}],
+        production: {},
+      },
+    },
+  },
+  {
     id: 1,
     name: "gas01",
     password: "password",
-
-    inputs: {
-      counterpartyBuys: {
-        noms: [
-          {
-            id: 1,
-            counterpartyId: 2,
-            amount: 100,
-          },
-        ],
+    noms: {
+      inputs: {
+        counterparty: {},
       },
-      marketBuys: {},
-      production: {},
-      acqiasitions: {},
-    },
-    outputs: {
-      counterpartySells: {},
-      marketSells: {},
-      consumption: {},
-      disposals: {},
-      gridOfftake: {},
+      outputs: {
+        counterparty: {},
+      },
     },
   },
-  2: {
+  {
     id: 2,
     name: "gas02",
     password: "password",
-
-    inputs: {
-      counterpartyBuys: {},
-      marketBuys: {},
-      production: {},
-      acqiasitions: {},
-    },
-    outputs: {
-      counterpartySells: {
-        noms: [
-          {
-            counterpartyId: 1,
-            amount: 100,
-          },
-        ],
+    noms: {
+      inputs: {
+        counterparty: {},
       },
-      marketSells: {},
-      consumption: {},
-      disposals: {},
-      gridOfftake: {},
+      outputs: {
+        counterparty: {},
+      },
     },
   },
-};
+];

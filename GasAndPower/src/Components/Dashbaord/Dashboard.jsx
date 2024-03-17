@@ -4,13 +4,12 @@ import { getStore } from "../../Utilities/localStorage";
 import { gasUsers } from "../../Utilities/dummyData";
 import DashHeader from "./DashHeader";
 
-const Dashboard = () => {
-  const account = getStore("account");
-  const system = gasUsers;
+const Dashboard = (props) => {
+  const {account} = props
 
   return (
     <>
-      <DashHeader />
+      <DashHeader account = {account} />
     </>
   );
 };

@@ -1,12 +1,12 @@
 import React from "react";
-import { accountActions, readAccount } from "../../Utilities/AccountSlice";
+import { accountActions} from "../../Utilities/AccountSlice";
 import Login from "../Login";
 import { useSelector, useDispatch } from "react-redux";
 import Dashboard from "../Dashbaord/Dashboard";
 
-const Home = () => {
+const Home = (props) => {
   const dispatch = useDispatch();
-  const account = useSelector(readAccount);
+  const {account} = props
   function setTypeById(e) {
     dispatch(accountActions.setType(e.target.id));
   }
@@ -15,7 +15,6 @@ const Home = () => {
     dispatch(accountActions.setLoggedIn());
     navigate("/");
   };
-  console.log(account);
 
   return (
     <>
@@ -31,12 +30,12 @@ const Home = () => {
       )}
       {account.type && !account.loggedIn && (
         <>
-          <Login toggleLogin={toggleLogin} />
+          <Login toggleLogin={toggleLogin} account={account} />
         </>
       )}
       {account.type && account.loggedIn && (
         <>
-          <Dashboard toggleLogin={toggleLogin} />
+          <Dashboard toggleLogin={toggleLogin} account={account} />
         </>
       )}
     </>

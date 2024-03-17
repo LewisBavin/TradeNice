@@ -8,8 +8,12 @@ import GasAllocs from "./GasAllocs";
 import GasSettings from "./GasSettings";
 import GasNoms from "./GasNoms";
 
-const DashHeader = () => {
-  const { view } = useSelector(readAccount);
+const DashHeader = (props) => {
+  const user = props.account.user
+
+  console.log('hi',user.noms.inputs.counterparty())
+
+  const { view } = props.account;
   const dispatch = useDispatch();
   const show = {
     gasBalance: <GasBalance />,
