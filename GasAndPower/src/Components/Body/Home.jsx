@@ -1,12 +1,12 @@
 import React from "react";
-import { accountActions} from "../../Utilities/AccountSlice";
+import { accountActions } from "../../Utilities/AccountSlice";
 import Login from "../Login";
 import { useSelector, useDispatch } from "react-redux";
 import Dashboard from "../Dashbaord/Dashboard";
 
 const Home = (props) => {
   const dispatch = useDispatch();
-  const {account} = props
+  const { account } = props;
   function setTypeById(e) {
     dispatch(accountActions.setType(e.target.id));
   }

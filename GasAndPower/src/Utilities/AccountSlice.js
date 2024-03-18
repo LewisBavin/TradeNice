@@ -1,8 +1,9 @@
 import { createSlice } from "@reduxjs/toolkit";
 import { setStore, getStore } from "./localStorage";
-import { gasUsers, userIdxOfID, userIdxOfName } from "./dummyData";
+import { gasUsers } from "./dummyData";
+import { arrObjByKeyVal } from "./usefulFuncs";
 
-const initialState = { view: "gasBalance" };
+const initialState = { view: "tabBalance" };
 
 export const accountSlice = createSlice({
   name: "account",
@@ -22,9 +23,9 @@ export const accountSlice = createSlice({
     },
     authoriseUser: (state, { payload }) => {
       const { password, userInput } = payload;
-      const user = gasUsers[userIdxOfName(gasUsers, userInput)];
+      const user = arrObjByKeyVal(gasUsers, "name", userInput);
       state.user = user && user.password === password && user;
-      state.loggedIn = user && true
+      state.loggedIn = user && true;
       setStore("account", state);
     },
   },
