@@ -1,7 +1,7 @@
 import { createSlice } from "@reduxjs/toolkit";
-import { setStore, getStore } from "./localStorage";
-import { gasUsers } from "./dummyData";
-import { arrObjByKeyVal } from "./usefulFuncs";
+import { setStore, getStore } from "../localStorage";
+import { gasUsers } from "../systemUsers";
+import { arrObjByKeyVal } from "../usefulFuncs";
 
 const initialState = { view: "tabBalance" };
 
@@ -32,6 +32,5 @@ export const accountSlice = createSlice({
 });
 
 export const accountActions = accountSlice.actions;
-
 export const readAccount = (state) => state.account;
 export default accountSlice.reducer;

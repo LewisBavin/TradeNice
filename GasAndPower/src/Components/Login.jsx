@@ -1,18 +1,18 @@
 import React from "react";
 import { useNavigate } from "react-router-dom";
 import { useDispatch, useSelector } from "react-redux";
-import { accountActions, readAccount } from "../Utilities/AccountSlice";
+import { accountActions, readAccount } from "../Utilities/Slices/AccountSlice";
 import { getStore } from "../Utilities/localStorage";
-import { gasUsers } from "../Utilities/dummyData";
+import { gasUsers } from "../Utilities/systemUsers";
 
 const Login = (props) => {
   const { toggleLogin, account } = props;
   const dispatch = useDispatch();
-  const authorise = ()=>{
-    dispatch(accountActions.authoriseUser({ userInput: "gas00", password: "password" }))
-  }
-
-
+  const authorise = () => {
+    dispatch(
+      accountActions.authoriseUser({ userInput: "gas00", password: "password" })
+    );
+  };
 
   return (
     <>

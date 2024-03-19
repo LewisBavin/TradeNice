@@ -1,4 +1,4 @@
-body{
+body {
   font-size: 1rem;
 }
 
@@ -27,6 +27,12 @@ body{
   &.jc-e {
     justify-content: end;
   }
+  &.jc-sb {
+    justify-content: space-between;
+  }
+  &.jc-sa {
+    justify-content: space-around;
+  }
 
   &.ai-c {
     align-items: center;
@@ -39,39 +45,57 @@ body{
   }
 }
 
-body{
- overflow-x: hidden;
+body {
+  overflow-x: hidden;
 }
 
-.root-container{
+.root-container {
   height: 100vh;
   width: 100vw;
 }
 
-.dashNav.title{
-  background-color: grey;
-  padding: 10px;
-  border-width: 1px;
-  height: min-content;
+.dash.container {
+  padding: 0.2em;
+  background-color: red;
 
-  &.inner{
-    background-color: darkgray;
-    font-size: 0.8em;
-    height: min-content;
+  .dashTabs {
+    background-color: pink;
+    padding: 0.5em 0.1em;
+
+    .dashTab {
+      background-color: yellow;
+
+      &.inner {
+        background-color: grey;
+
+        &.selected {
+          background-color: darkgreen;
+        }
+      }
+    }
+
+    .selected {
+      background-color: green;
+    }
+  }
+
+  .dashContent {
+    padding: 0.2em;
+    background-color: darkmagenta;
   }
 }
 
-footer, header{
+footer,
+header {
   position: fixed;
   width: 100%;
   margin: 0;
   height: fit-content;
   background-color: blue;
 }
-footer{
+footer {
   bottom: 0;
 }
-header{
+header {
   top: 0;
 }
-

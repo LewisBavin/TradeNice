@@ -1,5 +1,5 @@
 import React from "react";
-import { accountActions } from "../../Utilities/AccountSlice";
+import { accountActions } from "../../Utilities/Slices/AccountSlice";
 import Login from "../Login";
 import { useSelector, useDispatch } from "react-redux";
 import Dashboard from "../Dashbaord/Dashboard";

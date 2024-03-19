@@ -1,7 +1,7 @@
 import React from "react";
 import { getStore } from "../../Utilities/localStorage";
 import { useDispatch } from "react-redux";
-import { accountActions } from "../../Utilities/AccountSlice";
+import { accountActions } from "../../Utilities/Slices/AccountSlice";
 import { useNavigate } from "react-router-dom";
 
 function Header(props) {
