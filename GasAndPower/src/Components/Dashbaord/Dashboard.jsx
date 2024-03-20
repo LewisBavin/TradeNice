@@ -13,7 +13,6 @@ const Dashboard = ({ account }) => {
     setView({ ...view, idx, subIdx });
   };
 
-
   const toggleSelected = (e) => {
     let node = e.currentTarget;
     node.parentNode.childNodes.forEach((child) =>
@@ -25,12 +24,7 @@ const Dashboard = ({ account }) => {
   const dashTabs = [
     {
       name: "Balance",
-      childTabs: [
-        {
-          name: "Outstanding",
-          element: <TradingOutstanding />,
-        },
-      ],
+      childTabs: [{ name: "Outstanding", element: <TradingOutstanding /> }],
     },
     {
       name: "Nominations",

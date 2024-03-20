@@ -13,11 +13,12 @@ const initialState = {
 export const systemSlice = createSlice({
   name: "system",
   initialState,
-  reducers: {},
+  reducers: {withdraw: (state, {payload})=>{
+  }},
 });
 
 export const systemActions = systemSlice.actions;
-export const getRequests = (state) => state.requests;
-export const getGasUsers = (state) => state.gasUsers;
-export const getSystemRequests = (state) => state.requests;
+export const getRequests = (state) => state.system.requests;
+export const getUsers = (state) => state.system.gasUsers;
+export const read = (state) => state.system;
 export default systemSlice.reducer;

@@ -1,56 +1,56 @@
 import React from "react";
 import Request from "./Request";
 import { gasUsers } from "../../Utilities/systemUsers";
+import { actionButtons } from "../Buttons";
 
 const Requests = ({ reqs, reverse, yourID }) => {
   const users = gasUsers.map(({ id, name }) => {
     return { id, name };
   });
+  const b = actionButtons;
 
-  const counterParties = gasUsers.map(({ id, name }) => {
-    return { id, name };
-  });
+  const buysSells = ["input", "output"];
+  reverse && buysSells.reverse();
 
-  const buys = reqs.filter((req) => {
-    return req.direction === "input";
-  });
-  const sells = reqs.filter((req) => {
-    return req.direction == "output";
-  });
-  console.log(reverse ? "counter" : "you")
-  console.log(  "buys: ", buys, "sells: ", sells);
+  const buttons = reverse
+    ? [b.requestAccept, b.requestReject]
+    : [b.requestEdit, b.requestWithdraw];
 
   return (
-    <div className={"flx col" + (reverse ? "-r" : "")}>
-      <div className="inputs">
-        <div className="header">Buys</div>
-        <div className="requests">
-          {users.map((user) => {
-            return (
-              <>
-                {((!reverse && user.id !== yourID) ||
-                  (reverse && user.id == yourID)) && (
-                  <div className="counterParty">
-                    <div className="header">{user.name}</div>
-                    {buys
-                      .filter((req) => {
-                        return req.counterID == user.id;
-                      })
-                      .map((req) => {
-                        return (
-                          <>
-                            <div>{req.volume}</div>
-                          </>
-                        );
-                      })}
-                  </div>
-                )}
-              </>
-            );
-          })}
-        </div>
-      </div>
-    </div>
+    <>
+      {buysSells.map((direction, i) => {
+        return (
+          <div key={i} className={direction}>
+            <div className="header">
+              {direction == "input" ? "Buys" : "Sells"}
+            </div>
+            <div className="requestsAll">
+              {users.map((user, j) => {
+                const reqByCounter = reqs.filter((req) => {
+                  return reverse
+                    ? req.userID == user.id && req.direction == direction
+                    : req.counterID == user.id && req.direction == direction;
+                });
+                return (
+                  reqByCounter.length > 0 && (
+                    <div key={j} className="counterParty">
+                      <div className="header">{user.name}</div>
+                      <div className="requests">
+                        {reqByCounter.map((req, k) => {
+                          return (
+                            <Request req={req} key={k} buttons={buttons} />
+                          );
+                        })}
+                      </div>
+                    </div>
+                  )
+                );
+              })}
+            </div>
+          </div>
+        );
+      })}
+    </>
   );
 };
 
