@@ -4,6 +4,7 @@ import TradingVerified from "./Trading/TradingVerified";
 import TradingCreate from "./Trading/TradingCreate";
 import TradingOutstanding from "./Trading/TradingOutstanding";
 import { useState } from "react";
+import GasPrices from "./Grid Data/GasPrices";
 
 const Dashboard = ({ account }) => {
   const { id } = account.user;
@@ -15,13 +16,19 @@ const Dashboard = ({ account }) => {
 
   const toggleSelected = (e) => {
     let node = e.currentTarget;
-    node.parentNode.childNodes.forEach((child) =>
-      child.classList.remove("selected")
-    );
+    let childs = node.parentNode.childNodes;
+    childs.forEach((child) => child.classList.remove("selected"));
     node.classList.add("selected");
   };
 
   const dashTabs = [
+    {
+      name: "Grid Overviews",
+      childTabs: [
+        { name: "Gas Prices", element: <GasPrices /> },
+        { name: "Grid Flow", element: <GasPrices /> },
+      ],
+    },
     {
       name: "Balance",
       childTabs: [{ name: "Outstanding", element: <TradingOutstanding /> }],
