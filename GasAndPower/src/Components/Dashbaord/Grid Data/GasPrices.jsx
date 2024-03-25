@@ -1,55 +1,90 @@
 import React, { useEffect, useState } from "react";
-import { getGasPrices } from "../../../Utilities/apiTokens";
+import {
+  getElecPrices,
+  getGasPrices,
+  getGridPrices,
+} from "../../../Utilities/apiCalls";
 import Plot from "react-plotly.js";
 import { add, format } from "date-fns";
 import { useDispatch, useSelector } from "react-redux";
 import { graphActions } from "../../../Utilities/Slices/GraphSlice";
 
 const GasPrices = () => {
-  const [startDay, setStart] = useState(new Date());
-  const [points, setPoints] = useState({ x: [], y: [] });
-  let dispatch = useDispatch();
+  let today = new Date();
+  const [range, setRange] = useState({ start: today, end: today });
+  const [points, setPoints] = useState({ uk: {}, eu: {} });
+  const [view, setView] = useState("daily");
+  let { uk, eu } = points;
+  let { start, end } = range;
 
   useEffect(() => {
-    let setPrces = async () => {
-      let gasPrices = (await getGasPrices(startDay)).data;
-      let data = gasPrices.records;
-      data.map((dat) => {
-        points.x.push(dat.HourUTC.replace("T", " "));
-        points.y.push(dat.SpotPriceEUR);
+    let setGasPrces = async () => {
+      let prices = (await getGridPrices(start, end)).data.records;
+      let pricesUK = prices.filter((dat) => dat.PriceArea == "SYSTEM");
+      let pricesEU = prices.filter((dat) => dat.PriceArea == "DK1");
+      uk = { x: [], y: [] };
+      eu = { x: [], y: [] };
+      pricesUK.forEach((dat) => {
+        uk.x.push(dat.HourUTC.replace("T", " "));
+        uk.y.push(dat.SpotPriceEUR / 100);
       });
-      setPoints(points);
+      pricesEU.forEach((dat) => {
+        eu.x.push(dat.HourUTC.replace("T", " "));
+        eu.y.push(dat.SpotPriceEUR / 100);
+      });
+      setPoints({ uk, eu });
     };
-    setPrces();
-  }, [startDay]);
+    setGasPrces();
+  }, [range]);
 
-  let clearPoints = () => {
-    setPoints = {};
+  let changeStart = (n = 0) => {
+    setStart(add(startDay, { days: n }));
   };
 
-  dispatch(graphActions.setGasPrices(new Date().toString()));
-  dispatch(graphActions.logState());
-
-  let changeStart = () => {
-    setStart(add(startDay, { days: -1 }));
+  let changeRangeDaily = (n = 0) => {
+    setRange({ start: add(start, { days: n }), end: add(end, { days: n }) });
   };
   return (
     <>
-      <div className="plotControls">
-        <div className="header">plot controls</div>
-        <button onClick={changeStart}>D-1</button>
+      <div className="views flx jc-sa">
+        <div className="view">Show Hourly</div>
+        <div className="view">Show Daily</div>
       </div>
-      <Plot
-        data={[
-          {
-            ...points,
-            type: "scatter",
-            mode: "lines+markers",
-            marker: { color: "red" },
-          },
-        ]}
-        layout={{ width: 1000, height: 500, title: "A Fancy Plot" }}
-      />
+      <div className="plotContainer">
+        <Plot
+          data={[
+            {
+              ...points.uk,
+              type: "scatter",
+              mode: "lines+markers",
+              marker: { color: "red" },
+              name: "UK Grid: £/therm",
+            },
+            {
+              ...points.eu,
+              type: "scatter",
+              mode: "lines+markers",
+              marker: { color: "blue" },
+              name: "EU Grid: €/therm",
+            },
+          ]}
+          layout={{
+            width: 1000,
+            height: 500,
+            title: "Showing Gas Day: " + format(range.start, "dd-MM-yyyy"),
+            yaxis: { title: "Gas Grid Prices" },
+          }}
+        />
+        <div className="plotControls flx jc-c">
+          <div className="header"></div>
+          <button onClick={() => changeRangeDaily(-1)}>
+            {format(add(range.start, { days: -1 }), "dd-MMM")}
+          </button>
+          <button onClick={() => changeRangeDaily(+1)}>
+            {format(add(range.start, { days: +1 }), "dd-MMM")}
+          </button>
+        </div>
+      </div>
     </>
   );
 };
