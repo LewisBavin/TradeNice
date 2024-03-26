@@ -1,21 +1,38 @@
-import React, { useEffect, useState } from "react";
-import {
-  getElecPrices,
-  getGasPrices,
-  getGridPrices,
-} from "../../../Utilities/apiCalls";
+import React, { useEffect, useRef, useState } from "react";
+import { getGridPrices } from "../../../Utilities/apiCalls";
 import Plot from "react-plotly.js";
 import { add, format } from "date-fns";
 import { useDispatch, useSelector } from "react-redux";
-import { graphActions } from "../../../Utilities/Slices/GraphSlice";
+import { dateify, graphActions } from "../../../Utilities/Slices/GraphSlice";
+import "react-datepicker/dist/react-datepicker.css";
+import DatePicker, { registerLocale, setDefaultLocale } from "react-datepicker";
+import enGB from "date-fns/locale/en-GB";
+import { setDefaultOptions } from "date-fns";
+setDefaultOptions(enGB);
 
 const GasPrices = () => {
-  let today = new Date();
-  const [range, setRange] = useState({ start: today, end: today });
+  let dispatch = useDispatch();
+  const range = useSelector(dateify);
   const [points, setPoints] = useState({ uk: {}, eu: {} });
   const [view, setView] = useState("daily");
   let { uk, eu } = points;
   let { start, end } = range;
+
+  const timeifyAndSave = ({ start, end }) => {
+    dispatch(
+      graphActions.setDates({ start: start.getTime(), end: end.getTime() })
+    );
+  };
+
+  const timeify = (date) => date.getTime();
+
+  const datePick = (date, action = true) => {
+    timeifyAndSave({ start: date, end: date });
+  };
+
+  const doublePick = (date, action = true) => {
+    timeifyAndSave({ start: date, end: date });
+  };
 
   useEffect(() => {
     let setGasPrces = async () => {
@@ -37,18 +54,28 @@ const GasPrices = () => {
     setGasPrces();
   }, [range]);
 
-  let changeStart = (n = 0) => {
-    setStart(add(startDay, { days: n }));
+  let dStep1 = (n = 0) => {
+    range.start = add(range.start, { days: n });
+    range.end = add(range.end, { days: n });
+    timeifyAndSave(range);
   };
 
-  let changeRangeDaily = (n = 0) => {
-    setRange({ start: add(start, { days: n }), end: add(end, { days: n }) });
-  };
+  let dateRef = useRef();
+
   return (
     <>
       <div className="views flx jc-sa">
-        <div className="view">Show Hourly</div>
-        <div className="view">Show Daily</div>
+        <div className="view flx col ai-c jc-c">
+          <div className="header">Show Hourly</div>
+          <DatePicker
+            dateFormat={"dd-MM-yyyy"}
+            selected={range.start}
+            onChange={datePick}
+          />
+        </div>
+        <div className="view flx col ai-c jc-c">
+          <div className="header">Show Daily</div>
+        </div>
       </div>
       <div className="plotContainer">
         <Plot
@@ -77,10 +104,10 @@ const GasPrices = () => {
         />
         <div className="plotControls flx jc-c">
           <div className="header"></div>
-          <button onClick={() => changeRangeDaily(-1)}>
+          <button onClick={() => dStep1(-1)}>
             {format(add(range.start, { days: -1 }), "dd-MMM")}
           </button>
-          <button onClick={() => changeRangeDaily(+1)}>
+          <button onClick={() => dStep1(+1)}>
             {format(add(range.start, { days: +1 }), "dd-MMM")}
           </button>
         </div>

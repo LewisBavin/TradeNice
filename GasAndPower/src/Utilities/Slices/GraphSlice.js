@@ -1,32 +1,24 @@
 import { createSlice } from "@reduxjs/toolkit";
-import { getGasPrices } from "../apiCalls";
-import { current } from "@reduxjs/toolkit";
 
 const initialState = {
-  gasPrices: [],
-  plot: {
-    startString: new Date().toString(),
-    end: null,
-    range: null,
-    points: { x: [], y: [] },
-  },
+  dateRange: { start: new Date().getTime(), end: new Date().getTime() },
 };
 
 export const graphSlice = createSlice({
   name: "graph",
   initialState,
   reducers: {
-    setGasPrices: (state, { payload }) => {
-      state.gasPrices = payload
+    setDates: (state, { payload }) => {
+      let { start, end } = payload;
+      state.dateRange.start = start ? start : null;
+      state.dateRange.end = end ? end : start;
     },
-    logState: (state, { payload }) => {
-      console.log(current(state).gasPrices.gasPrices[0]);
-    },
-    checkGasPrices: (state) =>{
-      return state.gasPrices === null
-    }
   },
 });
 
 export const graphActions = graphSlice.actions;
+export const dateify = (state) => {
+  let {start, end} = {...state.graph.dateRange}
+  return {start: new Date(start), end: new Date(end)}
+};
 export default graphSlice.reducer;

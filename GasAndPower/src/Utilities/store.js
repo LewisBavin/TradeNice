@@ -7,7 +7,8 @@ export const store = configureStore(
   {
     reducer: {
       account: accountReducer,
-      system: systemReducer,graph: graphSlice,
+      system: systemReducer,
+      graph: graphSlice,
     },
   },
   window.__REDUX_DEVTOOLS_EXTENSION__ && window.__REDUX_DEVTOOLS_EXTENSION__()
