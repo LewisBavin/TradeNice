@@ -14,7 +14,7 @@ const GasPrices = () => {
   let dispatch = useDispatch();
   const range = useSelector(dateify);
   const [points, setPoints] = useState({ uk: {}, eu: {} });
-  const [view, setView] = useState("daily");
+  const [multiRange, setMulti] = useState();
   let { uk, eu } = points;
   let { start, end } = range;
 
@@ -68,13 +68,28 @@ const GasPrices = () => {
         <div className="view flx col ai-c jc-c">
           <div className="header">Show Hourly</div>
           <DatePicker
-            dateFormat={"dd-MM-yyyy"}
+            dateFormat="dd-MM-yyyy"
             selected={range.start}
-            onChange={datePick}
+            onChange={(date) => {
+              datePick(date);
+            }}
           />
         </div>
         <div className="view flx col ai-c jc-c">
           <div className="header">Show Daily</div>
+          <DatePicker
+            dateFormat="dd-MM-yyyy"
+            onChange={(date) => {
+              console.log(date);
+            }}
+          />{" "}
+          <DatePicker
+            dateFormat="dd-MM-yyyy"
+            selected={range.start}
+            onChange={(date) => {
+              console.log("log", date);
+            }}
+          />
         </div>
       </div>
       <div className="plotContainer">
@@ -99,6 +114,40 @@ const GasPrices = () => {
             width: 1000,
             height: 500,
             title: "Showing Gas Day: " + format(range.start, "dd-MM-yyyy"),
+            xaxis: {
+              rangeselector: {
+                buttons: [
+                  {
+                    step: "month",
+                    stepmode: "backward",
+                    count: 1,
+                    label: "1m",
+                  },
+                  {
+                    step: "month",
+                    stepmode: "backward",
+                    count: 6,
+                    label: "6m",
+                  },
+                  {
+                    step: "year",
+                    stepmode: "todate",
+                    count: 1,
+                    label: "YTD",
+                  },
+                  {
+                    step: "year",
+                    stepmode: "backward",
+                    count: 1,
+                    label: "1y",
+                  },
+                  {
+                    step: "all",
+                  },
+                ],
+              },
+              rangeslider: {},
+            },
             yaxis: { title: "Gas Grid Prices" },
           }}
         />
