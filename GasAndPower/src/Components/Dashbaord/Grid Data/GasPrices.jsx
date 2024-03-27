@@ -1,5 +1,5 @@
 import React, { useEffect, useRef, useState } from "react";
-import { getGridPrices, gridPricesAll } from "../../../Utilities/apiCalls";
+import { getGridPricesAll } from "../../../Utilities/apiCalls";
 import Plot from "react-plotly.js";
 import { add, format } from "date-fns";
 import { useDispatch, useSelector } from "react-redux";
@@ -17,45 +17,20 @@ const GasPrices = () => {
   const dispatch = useDispatch();
   const gridPrices = useSelector(getSavedPrices);
 
-  if (!gridPrices) {
-    let allPrices = gridPricesAll.data.records;
-    let prices = {
-      uk: allPrices.filter((obj) => obj.PriceArea == "SYSTEM"),
-      eu: allPrices.filter((obj) => obj.PriceArea == "DK1"),
-    };
-
-    Object.entries(prices).forEach(([key, value]) => {
-      let [x, y] = value.reduce(
+  !gridPrices &&
+    (async function getPrices() {
+      let allPrices = (await getGridPricesAll()).data.records;
+      let { uk, eu } = allPrices.reduce(
         (accum, val) => {
-          accum[0].push(val.HourUTC);
-          accum[1].push(val.SpotPriceEUR);
+          let key = val.PriceArea == "SYSTEM" ? "uk" : "eu";
+          accum[key].x.push(val.HourUTC);
+          accum[key].y.push(val.SpotPriceEUR / 100);
           return accum;
         },
-        [[], []]
+        { uk: { x: [], y: [] }, eu: { x: [], y: [] } }
       );
-      prices[key] = { x, y };
-    });
-    dispatch(graphActions.initialiseGridPrices(prices));
-  }
-
-  /*   let allPrices = gridPricesAll.data.records;
-    let prices = {
-      uk: allPrices.filter((obj) => obj.PriceArea == "SYSTEM"),
-      eu: allPrices.filter((obj) => obj.PriceArea == "DK1"),
-    };
-
-    Object.entries(prices).forEach(([key, value]) => {
-      let [x, y] = value.reduce(
-        (accum, val) => {
-          accum[0].push(val.HourUTC);
-          accum[1].push(val.SpotPriceEUR);
-          return accum;
-        },
-        [[], []]
-      );
-      prices[key] = { x, y };
-      dispatch(graphActions.initialiseGridPrices(prices))
-    }); */
+      dispatch(graphActions.initialiseGridPrices({ uk, eu }));
+    })();
 
   /*   let dispatch = useDispatch();
   const range = useSelector(dateify);
@@ -79,26 +54,6 @@ const GasPrices = () => {
   const doublePick = (date, action = true) => {
     timeifyAndSave({ start: date, end: date });
   };
-
-  useEffect(() => {
-    let setGasPrces = async () => {
-      let prices = (await getGridPrices(start, end)).data.records;
-      let pricesUK = prices.filter((dat) => dat.PriceArea == "SYSTEM");
-      let pricesEU = prices.filter((dat) => dat.PriceArea == "DK1");
-      uk = { x: [], y: [] };
-      eu = { x: [], y: [] };
-      pricesUK.forEach((dat) => {
-        uk.x.push(dat.HourUTC.replace("T", " "));
-        uk.y.push(dat.SpotPriceEUR / 100);
-      });
-      pricesEU.forEach((dat) => {
-        eu.x.push(dat.HourUTC.replace("T", " "));
-        eu.y.push(dat.SpotPriceEUR / 100);
-      });
-      setPoints({ uk, eu });
-    };
-    setGasPrces();
-  }, [range]);
 
   let dStep1 = (n = 0) => {
     range.start = add(range.start, { days: n });
@@ -144,42 +99,51 @@ const GasPrices = () => {
             layout={{
               width: 1000,
               height: 500,
-              title: "Showing Gas Day:",
+              title: "Grid Gas Prices",
               xaxis: {
                 rangeselector: {
                   buttons: [
                     {
-                      step: "month",
-                      stepmode: "backward",
-                      count: 1,
-                      label: "1m",
-                    },
-                    {
-                      step: "month",
-                      stepmode: "backward",
-                      count: 6,
-                      label: "6m",
-                    },
-                    {
-                      step: "year",
-                      stepmode: "todate",
-                      count: 1,
-                      label: "YTD",
-                    },
-                    {
                       step: "year",
                       stepmode: "backward",
                       count: 1,
-                      label: "1y",
+                      label: "Yearly",
+                    },
+                    {
+                      step: "month",
+                      stepmode: "backward",
+                      count: 1,
+                      label: "Monthly",
+                    },
+                    {
+                      step: "day",
+                      stepmode: "backward",
+                      count: 1,
+                      label: "Daily",
+                    },
+                    {
+                      step: "hour",
+                      stepmode: "backward",
+                      count: 1,
+                      label: "Hourly",
                     },
                     {
                       step: "all",
+                      label: "show all",
+                    },
+                    {
+                      step: "day",
+                      stepmode: "todate",
+                      count: 1,
+                      label: "Today",
                     },
                   ],
                 },
                 rangeslider: {},
               },
-              yaxis: { title: "Gas Grid Prices" },
+              yaxis: {
+                title: "Gas Grid Prices",
+              },
             }}
           />
         )}

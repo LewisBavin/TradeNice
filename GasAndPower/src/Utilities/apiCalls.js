@@ -14,13 +14,11 @@ export const getGridPrices = (start, end = start) => {
   );
 };
 
-const getGridPricesAll = () => {
+export const getGridPricesAll = () => {
   return axios.get(
     `https://api.energidataservice.dk/dataset/Elspotprices?` +
       `start=` +
-      `2024-01-01` +
+      `2022-01-01` +
       `&filter={"PriceArea":["SYSTEM", "DK1"]}&sort=HourUTC`
   );
 };
-
-export const gridPricesAll = await getGridPricesAll();
