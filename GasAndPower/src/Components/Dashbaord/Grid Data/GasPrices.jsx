@@ -1,9 +1,12 @@
 import React, { useEffect, useRef, useState } from "react";
-import { getGridPrices } from "../../../Utilities/apiCalls";
+import { getGridPrices, gridPricesAll } from "../../../Utilities/apiCalls";
 import Plot from "react-plotly.js";
 import { add, format } from "date-fns";
 import { useDispatch, useSelector } from "react-redux";
-import { dateify, graphActions } from "../../../Utilities/Slices/GraphSlice";
+import {
+  getSavedPrices,
+  graphActions,
+} from "../../../Utilities/Slices/GraphSlice";
 import "react-datepicker/dist/react-datepicker.css";
 import DatePicker, { registerLocale, setDefaultLocale } from "react-datepicker";
 import enGB from "date-fns/locale/en-GB";
@@ -11,7 +14,50 @@ import { setDefaultOptions } from "date-fns";
 setDefaultOptions(enGB);
 
 const GasPrices = () => {
-  let dispatch = useDispatch();
+  const dispatch = useDispatch();
+  const gridPrices = useSelector(getSavedPrices);
+
+  if (!gridPrices) {
+    let allPrices = gridPricesAll.data.records;
+    let prices = {
+      uk: allPrices.filter((obj) => obj.PriceArea == "SYSTEM"),
+      eu: allPrices.filter((obj) => obj.PriceArea == "DK1"),
+    };
+
+    Object.entries(prices).forEach(([key, value]) => {
+      let [x, y] = value.reduce(
+        (accum, val) => {
+          accum[0].push(val.HourUTC);
+          accum[1].push(val.SpotPriceEUR);
+          return accum;
+        },
+        [[], []]
+      );
+      prices[key] = { x, y };
+    });
+    dispatch(graphActions.initialiseGridPrices(prices));
+  }
+
+  /*   let allPrices = gridPricesAll.data.records;
+    let prices = {
+      uk: allPrices.filter((obj) => obj.PriceArea == "SYSTEM"),
+      eu: allPrices.filter((obj) => obj.PriceArea == "DK1"),
+    };
+
+    Object.entries(prices).forEach(([key, value]) => {
+      let [x, y] = value.reduce(
+        (accum, val) => {
+          accum[0].push(val.HourUTC);
+          accum[1].push(val.SpotPriceEUR);
+          return accum;
+        },
+        [[], []]
+      );
+      prices[key] = { x, y };
+      dispatch(graphActions.initialiseGridPrices(prices))
+    }); */
+
+  /*   let dispatch = useDispatch();
   const range = useSelector(dateify);
   const [points, setPoints] = useState({ uk: {}, eu: {} });
   const [multiRange, setMulti] = useState();
@@ -60,105 +106,85 @@ const GasPrices = () => {
     timeifyAndSave(range);
   };
 
-  let dateRef = useRef();
+  let dateRef = useRef(); */
 
   return (
     <>
       <div className="views flx jc-sa">
         <div className="view flx col ai-c jc-c">
           <div className="header">Show Hourly</div>
-          <DatePicker
-            dateFormat="dd-MM-yyyy"
-            selected={range.start}
-            onChange={(date) => {
-              datePick(date);
-            }}
-          />
         </div>
         <div className="view flx col ai-c jc-c">
           <div className="header">Show Daily</div>
-          <DatePicker
-            dateFormat="dd-MM-yyyy"
-            onChange={(date) => {
-              console.log(date);
-            }}
-          />{" "}
-          <DatePicker
-            dateFormat="dd-MM-yyyy"
-            selected={range.start}
-            onChange={(date) => {
-              console.log("log", date);
-            }}
-          />
         </div>
       </div>
       <div className="plotContainer">
-        <Plot
-          data={[
-            {
-              ...points.uk,
-              type: "scatter",
-              mode: "lines+markers",
-              marker: { color: "red" },
-              name: "UK Grid: £/therm",
-            },
-            {
-              ...points.eu,
-              type: "scatter",
-              mode: "lines+markers",
-              marker: { color: "blue" },
-              name: "EU Grid: €/therm",
-            },
-          ]}
-          layout={{
-            width: 1000,
-            height: 500,
-            title: "Showing Gas Day: " + format(range.start, "dd-MM-yyyy"),
-            xaxis: {
-              rangeselector: {
-                buttons: [
-                  {
-                    step: "month",
-                    stepmode: "backward",
-                    count: 1,
-                    label: "1m",
-                  },
-                  {
-                    step: "month",
-                    stepmode: "backward",
-                    count: 6,
-                    label: "6m",
-                  },
-                  {
-                    step: "year",
-                    stepmode: "todate",
-                    count: 1,
-                    label: "YTD",
-                  },
-                  {
-                    step: "year",
-                    stepmode: "backward",
-                    count: 1,
-                    label: "1y",
-                  },
-                  {
-                    step: "all",
-                  },
-                ],
+        {!gridPrices ? (
+          <>
+            <div>Nope</div>
+          </>
+        ) : (
+          <Plot
+            data={[
+              {
+                ...gridPrices.uk,
+                type: "scatter",
+                mode: "lines",
+                marker: { color: "red" },
+                name: "UK Grid: £/therm",
               },
-              rangeslider: {},
-            },
-            yaxis: { title: "Gas Grid Prices" },
-          }}
-        />
+              {
+                ...gridPrices.eu,
+                type: "scatter",
+                mode: "lines",
+                marker: { color: "blue" },
+                name: "EU Grid: €/therm",
+              },
+            ]}
+            layout={{
+              width: 1000,
+              height: 500,
+              title: "Showing Gas Day:",
+              xaxis: {
+                rangeselector: {
+                  buttons: [
+                    {
+                      step: "month",
+                      stepmode: "backward",
+                      count: 1,
+                      label: "1m",
+                    },
+                    {
+                      step: "month",
+                      stepmode: "backward",
+                      count: 6,
+                      label: "6m",
+                    },
+                    {
+                      step: "year",
+                      stepmode: "todate",
+                      count: 1,
+                      label: "YTD",
+                    },
+                    {
+                      step: "year",
+                      stepmode: "backward",
+                      count: 1,
+                      label: "1y",
+                    },
+                    {
+                      step: "all",
+                    },
+                  ],
+                },
+                rangeslider: {},
+              },
+              yaxis: { title: "Gas Grid Prices" },
+            }}
+          />
+        )}
         <div className="plotControls flx jc-c">
           <div className="header"></div>
-          <button onClick={() => dStep1(-1)}>
-            {format(add(range.start, { days: -1 }), "dd-MMM")}
-          </button>
-          <button onClick={() => dStep1(+1)}>
-            {format(add(range.start, { days: +1 }), "dd-MMM")}
-          </button>
         </div>
       </div>
     </>

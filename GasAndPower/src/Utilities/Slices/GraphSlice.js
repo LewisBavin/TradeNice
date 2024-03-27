@@ -1,8 +1,6 @@
 import { createSlice } from "@reduxjs/toolkit";
 
-const initialState = {
-  dateRange: { start: new Date().getTime(), end: new Date().getTime() },
-};
+const initialState = {};
 
 export const graphSlice = createSlice({
   name: "graph",
@@ -13,12 +11,12 @@ export const graphSlice = createSlice({
       state.dateRange.start = start ? start : null;
       state.dateRange.end = end ? end : start;
     },
+    initialiseGridPrices: (state, { payload }) => {
+      state.prices = payload;
+    },
   },
 });
 
 export const graphActions = graphSlice.actions;
-export const dateify = (state) => {
-  let {start, end} = {...state.graph.dateRange}
-  return {start: new Date(start), end: new Date(end)}
-};
+export const getSavedPrices = (state) => state.graph.prices;
 export default graphSlice.reducer;
