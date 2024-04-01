@@ -4,18 +4,26 @@ import { useDispatch } from "react-redux";
 import { accountActions } from "../../Utilities/Slices/AccountSlice";
 import { useNavigate } from "react-router-dom";
 
-function Header(props) {
-  const { account, toggleLogin } = props;
+function Header({account}) {
+  const dispatch = useDispatch();
+
+  const logOut = () => dispatch(accountActions.logOut());
+
+  <button onClick={logOut}>logout</button>;
 
   return (
     <>
       <div className="flx col">
-        <div className="flx">
+        <div className="flx jc-sb">
           <div>GBPS - Gas & Power Balancing System </div>
-          {account.user && account.loggedIn && <>Welcome {account.user.name}</>}
+
           <div className="flx">
-            <button onClick={toggleLogin}>Log Out</button>
-            <button>Switch to Power</button>
+            {account.user && (
+              <>
+                Welcome {account.user.username.toUpperCase()}
+                <button onClick={logOut}>logout</button>
+              </>
+            )}
           </div>
         </div>
       </div>

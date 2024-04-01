@@ -25,8 +25,8 @@ function Interface() {
   return (
     <>
       <div className="root-container flx col ai-c jc-c">
-        <header className="flx jc-c ai-c">
-          <Header toggleLogin={toggleLogin} account={account} />
+        <header>
+          <Header account={account} />
         </header>
         <main>
           <Routes>

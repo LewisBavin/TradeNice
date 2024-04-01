@@ -7,7 +7,8 @@ import { useState } from "react";
 import GasPrices from "./Grid Data/GasPrices";
 
 const Dashboard = ({ account }) => {
-  const { id } = account.user;
+  let {user} = account
+  let id = user.id
   const [view, setView] = useState({ idx: 2, subIdx: 0 });
 
   const changeView = (idx, subIdx = 0) => {
