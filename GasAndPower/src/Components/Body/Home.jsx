@@ -30,7 +30,7 @@ const Home = ({ account }) => {
     <>
       {!account.loggedIn ? (
         account.create ? (
-          <CreateUser account={account}/>
+          <CreateUser account={account} />
         ) : (
           <div className="loginContainer">
             <div className="header">Log in to Dashboard</div>
