@@ -1,7 +1,4 @@
-
-
-
-
+import React from "react";
 
 export const actionButtons = {
   requestWithdraw: <button>withdraw</button>,
