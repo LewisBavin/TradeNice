@@ -1,0 +1,113 @@
+body {
+  font-size: 1rem;
+}
+
+.flx {
+  display: flex;
+
+  &.col {
+    flex-direction: column;
+  }
+  &.col-r {
+    flex-direction: column-reverse;
+  }
+  &.row {
+    flex-direction: row;
+  }
+  &.row-r {
+    flex-direction: row-reverse;
+  }
+
+  &.jc-c {
+    justify-content: center;
+  }
+  &.jc-s {
+    justify-content: start;
+  }
+  &.jc-e {
+    justify-content: end;
+  }
+  &.jc-sb {
+    justify-content: space-between;
+  }
+  &.jc-sa {
+    justify-content: space-around;
+  }
+
+  &.ai-c {
+    align-items: center;
+  }
+  &.ai-s {
+    align-items: start;
+  }
+  &.ai-e {
+    align-items: end;
+  }
+}
+
+body {
+  overflow-x: hidden;
+}
+
+.root-container {
+  height: 100vh;
+  width: 100vw;
+}
+
+.dash.container {
+  padding: 0.2em;
+  background-color: red;
+
+  .dashTabs {
+    background-color: pink;
+    padding: 0.5em 0.1em;
+
+    .dashTab {
+      background-color: yellow;
+
+      &.inner {
+        background-color: grey;
+
+        &.selected {
+          background-color: darkgreen;
+        }
+      }
+    }
+
+    .selected {
+      background-color: green;
+    }
+  }
+
+  .dashContent {
+    padding: 0.2em;
+    background-color: darkmagenta;
+  }
+}
+
+.requestsContainer{
+  .details{
+    input{
+      width: auto;
+    }
+  }
+}
+
+.label.right{
+  float: right;
+}
+
+footer,
+header {
+  position: fixed;
+  width: 100%;
+  margin: 0;
+  height: fit-content;
+  background-color: blue;
+}
+footer {
+  bottom: 0;
+}
+header {
+  top: 0;
+}
