@@ -16,9 +16,7 @@ export const accountSlice = createSlice({
   initialState: initialState,
   reducers: {
     logIn: (state, { payload }) => {
-      Object.keys(payload).forEach((key) => {
-        state[key] = payload[key];
-      });
+      state.user = payload
       state.loggedIn = !!state.user;
     },
     logOut: (state) => {

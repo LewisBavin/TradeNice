@@ -14,12 +14,14 @@ const Home = ({ account }) => {
   const logIn = async (e) => {
     e.preventDefault();
     let feilds = e.target;
-    let username = feilds.username.value;
-    let password = sha256(feilds.password.value + salt);
-    let { user, msg } = (
-      await axios.get(`http://localhost:6002/auth/${username}/${password}`)
-    ).data;
-    dispatch(accountActions.logIn({ user, msg }));
+    let email = feilds.email.value;
+    let password = feilds.password.value;
+    let user= (
+      await axios.post(`http://localhost:6002/user/login/`,{email, password})
+    ).data.user;
+
+
+    dispatch(accountActions.logIn(user));
   };
 
   const setCreate = () => {
@@ -38,14 +40,14 @@ const Home = ({ account }) => {
               <form method="GET" action="" onSubmit={logIn}>
                 <input
                   type="text"
-                  name="username"
-                  id="username"
-                  placeholder="Username"
+                  name="email"
+                  id="loginEmail"
+                  placeholder="eMail"
                 />
                 <input
                   type="text"
                   name="password"
-                  id="password"
+                  id="loginPassword"
                   placeholder="Password"
                 />
                 <button type="submit">Go</button>
