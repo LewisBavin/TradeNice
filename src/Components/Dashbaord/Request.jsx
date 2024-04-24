@@ -4,8 +4,8 @@ const Request = ({ req, buttons }) => {
   const { ref, start, end, volume } = req;
   const func = () => {};
 
-  return (
-    <>
+  return (<></>
+  /*   <>
       <div className="request flx">
         <div className="details">
           <label htmlFor="ref">ref</label>
@@ -39,7 +39,7 @@ const Request = ({ req, buttons }) => {
           })}
         </div>
       </div>
-    </>
+    </> */
   );
 };
 

@@ -6,11 +6,9 @@ import { useNavigate } from "react-router-dom";
 import axios from "axios";
 
 function Header({ account }) {
-  console.log(account)
   const dispatch = useDispatch();
   
   const logOut = async () => {
-    console.log(account.user.token)
     await axios.delete(`http://localhost:6002/user/logout/this`,account.user.token)
     dispatch(accountActions.logOut());
   };
