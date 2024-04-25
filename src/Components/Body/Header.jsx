@@ -12,7 +12,7 @@ function Header({ account }) {
     console.log(account.user.token);
     await axios.delete(
       `http://localhost:6002/user/logout/this`,
-      account.user.token
+      {headers: {token: account.user.token}}
     );
     dispatch(accountActions.logOut());
   };

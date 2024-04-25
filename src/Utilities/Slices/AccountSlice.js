@@ -7,7 +7,7 @@ const initialState = !getStore("account")
   ? {
       loggedIn: false,
       msg: null,
-      view: "tabBalance",
+      view: null,
       user: null,
       create: false,
     }
@@ -34,6 +34,10 @@ export const accountSlice = createSlice({
     },
     setType: (state, { payload }) => {
       state.type = payload;
+      setStore("account", state);
+    },
+    setRequests: (state, { payload }) => {
+      state.requests = payload;
       setStore("account", state);
     },
     setLoggedIn: (state) => {

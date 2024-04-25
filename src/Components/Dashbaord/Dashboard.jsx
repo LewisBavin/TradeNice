@@ -5,14 +5,22 @@ import TradingCreate from "./Trading/TradingCreate";
 import TradingOutstanding from "./Trading/TradingOutstanding";
 import { useState } from "react";
 import GasPrices from "./Grid Data/GasPrices";
+import { useDispatch } from "react-redux";
+import { accountActions } from "../../Utilities/Slices/AccountSlice";
 
 const Dashboard = ({ account }) => {
   let { user } = account;
+  const dispatch = useDispatch();
   let id = user.user_id;
-  const [view, setView] = useState({ idx: 2, subIdx: 0 });
+  const [view, setView] = useState(
+    !account.view
+      ? { idx: 0, subIdx: 0 }
+      : { idx: account.view.idx, subIdx: account.view.subIdx }
+  );
 
   const changeView = (idx, subIdx = 0) => {
     setView({ ...view, idx, subIdx });
+    dispatch(accountActions.setView({ ...view, idx, subIdx }));
   };
 
   const toggleSelected = (e) => {

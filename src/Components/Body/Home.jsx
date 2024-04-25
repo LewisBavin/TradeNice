@@ -16,10 +16,11 @@ const Home = ({ account }) => {
     let feilds = e.target;
     let email = feilds.email.value;
     let password = feilds.password.value;
-    let user= (
-      await axios.post(`http://localhost:6002/user/login/`,{email, password})
+    console.log(feilds, email, password);
+    let user = (
+      await axios.post(`http://localhost:6002/user/login/`, { email, password })
     ).data.user;
-
+    console.log("hi")
 
     dispatch(accountActions.logIn(user));
   };
