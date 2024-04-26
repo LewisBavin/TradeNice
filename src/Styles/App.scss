@@ -112,11 +112,28 @@ header {
   top: 0;
 }
 
-.react-datepicker__input-container, .react-datepicker-ignore-onclickoutside{
-  width: 100px
+.react-datepicker-wrapper{
+  width: 100px;
+
+  & .requestInput{
+    width: 100px;
+  }
 }
 
 .requestInput{
-  width: 100px;
+  width: 100%;
   text-align: center;
+}
+
+.requests.row{
+  &.err{
+    color: darkred;
+  }
+
+  & > .col{
+    width: 100px;
+    text-align: center;
+    display: flex;
+    justify-content: center;
+  }
 }

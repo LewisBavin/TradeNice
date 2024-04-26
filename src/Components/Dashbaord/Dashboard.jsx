@@ -106,10 +106,8 @@ const Dashboard = ({ account }) => {
             );
           })}
         </div>
-        <div className="dashContent container">
-          <div className="content">
+        <div className="dashContent">
             {dashTabs[view.idx].childTabs[view.subIdx].element}
-          </div>
         </div>
       </div>
     </>
