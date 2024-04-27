@@ -7,6 +7,7 @@ import { useState } from "react";
 import GasPrices from "./Grid Data/GasPrices";
 import { useDispatch } from "react-redux";
 import { accountActions } from "../../Utilities/Slices/AccountSlice";
+import Dropdown from 'react-bootstrap/Dropdown';
 
 const Dashboard = ({ account }) => {
   let { user } = account;
@@ -49,11 +50,11 @@ const Dashboard = ({ account }) => {
     {
       name: "Trading",
       childTabs: [
-        { name: "Outstanding", element: <TradingOutstanding userID={id} /> },
-        { name: "Verified", element: <TradingVerified account={account} /> },
+        { name: "Create", element: <TradingCreate account={account} /> },
+        { name: "View Requests", element: <TradingOutstanding userID={id} /> },
         {
-          name: "Create Request",
-          element: <TradingCreate account={account} />,
+          name: "Agreed",
+          element: <TradingVerified account={account} />,
         },
         { name: "Disputes", element: <TradingDispute account={account} /> },
       ],
@@ -107,7 +108,7 @@ const Dashboard = ({ account }) => {
           })}
         </div>
         <div className="dashContent">
-            {dashTabs[view.idx].childTabs[view.subIdx].element}
+          {dashTabs[view.idx].childTabs[view.subIdx].element}
         </div>
       </div>
     </>

@@ -132,8 +132,12 @@ header {
 
   & > .col{
     width: 100px;
-    text-align: center;
+    
     display: flex;
     justify-content: center;
   }
+}
+
+.requests.container *{
+  text-align: center;
 }

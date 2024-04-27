@@ -1,14 +1,9 @@
 import axios from "axios";
 import React, { createRef, useEffect, useState } from "react";
-import {
-  accountActions,
-  readAccount,
-} from "../../../Utilities/Slices/AccountSlice";
+import { readAccount } from "../../../Utilities/Slices/AccountSlice";
 import { useDispatch, useSelector } from "react-redux";
 import ReactDatePicker from "react-datepicker";
 import { differenceInDays, format, formatDate, toDate } from "date-fns";
-import Popup from "reactjs-popup";
-import { valid } from "joi";
 
 const TradingCreate = () => {
   const [state, setState] = useState({
@@ -48,6 +43,7 @@ const TradingCreate = () => {
       showErrors: false,
       trySubmit: false,
       validate: true,
+      success: null,
     });
   };
 
@@ -107,16 +103,27 @@ const TradingCreate = () => {
   };
 
   let sendRequests = async (requests) => {
-    console.log(requests)
-    let result = await axios.post("http://localhost:6002/user/addRequest", requests, {
-      headers: { token: account.user.token },
-    });
+    let { status, err } = (
+      await axios.post("http://localhost:6002/user/addRequest", requests, {
+        headers: { token: account.user.token },
+      })
+    ).data;
 
-    console.log(result.data);
+    setState({
+      requests: [],
+      errs: [],
+      showErrors: false,
+      validated: false,
+      trySubmit: false,
+      validate: true,
+      success: status
+        ? "Requests uploaded successfully. Counterparties will be notified"
+        : err,
+    });
   };
 
   useEffect(
-    /* updates errors and validated status*/
+    /* updates errors and validated status, sends to back*/
     () => {
       if (state.validate) {
         let requests = [...state.requests];
@@ -155,19 +162,19 @@ const TradingCreate = () => {
         return;
       }
       if (state.trySubmit) {
-        console.log("submitting to back");
-        sendRequests(state.requests);
+        sendRequests({ requests: state.requests });
       }
     },
     [state.requests, state.trySubmit]
   );
 
   !state.users ? getUsers() : null;
+  let createAdd = !!state.requests.length
 
   return (
-    <div key={"k"} className="container flx col jc-c ai-c">
+    <div className="requests container flx col jc-c ai-c">
       <form>
-        <div className="requests row">
+        {createAdd ? <div className="requests row">
           <div className="col">Direction</div>
           <div className="col">Counterparty</div>
           <div className="col">Counter Id</div>
@@ -177,7 +184,7 @@ const TradingCreate = () => {
           <div className="col">Total Volume</div>
           <div className="col">Price</div>
           <div className="col"></div>
-        </div>
+        </div> : null}
         {state.requests.map((request, i) => {
           return (
             <>
@@ -320,13 +327,22 @@ const TradingCreate = () => {
           );
         })}
       </form>
-      <div className="flx">
-        <div className="header">CREATE REQUEST</div>
+      <div key={"k2"} className="flx">
+        <div className="header">{!createAdd ? "CREATE" : "ADD"} REQUEST</div>
         <button onClick={addRequest}>+</button>
-        {state.requests.length ? (
-          <button onClick={submitRequests}>Submit Requests</button>
-        ) : null}
       </div>
+      {state.requests.length ? (
+        <button onClick={submitRequests}>Submit Requests</button>
+      ) : null}
+      {state.success ? (
+        <>
+          <div className="footer flx">
+            <div className="message">{state.success}</div>
+            <button>Go to Requests</button>
+            <button>View Balance</button>
+          </div>
+        </>
+      ) : null}
     </div>
   );
 };
