@@ -54,47 +54,8 @@ body {
   width: 100vw;
 }
 
-.dash.container {
-  padding: 0.2em;
-  background-color: red;
-
-  .dashTabs {
-    background-color: pink;
-    padding: 0.5em 0.1em;
-
-    .dashTab {
-      background-color: yellow;
-
-      &.inner {
-        background-color: grey;
-
-        &.selected {
-          background-color: darkgreen;
-        }
-      }
-    }
-
-    .selected {
-      background-color: green;
-    }
-  }
-
-  .dashContent {
-    padding: 0.2em;
-    background-color: darkmagenta;
-  }
-}
-
-.requestsContainer{
-  .details{
-    input{
-      width: auto;
-    }
-  }
-}
-
-.label.right{
-  float: right;
+.dashContainer {
+  width: 80vw;
 }
 
 footer,
@@ -112,32 +73,32 @@ header {
   top: 0;
 }
 
-.react-datepicker-wrapper{
+.react-datepicker-wrapper {
   width: 100px;
 
-  & .requestInput{
+  & .requestInput {
     width: 100px;
   }
 }
 
-.requestInput{
+.requestInput {
   width: 100%;
   text-align: center;
 }
 
-.requests.row{
-  &.err{
+.requests.row {
+  &.err {
     color: darkred;
   }
 
-  & > .col{
+  & > .col {
     width: 100px;
-    
+
     display: flex;
     justify-content: center;
   }
 }
 
-.requests.container *{
+.requests.container * {
   text-align: center;
 }

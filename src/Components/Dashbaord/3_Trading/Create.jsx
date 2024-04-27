@@ -4,8 +4,12 @@ import { readAccount } from "../../../Utilities/Slices/AccountSlice";
 import { useDispatch, useSelector } from "react-redux";
 import ReactDatePicker from "react-datepicker";
 import { differenceInDays, format, formatDate, toDate } from "date-fns";
+import Container from "react-bootstrap/Container";
+import Row from "react-bootstrap/Row";
+import Col from "react-bootstrap/Col";
+import Form from "react-bootstrap/Form";
 
-const TradingCreate = () => {
+const Create = () => {
   const [state, setState] = useState({
     requests: [],
     errs: [],
@@ -168,23 +172,91 @@ const TradingCreate = () => {
     [state.requests, state.trySubmit]
   );
 
+  const requestParams = {
+    direction: "Direction",
+    userName: "Counterparty Name",
+    counter_id: "Counterparty ID",
+    start_date: "Start Date",
+    end_date: "End Date",
+    volume: "Daily Volume",
+    total_volume: "Total Volume",
+    price: "Price",
+    remove: "",
+  };
+
   !state.users ? getUsers() : null;
-  let createAdd = !!state.requests.length
+  let createAdd = !!state.requests.length;
 
   return (
     <div className="requests container flx col jc-c ai-c">
+      <Form>
+        <Container fluid>
+          <Row>
+            <Col>
+              <Form.Select defaultValue="Buy/Sell">
+                <option disabled>Buy/Sell</option>
+                <option>Buy</option>
+                <option>Sell</option>
+              </Form.Select>
+            </Col>
+            <Col>
+              <Form.Select defaultValue="From/To">
+                <option disabled>From/To</option>
+                {state.users &&
+                  state.users.map((u, i) => (
+                    <option key={i} value={u.name}>
+                      {u.name}
+                    </option>
+                  ))}
+              </Form.Select>
+            </Col>
+            <Col>
+              <Form.Select defaultValue="User ID">
+                <option disabled>User ID</option>
+                {state.users &&
+                  state.users.map((u, i) => (
+                    <option key={i} value={u.id}>
+                      {u.id}
+                    </option>
+                  ))}
+              </Form.Select>
+            </Col>
+          </Row>
+          <Row>
+            <Col>
+              <Form.Control type="date" id="start_date" />
+            </Col>
+            <Col>
+              <Form.Control type="date" id="start_date" />
+            </Col>
+          </Row>
+          <Row>
+            <Col>
+              <Form.Control type="number" placeholder="Volume" />
+            </Col>
+            <Col>
+              <Form.Control type="number" placeholder="Total Volume" />
+            </Col>
+            <Col>
+              <Form.Control type="number" placeholder="Price" />
+            </Col>
+          </Row>
+        </Container>
+      </Form>
       <form>
-        {createAdd ? <div className="requests row">
-          <div className="col">Direction</div>
-          <div className="col">Counterparty</div>
-          <div className="col">Counter Id</div>
-          <div className="col">Start Date</div>
-          <div className="col">End Date</div>
-          <div className="col">Daily Volume</div>
-          <div className="col">Total Volume</div>
-          <div className="col">Price</div>
-          <div className="col"></div>
-        </div> : null}
+        {createAdd ? (
+          <div className="requests row">
+            <div className="col">Direction</div>
+            <div className="col">Counterparty</div>
+            <div className="col">Counter Id</div>
+            <div className="col">Start Date</div>
+            <div className="col">End Date</div>
+            <div className="col">Daily Volume</div>
+            <div className="col">Total Volume</div>
+            <div className="col">Price</div>
+            <div className="col"></div>
+          </div>
+        ) : null}
         {state.requests.map((request, i) => {
           return (
             <>
@@ -347,4 +419,4 @@ const TradingCreate = () => {
   );
 };
 
-export default TradingCreate;
+export default Create;

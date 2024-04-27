@@ -13,7 +13,7 @@ import enGB from "date-fns/locale/en-GB";
 import { setDefaultOptions } from "date-fns";
 setDefaultOptions(enGB);
 
-const GasPrices = () => {
+const Prices = () => {
   const dispatch = useDispatch();
   const gridPrices = useSelector(getSavedPrices);
 
@@ -155,4 +155,4 @@ const GasPrices = () => {
   );
 };
 
-export default GasPrices;
+export default Prices;

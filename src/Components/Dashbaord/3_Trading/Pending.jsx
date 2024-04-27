@@ -3,9 +3,9 @@ import Requests from "../Requests";
 import { getRequests} from "../../../Utilities/Slices/SystemSlice";
 import { useSelector } from "react-redux";
 
-const TradingOutstanding = ({ userID }) => {
+const Pending = ({ userID }) => {
 
   
 };
 
-export default TradingOutstanding;
+export default Pending;

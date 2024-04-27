@@ -10,6 +10,7 @@ const initialState = !getStore("account")
       view: null,
       user: null,
       create: false,
+      view: [0, 0],
     }
   : getStore("account");
 
