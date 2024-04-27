@@ -8,6 +8,7 @@ import Container from "react-bootstrap/Container";
 import Row from "react-bootstrap/Row";
 import Col from "react-bootstrap/Col";
 import Form from "react-bootstrap/Form";
+import { Button } from "react-bootstrap";
 
 const Create = () => {
   const [state, setState] = useState({
@@ -17,6 +18,7 @@ const Create = () => {
     validated: false,
     trySubmit: false,
     validate: true,
+    requestCounts: [],
   });
   let account = useSelector(readAccount);
 
@@ -187,61 +189,128 @@ const Create = () => {
   !state.users ? getUsers() : null;
   let createAdd = !!state.requests.length;
 
+  let handleSubmit = (e) => {
+    e.preventDefault();
+    console.log(e.target);
+  };
+
+  let handleChange = (e, i) => {
+    console.log(e.target);
+  };
+
+  let addForm = () => {
+    let requestCounts = [...state.requestCounts];
+    requestCounts.push(null);
+    setState({ ...state, requestCounts });
+  };
+
   return (
     <div className="requests container flx col jc-c ai-c">
-      <Form>
-        <Container fluid>
-          <Row>
-            <Col>
-              <Form.Select defaultValue="Buy/Sell">
-                <option disabled>Buy/Sell</option>
-                <option>Buy</option>
-                <option>Sell</option>
-              </Form.Select>
-            </Col>
-            <Col>
-              <Form.Select defaultValue="From/To">
-                <option disabled>From/To</option>
-                {state.users &&
-                  state.users.map((u, i) => (
-                    <option key={i} value={u.name}>
-                      {u.name}
-                    </option>
-                  ))}
-              </Form.Select>
-            </Col>
-            <Col>
-              <Form.Select defaultValue="User ID">
-                <option disabled>User ID</option>
-                {state.users &&
-                  state.users.map((u, i) => (
-                    <option key={i} value={u.id}>
-                      {u.id}
-                    </option>
-                  ))}
-              </Form.Select>
-            </Col>
-          </Row>
-          <Row>
-            <Col>
-              <Form.Control type="date" id="start_date" />
-            </Col>
-            <Col>
-              <Form.Control type="date" id="start_date" />
-            </Col>
-          </Row>
-          <Row>
-            <Col>
-              <Form.Control type="number" placeholder="Volume" />
-            </Col>
-            <Col>
-              <Form.Control type="number" placeholder="Total Volume" />
-            </Col>
-            <Col>
-              <Form.Control type="number" placeholder="Price" />
-            </Col>
-          </Row>
-        </Container>
+      <Form className="border border-light" onSubmit={handleSubmit}>
+        {state.requestCounts.map((r, i) => {
+          return (
+            <Form.Group
+              key={i}
+              onChange={(e) => {
+                handleChange(e, i);
+              }}
+            >
+              <Container fluid>
+                <Row className="py-2">
+                  <Col>
+                    <Form.Select
+                      name="direction"
+                      id={`${i}`}
+                      defaultValue="Buy/Sell"
+                    >
+                      <option disabled>Buy/Sell</option>
+                      <option>Buy</option>
+                      <option>Sell</option>
+                    </Form.Select>
+                  </Col>
+                  <Col>
+                    <Form.Select defaultValue="From/To" name="user_name">
+                      <option disabled>From/To</option>
+                      {state.users &&
+                        state.users.map((u, k) => (
+                          <option key={k} value={u.name}>
+                            {u.name}
+                          </option>
+                        ))}
+                    </Form.Select>
+                  </Col>
+                  <Col>
+                    <Form.Select defaultValue="User ID" name="user_id">
+                      <option disabled>User ID</option>
+                      {state.users &&
+                        state.users.map((u, k) => (
+                          <option key={k} value={u.id}>
+                            {u.id}
+                          </option>
+                        ))}
+                    </Form.Select>
+                  </Col>
+                </Row>
+                <Row className="py-2">
+                  <Col>
+                    <div className="flx">
+                      <Form.Text className="text-muted">Start Date</Form.Text>
+                      <Form.Control
+                        value={""}
+                        type="date"
+                        name="start_date"
+                        onClick={() => {}}
+                      />
+                    </div>
+                  </Col>
+                  <Col>
+                    <div className="flx">
+                      <Form.Text className="text-muted">End Date</Form.Text>
+                      <Form.Control type="date" name="end_date" />
+                    </div>
+                  </Col>
+                </Row>
+                <Row className="py-2">
+                  <Col>
+                    <Form.Control
+                      type="number"
+                      name="volume"
+                      placeholder="Volume (Th/day)"
+                    />
+                  </Col>
+                  <Col>
+                    <Form.Control
+                      type="number"
+                      name="total_volume"
+                      placeholder="Total Volume (Th)"
+                    />
+                  </Col>
+                  <Col>
+                    <Form.Control
+                      type="number"
+                      name="price"
+                      placeholder="Price (£/Th)"
+                    />
+                  </Col>
+                </Row>
+              </Container>
+            </Form.Group>
+          );
+        })}
+
+        <div className="divider py-1 bg-secondary"></div>
+        <Button type="submit">Submit</Button>
+      </Form>
+
+      <Button onClick={addForm}>+</Button>
+
+      <Form onSubmit={handleSubmit}>
+        <Form.Control type="number" />
+        <Form.Control type="number" />
+        <Form.Control type="number" />
+        <Form.Control type="number" />
+
+        <Button type="submit">Submit</Button>
       </Form>
       <form>
         {createAdd ? (
