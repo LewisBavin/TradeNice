@@ -41,6 +41,10 @@ export const accountSlice = createSlice({
       state.requests = payload;
       setStore("account", state);
     },
+    setUsers: (state, { payload }) => {
+      state.users = payload;
+      setStore("account", state);
+    },
     setLoggedIn: (state) => {
       state.loggedIn = !state.loggedIn;
       setStore("account", state);
