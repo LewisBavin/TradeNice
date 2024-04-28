@@ -1,18 +1,16 @@
 import React from "react";
-import TradingDispute from "./3_Trading/Dispute";
-import TradingVerified from "./3_Trading/Agreed";
-import TradingCreate from "./3_Trading/Create";
-import TradingOutstanding from "./3_Trading/Pending";
 import { useState } from "react";
-import GasPrices from "./1_Market/Prices";
 import { useDispatch } from "react-redux";
 import { accountActions } from "../../Utilities/Slices/AccountSlice";
-import Dropdown from "react-bootstrap/Dropdown";
 import {
+  Accordion,
+  Dropdown,
   DropdownMenu,
   DropdownToggle,
   NavbarText,
   NavItem,
+  Row,
+  Col,
 } from "react-bootstrap";
 import Prices from "./1_Market/Prices";
 import Flows from "./1_Market/Flows";
@@ -74,12 +72,20 @@ const Dashboard = ({ account }) => {
       inner: [
         { title: "Create", header: "Create Trade Requests", elem: <Create /> },
         {
-          title: "View Requests",
+          title: "Pending",
           header: "Your Pending Trade Requests",
           elem: <Pending />,
         },
-        { title: "Agreed", header: "Your Matched Trades", elem: <Agreed /> },
-        { title: "Dispute", header: "Raise a Dispute", elem: <Dispute /> },
+        {
+          title: "Agreed Trades",
+          header: "Your Matched Counterparty Trades",
+          elem: <Agreed />,
+        },
+        {
+          title: "Dispute",
+          header: "See an issue with any matched trades? Raise a dispute",
+          elem: <Dispute />,
+        },
       ],
     },
     {
@@ -110,7 +116,6 @@ const Dashboard = ({ account }) => {
   };
 
   let setView = (i, j, hide = false) => {
-    console.log([...state.drop].map((d) => false));
     setState(
       hide
         ? { ...state, view: [i, j], drop: [...state.drop].map((d) => false) }
@@ -124,23 +129,22 @@ const Dashboard = ({ account }) => {
   let mainTab = navMenu[main];
   let innerTab = mainTab.inner[inner];
   return (
-    <>
-      <div className="dashContainer">
-        <Navbar
-          onMouseLeave={() => showDropdown(0, true)}
-          expand="lg"
-          className="bg-body-tertiary"
-        >
-          <Container>
-            <Navbar.Brand href="#home">Trade... nicely</Navbar.Brand>
-            <Navbar.Toggle aria-controls="basic-navbar-nav" />
-            <Navbar.Collapse id="dashCollapse" className="flx col">
-              <Nav className="me-auto">
+    <div className="dashContainer">
+      <Navbar
+        onMouseLeave={() => showDropdown(0, true)}
+        expand="lg"
+        className="bg-body-tertiary"
+      >
+        <Container>
+          <Navbar.Brand href="#home">Trade... nicely</Navbar.Brand>
+          <Navbar.Toggle aria-controls="basic-navbar-nav" />
+          <Navbar.Collapse id="dashCollapse">
+            <Nav variant="pills">
+              <Container>
                 {navMenu.map((nav, i) => {
                   return (
                     <NavDropdown
                       title={navMenu[i].title}
-                      key={i}
                       show={drop[i]}
                       onMouseEnter={() => showDropdown(i)}
                       className={
@@ -155,53 +159,72 @@ const Dashboard = ({ account }) => {
                     >
                       {nav.inner.map((inner, j) => {
                         return (
-                          <NavDropdown.Item
-                            key={j}
-                            onMouseEnter={() => showDropdown(i)}
-                            onClick={() => {
-                              setView(i, j);
-                            }}
-                          >
-                            {navMenu[i].inner[j].title}
-                          </NavDropdown.Item>
+                          <Container key={j}>
+                            <Row>
+                              <NavDropdown.Divider />
+                              <NavDropdown.Item
+                                onMouseEnter={() => showDropdown(i)}
+                                onClick={() => {
+                                  setView(i, j);
+                                }}
+                              >
+                                {navMenu[i].inner[j].title}
+                              </NavDropdown.Item>
+                            </Row>
+                          </Container>
                         );
                       })}
                     </NavDropdown>
                   );
                 })}
-              </Nav>
-              <Nav
-                activeKey="/home"
-                className="me-auto"
-                onSelect={(selectedKey) => alert(`selected ${selectedKey}`)}
-              >
-                {mainTab.inner.map((tab, j) => {
+
+                {mainTab.inner.map((tab, k) => {
                   return (
-                    <>
-                      <NavItem
-                        onMouseEnter={() => {
-                          showDropdown(0, true);
-                        }}
-                        onClick={() => {
-                          setView(main, j);
-                        }}
-                        className="px-2 pt-2"
-                      >
-                        {tab.title}
-                      </NavItem>
-                    </>
+                    <NavItem
+                      onMouseEnter={() => {
+                        showDropdown(0, true);
+                      }}
+                      onClick={() => {
+                        setView(main, k);
+                      }}
+                    >
+                      <Nav.Link className="text-nowrap">{tab.title}</Nav.Link>
+                    </NavItem>
                   );
                 })}
-              </Nav>
-            </Navbar.Collapse>
-          </Container>
-        </Navbar>
-        <div className="contentContainer">
-          <div className="contentHeader">{innerTab.header}</div>
-          <div className="content">{innerTab.elem}</div>
-        </div>
-      </div>
-    </>
+              </Container>
+            </Nav>
+            <Nav className="me-auto" justify variant="tabs"></Nav>
+          </Navbar.Collapse>
+        </Container>
+      </Navbar>
+      <Container>
+        <Row>
+          <Nav variant="pills">
+            {navMenu.map((mainTab, k) => {
+              return (
+                <Nav.Item>
+                  <Nav.Link
+                    eventKey={k}
+                    onClick={() => {
+                      setView(main, k);
+                    }}
+                  >
+                    {mainTab.title}
+                  </Nav.Link>
+                </Nav.Item>
+              );
+            })}
+          </Nav>
+        </Row>
+        <Row></Row>
+      </Container>
+
+      {/*  <div className="contentContainer">
+        <div className="contentHeader">{innerTab.header}</div>
+        <div className="content">{innerTab.elem}</div>
+      </div> */}
+    </div>
   );
 };
 

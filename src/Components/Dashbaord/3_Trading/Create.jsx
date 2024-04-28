@@ -5,13 +5,17 @@ import {
   readAccount,
 } from "../../../Utilities/Slices/AccountSlice";
 import { useDispatch, useSelector } from "react-redux";
-import { differenceInDays, format, formatDate, toDate } from "date-fns";
-import Container from "react-bootstrap/Container";
-import Row from "react-bootstrap/Row";
-import Col from "react-bootstrap/Col";
-import Form from "react-bootstrap/Form";
-import { Button } from "react-bootstrap";
-import { startOfDay } from "date-fns";
+import { differenceInDays, startOfDay, toDate } from "date-fns";
+import {
+  Button,
+  Row,
+  Col,
+  Form,
+  Container,
+  Toast,
+  ToastContainer,
+} from "react-bootstrap";
+import MyToast from "../../MyToast";
 
 const Create = () => {
   const dispatch = useDispatch();
@@ -20,7 +24,10 @@ const Create = () => {
     requests: [],
     errs: [],
     users: account.users,
+    toast: {},
   });
+
+  const [show, setShow] = useState(false);
 
   const requestParams = {
     direction: "",
@@ -157,19 +164,19 @@ const Create = () => {
           }
         )
       ).data;
-      let success = {
-        success: !err,
-        msg: !err
-          ? "Requests uploaded! They can be viewed in 'Pending'."
-          : "Requests rejected - Bad Form Data",
-      };
-      setState({ ...state, success, requests: [], errs: [] });
+      let strong = !!err ? "Error! Bad Form Data" : "Success!";
+      let body = !!err ? "Requests failed to submit" : "Requests submitted!";
+      let variant = !!err ? "danger" : "success";
+      let toast = { ...state.toast, strong, body, variant, showToast: true };
+      setState({ ...state, toast });
     } catch (e) {
-      let success = {
-        success: false,
-        msg: "Error uploading requests. Please contact admins",
-      };
-      setState({ ...state, success, requests: [], errs: [] });
+      console.log(e);
+      let strong = "Connection Error!";
+      let body = "Couldn't connect to database. Requests not submitted";
+      let variant = "danger";
+      let toast = { ...state.toast, strong, body, variant, showToast: true };
+      setState({ ...state, toast });
+    } finally {
     }
   };
 
@@ -181,212 +188,220 @@ const Create = () => {
   let isBlanks = state.requests.some((req) =>
     Object.values(req).some((val) => !val)
   );
-  console.log(state.success);
   return (
-    <div className="requests container flx col jc-c ai-c">
-      <Form className="border border-light" onSubmit={handleSubmit}>
-        {state.requests.map((request, i) => {
-          let errs = [...state.errs][i];
+    <>
+      <div className="requests container flx col jc-c ai-c">
+        <Form className="border border-light" onSubmit={handleSubmit}>
+          {state.requests.map((request, i) => {
+            let errs = [...state.errs][i];
 
-          return (
-            <Form.Group key={i}>
-              <Container fluid>
-                <Row>
-                  <Col className="position-relative">
-                    <Button
-                      onClick={removeRequest}
-                      variant="outline-danger"
-                      className="position-absolute top-50 start-50 translate-middle"
-                    >
-                      -
-                    </Button>
-                  </Col>
-                  <Col xs={10}>
-                    <Row className="py-2">
-                      <Col>
-                        <Form.Select
-                          name="direction"
-                          value={request.direction}
-                          onChange={(e) => {
-                            handleChange(e, i);
-                          }}
-                        >
-                          <option value="" disabled>
-                            Buy/Sell
-                          </option>
-                          <option>Buy</option>
-                          <option>Sell</option>
-                        </Form.Select>
-                        <Form.Text className="text-danger">
-                          {errs.direction}
-                        </Form.Text>
-                      </Col>
-                      <Col>
-                        <Form.Select
-                          value={request.user_name}
-                          name="user_name"
-                          onChange={(e) => {
-                            handleChange(e, i);
-                          }}
-                        >
-                          <option value="" disabled>
-                            From/To
-                          </option>
-                          {state.users &&
-                            state.users.map((u, k) => (
-                              <option key={k} value={u.name}>
-                                {u.name}
-                              </option>
-                            ))}
-                        </Form.Select>
-                        <Form.Text className="text-danger">
-                          {errs.user_name}
-                        </Form.Text>
-                      </Col>
-                      <Col>
-                        <Form.Select
-                          value={request.counter_id}
-                          name="counter_id"
-                          disabled
-                          onChange={(e) => {
-                            handleChange(e, i);
-                          }}
-                        >
-                          <option value="" disabled>
-                            Counter ID
-                          </option>
-                          {state.users &&
-                            state.users.map((u, k) => (
-                              <option key={k} value={u.id}>
-                                {u.id}
-                              </option>
-                            ))}
-                        </Form.Select>
-                      </Col>
-                    </Row>
-                    <Row className="py-2">
-                      <Col>
-                        <div className="flx">
-                          <Form.Text className="text-muted">
-                            Start Date
+            return (
+              <Form.Group key={i}>
+                <Container fluid>
+                  <Row>
+                    <Col className="position-relative">
+                      <Button
+                        onClick={removeRequest}
+                        variant="outline-danger"
+                        className="position-absolute top-50 start-50 translate-middle"
+                      >
+                        -
+                      </Button>
+                    </Col>
+                    <Col xs={10}>
+                      <Row className="py-2">
+                        <Col>
+                          <Form.Select
+                            name="direction"
+                            value={request.direction}
+                            onChange={(e) => {
+                              handleChange(e, i);
+                            }}
+                          >
+                            <option value="" disabled>
+                              Buy/Sell
+                            </option>
+                            <option>Buy</option>
+                            <option>Sell</option>
+                          </Form.Select>
+                          <Form.Text className="text-danger">
+                            {errs.direction}
                           </Form.Text>
-                          <Form.Control
-                            type="date"
-                            name="start_date"
-                            value={request.start_date}
+                        </Col>
+                        <Col>
+                          <Form.Select
+                            value={request.user_name}
+                            name="user_name"
                             onChange={(e) => {
                               handleChange(e, i);
                             }}
-                          />
-                        </div>
-                        <Form.Text className="text-danger">
-                          {errs.start_date}
-                        </Form.Text>
-                      </Col>
-                      <Col>
-                        <div className="flx">
-                          <Form.Text className="text-muted">End Date</Form.Text>
-                          <Form.Control
-                            type="date"
-                            name="end_date"
-                            value={request.end_date}
-                            onChange={(e) => {
-                              handleChange(e, i);
-                            }}
-                          />
-                        </div>
-                        <Form.Text className="text-danger">
-                          {errs.end_date}
-                        </Form.Text>
-                      </Col>
-                    </Row>
-                    <Row className="py-2">
-                      <Col>
-                        <div className="flx">
-                          <Form.Control
-                            type="number"
-                            name="volume"
-                            value={request.volume}
-                            disabled={!request.start_date || !request.end_date}
-                            placeholder="Volume"
-                            onChange={(e) => {
-                              handleChange(e, i);
-                            }}
-                          />
-                          <Form.Text className="text-muted">Th/day</Form.Text>
-                        </div>
-                        <Form.Text className="text-danger">
-                          {errs.volume}
-                        </Form.Text>
-                      </Col>
-
-                      <Col>
-                        <div className="flx">
-                          <Form.Text className="text-muted">£</Form.Text>
-                          <Form.Control
-                            type="number"
-                            name="price"
-                            value={request.price}
-                            disabled={!request.start_date || !request.end_date}
-                            placeholder="Price"
-                            onChange={(e) => {
-                              handleChange(e, i);
-                            }}
-                          />
-                          <Form.Text className="text-muted">/Th</Form.Text>
-                        </div>
-                        <Form.Text className="text-danger">
-                          {errs.price}
-                        </Form.Text>
-                      </Col>
-                      <Col>
-                        <div className="flx">
-                          <Form.Control
-                            type="number"
-                            name="total_volume"
+                          >
+                            <option value="" disabled>
+                              From/To
+                            </option>
+                            {state.users &&
+                              state.users.map((u, k) => (
+                                <option key={k} value={u.name}>
+                                  {u.name}
+                                </option>
+                              ))}
+                          </Form.Select>
+                          <Form.Text className="text-danger">
+                            {errs.user_name}
+                          </Form.Text>
+                        </Col>
+                        <Col>
+                          <Form.Select
+                            value={request.counter_id}
+                            name="counter_id"
                             disabled
-                            readOnly
-                            value={request.total_volume}
-                            placeholder="Total Volume"
                             onChange={(e) => {
                               handleChange(e, i);
                             }}
-                          />
-                          <Form.Text className="text-muted">Th</Form.Text>
-                        </div>
-                      </Col>
-                    </Row>
-                  </Col>
-                </Row>
-              </Container>
-              <div className="divider py-1 bg-secondary"></div>
-            </Form.Group>
-          );
-        })}
-        <Container fluid>
-          <Row>
-            <Col className="position-relative">
-              <Button
-                hidden={!state.requests.length}
-                disabled={isBlanks || areErrors}
-                type="Submit"
-                variant={isBlanks || areErrors ? "danger" : "success"}
-                className="position-absolute start-50 translate-middle-x"
-              >
-                Submit
-              </Button>
-              <Button
-                onClick={addRequest}
-                variant="outline-success"
-                className="position-absolute end-0"
-              >
-                +
-              </Button>
-            </Col>
-          </Row>
-        </Container>
-      </Form>
-    </div>
+                          >
+                            <option value="" disabled>
+                              Counter ID
+                            </option>
+                            {state.users &&
+                              state.users.map((u, k) => (
+                                <option key={k} value={u.id}>
+                                  {u.id}
+                                </option>
+                              ))}
+                          </Form.Select>
+                        </Col>
+                      </Row>
+                      <Row className="py-2">
+                        <Col>
+                          <div className="flx">
+                            <Form.Text className="text-muted">
+                              Start Date
+                            </Form.Text>
+                            <Form.Control
+                              type="date"
+                              name="start_date"
+                              value={request.start_date}
+                              onChange={(e) => {
+                                handleChange(e, i);
+                              }}
+                            />
+                          </div>
+                          <Form.Text className="text-danger">
+                            {errs.start_date}
+                          </Form.Text>
+                        </Col>
+                        <Col>
+                          <div className="flx">
+                            <Form.Text className="text-muted">
+                              End Date
+                            </Form.Text>
+                            <Form.Control
+                              type="date"
+                              name="end_date"
+                              value={request.end_date}
+                              onChange={(e) => {
+                                handleChange(e, i);
+                              }}
+                            />
+                          </div>
+                          <Form.Text className="text-danger">
+                            {errs.end_date}
+                          </Form.Text>
+                        </Col>
+                      </Row>
+                      <Row className="py-2">
+                        <Col>
+                          <div className="flx">
+                            <Form.Control
+                              type="number"
+                              name="volume"
+                              value={request.volume}
+                              disabled={
+                                !request.start_date || !request.end_date
+                              }
+                              placeholder="Volume"
+                              onChange={(e) => {
+                                handleChange(e, i);
+                              }}
+                            />
+                            <Form.Text className="text-muted">Th/day</Form.Text>
+                          </div>
+                          <Form.Text className="text-danger">
+                            {errs.volume}
+                          </Form.Text>
+                        </Col>
+
+                        <Col>
+                          <div className="flx">
+                            <Form.Text className="text-muted">£</Form.Text>
+                            <Form.Control
+                              type="number"
+                              name="price"
+                              value={request.price}
+                              disabled={
+                                !request.start_date || !request.end_date
+                              }
+                              placeholder="Price"
+                              onChange={(e) => {
+                                handleChange(e, i);
+                              }}
+                            />
+                            <Form.Text className="text-muted">/Th</Form.Text>
+                          </div>
+                          <Form.Text className="text-danger">
+                            {errs.price}
+                          </Form.Text>
+                        </Col>
+                        <Col>
+                          <div className="flx">
+                            <Form.Control
+                              type="number"
+                              name="total_volume"
+                              disabled
+                              readOnly
+                              value={request.total_volume}
+                              placeholder="Total Volume"
+                              onChange={(e) => {
+                                handleChange(e, i);
+                              }}
+                            />
+                            <Form.Text className="text-muted">Th</Form.Text>
+                          </div>
+                        </Col>
+                      </Row>
+                    </Col>
+                  </Row>
+                </Container>
+                <div className="divider py-1 bg-secondary"></div>
+              </Form.Group>
+            );
+          })}
+          <Container fluid>
+            <Row>
+              <Col className="position-relative">
+                <Button
+                  hidden={!state.requests.length}
+                  disabled={isBlanks || areErrors}
+                  type="Submit"
+                  variant={isBlanks || areErrors ? "danger" : "success"}
+                  className="position-absolute start-50 translate-middle-x"
+                >
+                  Submit
+                </Button>
+                <Button
+                  onClick={addRequest}
+                  variant="outline-success"
+                  className="position-absolute end-0"
+                >
+                  +
+                </Button>
+              </Col>
+            </Row>
+          </Container>
+        </Form>
+      </div>
+      {state.toast.showToast && <MyToast toastSettings={{ ...state.toast }} />}
+    </>
   );
 };
 
