@@ -200,7 +200,9 @@ const Create = () => {
                   <Row>
                     <Col className="position-relative">
                       <Button
-                        onClick={()=>{removeRequest(i)}}
+                        onClick={() => {
+                          removeRequest(i);
+                        }}
                         variant="outline-danger"
                         className="position-absolute top-50 start-50 translate-middle"
                       >
@@ -377,22 +379,23 @@ const Create = () => {
           })}
           <Container fluid>
             <Row>
-              <Col className="position-relative">
+              <Col>
+                <Button
+                  onClick={addRequest}
+                  variant="outline-success"
+                  className=""
+                >
+                  +
+                </Button>
+              </Col>
+              <Col>
                 <Button
                   hidden={!state.requests.length}
                   disabled={isBlanks || areErrors}
                   type="Submit"
                   variant={isBlanks || areErrors ? "danger" : "success"}
-                  className="position-absolute start-50 translate-middle-x"
                 >
                   Submit
-                </Button>
-                <Button
-                  onClick={addRequest}
-                  variant="outline-success"
-                  className="position-absolute end-0"
-                >
-                  +
                 </Button>
               </Col>
             </Row>

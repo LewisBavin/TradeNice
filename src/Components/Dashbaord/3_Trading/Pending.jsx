@@ -1,7 +1,7 @@
 import React, { useEffect, useState } from "react";
 import axios from "axios";
 import { Col, Row, Container, Form, Button } from "react-bootstrap";
-import { format, startOfDay, toDate } from "date-fns";
+import { differenceInDays, format, startOfDay, toDate } from "date-fns";
 
 const Pending = ({ account }) => {
   const [dates, setDates] = useState({
@@ -10,13 +10,13 @@ const Pending = ({ account }) => {
   });
   const [err, setErr] = useState(null);
   const [requests, setRequests] = useState({ inputs: [], outputs: [] });
-  const [edited, edit] = useState([]);
-  const [actions, setActions] = useState({
-    edit: [],
-    accept: [],
-    reject: [],
-    del: [],
-  });
+  const [submit, setSubmit] = useState(false);
+
+  useEffect(() => {
+    if (submit) {
+      console.log(submit);
+    }
+  }, [submit]);
 
   let updateDates = (e) => {
     let temp = { ...dates, [e.target.name]: e.target.value };
@@ -74,6 +74,20 @@ const Pending = ({ account }) => {
     { groupedUserOffers: {}, groupedCounterBids: {} }
   );
 
+  let reqRevert = (e, id) => {
+    let eVal = e.target.value;
+    let eName = e.target.name;
+    let temp = { inputs: [...requests.inputs], outputs: [...requests.outputs] };
+    let req =
+      temp.inputs.find((el) => id == el.id) ||
+      temp.outputs.find((el) => id == el.id);
+    req.remove ? delete req.remove : null;
+    req.accept ? delete req.accept : null;
+    req.reject ? delete req.reject : null;
+    req.edit ? delete req.edit : null;
+    setRequests({ ...requests, ...temp });
+  };
+
   let reqAction = (e, id) => {
     let eVal = e.target.value;
     let eName = e.target.name;
@@ -81,14 +95,27 @@ const Pending = ({ account }) => {
     let req =
       temp.inputs.find((el) => id == el.id) ||
       temp.outputs.find((el) => id == el.id);
+
     if (eName == "action") {
-      if (eVal == "edit") {
-        req[eVal] = { [eVal]: { ...req } };
-      } else {
-        req[eVal] = true;
-      }
+      req.edit = eVal == "edit";
+      req.remove = eVal == "remove";
+      req.accept = eVal == "accept";
+      req.reject = eVal == "reject";
+      req[eVal] = eVal;
+    } else if (!!req.edit) {
+      let edits =
+        req.edit == "edit"
+          ? { ...req, [eName]: eVal }
+          : { ...req.edit, [eName]: eVal };
+      edits.total_volume =
+        differenceInDays(edits.end_date, edits.start_date) * edits.volume;
+      req.edit = { ...edits };
     }
-    setActions({ ...requests, ...temp });
+    setRequests({ ...requests, ...temp });
+  };
+
+  let submitChanges = (e) => {
+    setSubmit(true);
   };
 
   let requestElement = (req, user = true) => {
@@ -106,8 +133,15 @@ const Pending = ({ account }) => {
       cancel,
       remove,
     } = req;
+    req.edit ? ({ volume, total_volume, price } = req.edit) : null;
 
-    req.id == 90 ? console.log(req.edit) : null;
+    let styles = {
+      accept: "text-success",
+      reject: "text-warning",
+      remove: "text-danger strikethrough",
+      edit: "text-primary",
+    };
+    let style = Object.keys(styles).find((style) => !!req[style]);
 
     return (
       <Form>
@@ -117,7 +151,7 @@ const Pending = ({ account }) => {
               name="id"
               disabled
               value={id}
-              className="text-danger"
+              className={style && styles[style]}
               onChange={(e) => {
                 reqAction(e, id);
               }}
@@ -128,6 +162,7 @@ const Pending = ({ account }) => {
               name="direction"
               disabled
               value={direction}
+              className={style && styles[style]}
               onChange={(e) => {
                 reqAction(e, id);
               }}
@@ -138,10 +173,11 @@ const Pending = ({ account }) => {
               type="date"
               name="start_date"
               disabled
+              className={style && styles[style]}
+              value={format(start_date, "yyyy-MM-dd")}
               onChange={(e) => {
                 reqAction(e, id);
               }}
-              value={format(start_date, "yyyy-MM-dd")}
             />
           </Col>
           <Col xs={2}>
@@ -149,10 +185,11 @@ const Pending = ({ account }) => {
               type="date"
               name="end_date"
               disabled
+              className={style && styles[style]}
+              value={format(end_date, "yyyy-MM-dd")}
               onChange={(e) => {
                 reqAction(e, id);
               }}
-              value={format(end_date, "yyyy-MM-dd")}
             />
           </Col>
           <Col xs={2}>
@@ -160,21 +197,23 @@ const Pending = ({ account }) => {
               disabled={!user || !edit}
               name="volume"
               type="number"
+              value={volume}
+              className={style && styles[style]}
               onChange={(e) => {
                 reqAction(e, id);
               }}
-              value={edit ? edit.volume : volume}
             />
           </Col>
-          <Col xs={1}>
+          <Col>
             <Form.Control
               disabled={!user || !edit}
               name="price"
               type="number"
+              className={style && styles[style]}
+              value={price}
               onChange={(e) => {
                 reqAction(e, id);
               }}
-              value={price}
             />
           </Col>
           <Col xs={2}>
@@ -182,31 +221,21 @@ const Pending = ({ account }) => {
               name="total_volume"
               type="number"
               disabled
+              className={style && styles[style]}
+              value={total_volume}
               onChange={(e) => {
                 reqAction(e, id);
               }}
-              value={total_volume}
             />
           </Col>
           <Col xs={1}>
             <Form.Select
               name="action"
+              className="text-center"
               onChange={(e) => {
                 reqAction(e, id);
               }}
-              value={
-                user
-                  ? edit
-                    ? "edit"
-                    : remove
-                    ? "remove"
-                    : ""
-                  : accept
-                  ? "accept"
-                  : reject
-                  ? "reject"
-                  : ""
-              }
+              value={style ? style : ""}
             >
               <option value="" disabled>
                 &darr;
@@ -216,6 +245,19 @@ const Pending = ({ account }) => {
               {!user && <option value="accept">accept</option>}
               {!user && <option value="reject">reject</option>}
             </Form.Select>
+          </Col>
+        </Row>
+        <Row className="d-flex justify-content-center pb-3">
+          <Col xs={1}>
+            {(req.edit || req.accept || req.remove || req.reject) && (
+              <Button
+                onClick={(e) => {
+                  reqRevert(e, id);
+                }}
+              >
+                Cancel
+              </Button>
+            )}
           </Col>
         </Row>
       </Form>
@@ -262,6 +304,14 @@ const Pending = ({ account }) => {
               </Col>
             </Row>
           </Form>
+        </Row>
+      </Container>
+      <div name="lol"></div>
+      <Container>
+        <Row>
+          <Col>
+            {submit && <Button onClick={submitChanges}>Save Changes</Button>}
+          </Col>
         </Row>
       </Container>
       <Container>

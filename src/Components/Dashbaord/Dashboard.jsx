@@ -124,25 +124,23 @@ const Dashboard = ({ account }) => {
     <div className="dashContainer">
       <Navbar
         expand="lg"
-        className="bg-body-tertiary"
-        style={{borderRadius: "30px"}}
+        className="bg-body-tertiary mx-5"
+        style={{ borderRadius: "30px" }}
         onMouseLeave={() => {
           lastTabs();
         }}
       >
-        <Container className="text-center text-nowrap">
-          <Navbar.Brand href="#home">Trade... nicely</Navbar.Brand>
-          <Navbar.Toggle aria-controls="basic-navbar-nav" />
-          <Container>
+        <Container>
+          <Container className="text-center text-nowrap">
             <Nav
               variant="pills"
-              className="justify-content-md-center outer fs-5 py-2"
+              className="justify-content-md-center outer fs-6 py-1"
             >
               <Row
                 className="py-1"
                 style={{
                   backgroundColor: "grey",
-                  borderRadius: "10px",
+                  borderRadius: "20px",
                 }}
               >
                 {navMenu.map((tab, i) => {
@@ -151,7 +149,7 @@ const Dashboard = ({ account }) => {
                       <Nav.Item
                         style={{
                           backgroundColor: "darkgrey",
-                          borderRadius: "10px",
+                          borderRadius: "20px",
                         }}
                         onMouseEnter={() => {
                           setTabs(i);
@@ -164,10 +162,9 @@ const Dashboard = ({ account }) => {
                 })}
               </Row>
             </Nav>
-
             <Nav
               variant="pills"
-              className="justify-content-md-center inner fs-6 py-2"
+              className="justify-content-md-center inner fs-7 py-1"
             >
               <Row
                 className="py-1"
@@ -204,11 +201,13 @@ const Dashboard = ({ account }) => {
               </Row>
             </Nav>
           </Container>
+          <Navbar.Brand href="#home" className="text-center text-wrap">
+            {content.header}
+          </Navbar.Brand>
         </Container>
       </Navbar>
 
       <Container className="content">
-        <div className="header">{content.header}</div>
         <div className="contents">{content.elem}</div>
       </Container>
     </div>
