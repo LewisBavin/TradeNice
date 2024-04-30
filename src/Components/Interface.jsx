@@ -24,7 +24,7 @@ function Interface() {
 
   return (
     <>
-      <div className="root-container flx col ai-c">
+      <div className="root-container flx col ai-c jc-c">
         <header className="">
           <Header account={account} />
         </header>

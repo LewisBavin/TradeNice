@@ -15,7 +15,7 @@ const Pending = ({ account }) => {
     edit: [],
     accept: [],
     reject: [],
-    delete: [],
+    del: [],
   });
 
   let updateDates = (e) => {
@@ -74,19 +74,40 @@ const Pending = ({ account }) => {
     { groupedUserOffers: {}, groupedCounterBids: {} }
   );
 
-  let reqAction = (e, i = 0) => {
-    let action = e.target.value;
-    let push = [...actions[action]];
-    push.push(i);
-    setActions({ ...actions, [action]: push });
+  let reqAction = (e, id) => {
+    let eVal = e.target.value;
+    let eName = e.target.name;
+    let temp = { inputs: [...requests.inputs], outputs: [...requests.outputs] };
+    let req =
+      temp.inputs.find((el) => id == el.id) ||
+      temp.outputs.find((el) => id == el.id);
+    if (eName == "action") {
+      if (eVal == "edit") {
+        req[eVal] = { [eVal]: { ...req } };
+      } else {
+        req[eVal] = true;
+      }
+    }
+    setActions({ ...requests, ...temp });
   };
-  console.log(actions.edit);
+
   let requestElement = (req, user = true) => {
-    let { id, volume, total_volume, price } = { ...req };
-    let editable = actions.edit.filter((i) => id == i).length;
-    let edits = edited.filter((i) => i.id == id);
-    let isEdited = edits.length;
-    isEdited ? ({ volume, total_volume, price } = edits[0]) : null;
+    let {
+      id,
+      direction,
+      start_date,
+      end_date,
+      volume,
+      total_volume,
+      price,
+      edit,
+      accept,
+      reject,
+      cancel,
+      remove,
+    } = req;
+
+    req.id == 90 ? console.log(req.edit) : null;
 
     return (
       <Form>
@@ -95,7 +116,8 @@ const Pending = ({ account }) => {
             <Form.Control
               name="id"
               disabled
-              value={req.id}
+              value={id}
+              className="text-danger"
               onChange={(e) => {
                 reqAction(e, id);
               }}
@@ -105,7 +127,7 @@ const Pending = ({ account }) => {
             <Form.Control
               name="direction"
               disabled
-              value={req.direction}
+              value={direction}
               onChange={(e) => {
                 reqAction(e, id);
               }}
@@ -119,7 +141,7 @@ const Pending = ({ account }) => {
               onChange={(e) => {
                 reqAction(e, id);
               }}
-              value={format(req.start_date, "yyyy-MM-dd")}
+              value={format(start_date, "yyyy-MM-dd")}
             />
           </Col>
           <Col xs={2}>
@@ -130,23 +152,23 @@ const Pending = ({ account }) => {
               onChange={(e) => {
                 reqAction(e, id);
               }}
-              value={format(req.end_date, "yyyy-MM-dd")}
+              value={format(end_date, "yyyy-MM-dd")}
             />
           </Col>
           <Col xs={2}>
             <Form.Control
-              disabled={!user || !editable}
+              disabled={!user || !edit}
               name="volume"
               type="number"
               onChange={(e) => {
                 reqAction(e, id);
               }}
-              value={volume}
+              value={edit ? edit.volume : volume}
             />
           </Col>
           <Col xs={1}>
             <Form.Control
-              disabled={!user || !editable}
+              disabled={!user || !edit}
               name="price"
               type="number"
               onChange={(e) => {
@@ -168,16 +190,29 @@ const Pending = ({ account }) => {
           </Col>
           <Col xs={1}>
             <Form.Select
+              name="action"
               onChange={(e) => {
                 reqAction(e, id);
               }}
-              value=""
+              value={
+                user
+                  ? edit
+                    ? "edit"
+                    : remove
+                    ? "remove"
+                    : ""
+                  : accept
+                  ? "accept"
+                  : reject
+                  ? "reject"
+                  : ""
+              }
             >
               <option value="" disabled>
                 &darr;
               </option>
               {user && <option value="edit">edit</option>}
-              {user && <option value="delete">delete</option>}
+              {user && <option value="remove">remove</option>}
               {!user && <option value="accept">accept</option>}
               {!user && <option value="reject">reject</option>}
             </Form.Select>
