@@ -170,7 +170,6 @@ const Create = () => {
       let toast = { ...state.toast, strong, body, variant, showToast: true };
       setState({ ...state, toast });
     } catch (e) {
-      console.log(e);
       let strong = "Connection Error!";
       let body = "Couldn't connect to database. Requests not submitted";
       let variant = "danger";
@@ -201,7 +200,7 @@ const Create = () => {
                   <Row>
                     <Col className="position-relative">
                       <Button
-                        onClick={removeRequest}
+                        onClick={()=>{removeRequest(i)}}
                         variant="outline-danger"
                         className="position-absolute top-50 start-50 translate-middle"
                       >

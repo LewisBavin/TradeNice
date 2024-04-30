@@ -21,7 +21,6 @@ function Header({ account }) {
   };
 
   return (
-    <>
       <Navbar expand="lg" className="bg-body-tertiary">
         <Container>
           <Navbar.Brand href="#home">
@@ -53,7 +52,6 @@ function Header({ account }) {
           </Navbar.Collapse>
         </Container>
       </Navbar>
-    </>
   );
 }
 

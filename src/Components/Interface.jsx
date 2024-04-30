@@ -24,11 +24,11 @@ function Interface() {
 
   return (
     <>
-      <div className="root-container flx col ai-c jc-c">
-        <header>
+      <div className="root-container flx col ai-c">
+        <header className="">
           <Header account={account} />
         </header>
-        <main>
+        <main className="">
           <Routes>
             <Route
               path="/"
@@ -36,7 +36,7 @@ function Interface() {
             ></Route>
           </Routes>
         </main>
-        <footer className="flx jc-c ai-c">
+        <footer className="">
           <Footer />
         </footer>
       </div>

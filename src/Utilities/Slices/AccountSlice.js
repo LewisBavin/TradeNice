@@ -3,16 +3,15 @@ import { setStore, getStore } from "../localStorage";
 import { gasUsers } from "../systemUsers";
 import { arrObjByKeyVal } from "../usefulFuncs";
 
-const initialState = !getStore("account")
-  ? {
-      loggedIn: false,
-      msg: null,
-      view: null,
-      user: null,
-      create: false,
-      view: [0, 0],
-    }
-  : getStore("account");
+const initial = {
+  loggedIn: false,
+  msg: null,
+  view: null,
+  user: null,
+  create: false,
+  view: { main: 0, inner: 0 },
+};
+const initialState = !getStore("account") ? initial : getStore("account");
 
 export const accountSlice = createSlice({
   name: "account",
@@ -24,9 +23,13 @@ export const accountSlice = createSlice({
       setStore("account", state);
     },
     logOut: (state) => {
-      state.loggedIn = false;
-      state.msg = null;
-      state.user = null;
+      Object.keys(state).forEach((key) => {
+        if (initial.hasOwnProperty(key)) {
+          state[key] = initial[key];
+        } else {
+          delete state[key];
+        }
+      });
       setStore("account", state);
     },
     setCreate: (state, { payload }) => {

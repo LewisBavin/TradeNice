@@ -4,10 +4,11 @@ import { Provider } from "react-redux";
 import { store } from "./Utilities/store.js";
 import App from "./App.jsx";
 import "./Styles/index.css";
-import "./Styles/App.scss";
+
 
 import 'bootstrap/dist/css/bootstrap.min.css';
 import "react-toastify/dist/ReactToastify.css";
+import "./Styles/App.scss";
 import { BrowserRouter } from "react-router-dom";
 
 ReactDOM.createRoot(document.getElementById("root")).render(
