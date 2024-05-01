@@ -11,12 +11,23 @@ const Pending = ({ account }) => {
   const [err, setErr] = useState(null);
   const [requests, setRequests] = useState({ inputs: [], outputs: [] });
   const [submit, setSubmit] = useState(false);
+  const [submits, setSubmits] = useState({})
 
   useEffect(() => {
-    if (submit) {
-      console.log(submit);
-    }
-  }, [submit]);
+    let temp = [...requests.inputs, ...requests.outputs];
+    let submits = temp.reduce(
+      (accum, req) => {
+        req.edit ? accum.edits.push(req.edit) : null;
+        req.remove ? accum.removes.push(req) : null;
+        req.accept ? accum.accepts.push(req) : null;
+        req.reject ? accum.rejects.push(req) : null;
+        return accum;
+      },
+      { edits: [], removes: [], rejects: [], accepts: [] }
+    );
+    setSubmit(Object.keys(submits).some((key) => submits[key].length));
+    setSubmits(submits)
+  }, [requests]);
 
   let updateDates = (e) => {
     let temp = { ...dates, [e.target.name]: e.target.value };
@@ -108,15 +119,13 @@ const Pending = ({ account }) => {
           ? { ...req, [eName]: eVal }
           : { ...req.edit, [eName]: eVal };
       edits.total_volume =
-        differenceInDays(edits.end_date, edits.start_date) * edits.volume;
+        (differenceInDays(edits.end_date, edits.start_date) + 1) * edits.volume;
       req.edit = { ...edits };
     }
     setRequests({ ...requests, ...temp });
   };
 
-  let submitChanges = (e) => {
-    setSubmit(true);
-  };
+
 
   let requestElement = (req, user = true) => {
     let {
@@ -263,12 +272,45 @@ const Pending = ({ account }) => {
       </Form>
     );
   };
-
+  let submitChanges = async () => {
+    if (submits.removes.length){
+      await axios.post(
+        "http://localhost:6002/user/requests/remove",
+        { submits },
+        {
+          headers: { token: account.user.token },
+        }
+      )
+    }
+    if (submits.rejects.length){
+      await axios.post(
+        "http://localhost:6002/user/requests/reject",
+        { submits },
+        {
+          headers: { token: account.user.token },
+        }
+      )
+    }
+    if (submits.accepts.length){
+      await axios.post(
+        "http://localhost:6002/user/requests/accept",
+        { submits },
+        {
+          headers: { token: account.user.token },
+        }
+      )
+    }
+};
   return (
     <>
       <Container className="text-center">
         <Row>
           <Form onSubmit={getRequests}>
+          <Row>
+              <Col className="text-primary d-flex justify-content-center align-items-center pt-3">
+                Filter bids & offers
+              </Col>
+            </Row>
             <Row>
               <Col className="text-danger d-flex justify-content-center align-items-center">
                 {err}
@@ -306,12 +348,9 @@ const Pending = ({ account }) => {
           </Form>
         </Row>
       </Container>
-      <div name="lol"></div>
       <Container>
-        <Row>
-          <Col>
-            {submit && <Button onClick={submitChanges}>Save Changes</Button>}
-          </Col>
+        <Row className="justify-content-md-center px-5">
+            {submit && <Button variant="success" onClick={submitChanges}>Save Changes</Button>}
         </Row>
       </Container>
       <Container>

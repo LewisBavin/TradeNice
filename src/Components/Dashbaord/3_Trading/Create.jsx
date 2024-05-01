@@ -157,7 +157,7 @@ const Create = () => {
     try {
       let { status, err } = (
         await axios.post(
-          "http://localhost:6002/user/addRequest",
+          "http://localhost:6002/user/requests/add",
           { requests },
           {
             headers: { token: account.user.token },
@@ -190,7 +190,7 @@ const Create = () => {
   return (
     <>
       <div className="requests container flx col jc-c ai-c">
-        <Form className="border border-light" onSubmit={handleSubmit}>
+        <Form className={state.requests.length ? "border border-light" : ""} onSubmit={handleSubmit}>
           {state.requests.map((request, i) => {
             let errs = [...state.errs][i];
 

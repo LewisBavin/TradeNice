@@ -57,7 +57,7 @@ main {
 
 .dashContainer {
   position: fixed;
-  top: 20%;
+  top: 15%;
   left: 50%;
   transform: translate(-50%, -50%);
 }
@@ -65,9 +65,12 @@ main {
   position: absolute;
   transform: translateX(-50%);
   left: 50%;
-  height: 65vh;
-  overflow-y: auto
+  height: 75vh;
+  width: 90vw;
+  overflow-y: auto;
 }
+
+
 .contents{
 }
 
@@ -78,6 +81,7 @@ header {
   margin: 0;
   height: fit-content;
   background-color: blue;
+  z-index: 5;
 }
 footer {
   bottom: 0;

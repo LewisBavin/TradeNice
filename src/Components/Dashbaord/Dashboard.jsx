@@ -37,17 +37,27 @@ const Dashboard = ({ account }) => {
 
   const navMenu = [
     {
-      title: "Market Overview",
+      title: "Trading",
       inner: [
         {
-          title: "Gas Prices",
-          header: "UK and EU Gas Spot Prices",
-          elem: <Prices account={account} />,
+          title: "Create Trades",
+          header: "Post Bids & Offers to Desired Counterparties",
+          elem: <Create />,
         },
         {
-          title: "Grid Flows",
-          header: "UK National Grid Flows",
-          elem: <Flows account={account} />,
+          title: "Pending Trades",
+          header: "Edit Your Pending Trades & Action Counterparty Trades",
+          elem: <Pending account={account} />,
+        },
+        {
+          title: "Agreed Trades",
+          header: "View Your Matched Trades",
+          elem: <Agreed account={account} />,
+        },
+        {
+          title: "Dispute",
+          header: "See An Issue With A Trade? Raise A Dispute",
+          elem: <Dispute account={account} />,
         },
       ],
     },
@@ -67,26 +77,21 @@ const Dashboard = ({ account }) => {
       ],
     },
     {
-      title: "Trading",
+      title: "Market Overview",
       inner: [
-        { title: "Create", header: "Create Trade Requests", elem: <Create /> },
         {
-          title: "Pending",
-          header: "Your Pending Trade Requests",
-          elem: <Pending account={account} />,
+          title: "Gas Prices",
+          header: "UK and EU Gas Spot Prices",
+          elem: <Prices account={account} />,
         },
         {
-          title: "Agreed Trades",
-          header: "Your Matched Counterparty Trades",
-          elem: <Agreed account={account} />,
-        },
-        {
-          title: "Dispute",
-          header: "See an issue with any matched trades? Raise a dispute",
-          elem: <Dispute account={account} />,
+          title: "Grid Flows",
+          header: "UK National Grid Flows",
+          elem: <Flows account={account} />,
         },
       ],
     },
+
     {
       title: "Account",
       inner: [
@@ -131,79 +136,83 @@ const Dashboard = ({ account }) => {
         }}
       >
         <Container>
-          <Container className="text-center text-nowrap">
-            <Nav
-              variant="pills"
-              className="justify-content-md-center outer fs-6 py-1"
-            >
-              <Row
-                className="py-1"
-                style={{
-                  backgroundColor: "grey",
-                  borderRadius: "20px",
-                }}
+          <Col xs={2}>
+            <Navbar.Brand href="#home" className="text-center text-wrap" xs={2}>
+              {content.header}
+            </Navbar.Brand>
+          </Col>
+          <Col>
+            <Container className="text-center text-nowrap px-5">
+              <Nav
+                variant="pills"
+                className="justify-content-md-center outer fs-6 py-1"
               >
-                {navMenu.map((tab, i) => {
-                  return (
-                    <Col key={i}>
-                      <Nav.Item
-                        style={{
-                          backgroundColor: "darkgrey",
-                          borderRadius: "20px",
-                        }}
-                        onMouseEnter={() => {
-                          setTabs(i);
-                        }}
-                      >
-                        <Nav.Link active={i == main}>{tab.title}</Nav.Link>
-                      </Nav.Item>
-                    </Col>
-                  );
-                })}
-              </Row>
-            </Nav>
-            <Nav
-              variant="pills"
-              className="justify-content-md-center inner fs-7 py-1"
-            >
-              <Row
-                className="py-1"
-                style={{
-                  backgroundColor: "grey",
-                  borderRadius: "10px",
-                }}
-              >
-                {mainTab.inner.map((tab, j) => {
-                  return (
-                    <Col key={j}>
-                      <Nav.Item
-                        style={{
-                          backgroundColor: "grey",
-                          borderRadius: "10px",
-                        }}
-                        onMouseEnter={() => {
-                          setTabs(main, j);
-                        }}
-                      >
-                        <Nav.Link
-                          active={j == inner}
-                          eventKey={j}
-                          onClick={() => {
-                            setTabs(main, j, true);
+                <Row
+                  className="py-0"
+                  style={{
+                    backgroundColor: "grey",
+                    borderRadius: "40px",
+                  }}
+                >
+                  {navMenu.map((tab, i) => {
+                    return (
+                      <Col key={i}>
+                        <Nav.Item
+                          style={{
+                            backgroundColor: "darkgrey",
+                            borderRadius: "30px",
+                          }}
+                          onMouseEnter={() => {
+                            setTabs(i);
                           }}
                         >
-                          {tab.title}
-                        </Nav.Link>
-                      </Nav.Item>
-                    </Col>
-                  );
-                })}
-              </Row>
-            </Nav>
-          </Container>
-          <Navbar.Brand href="#home" className="text-center text-wrap">
-            {content.header}
-          </Navbar.Brand>
+                          <Nav.Link active={i == main}>{tab.title}</Nav.Link>
+                        </Nav.Item>
+                      </Col>
+                    );
+                  })}
+                </Row>
+              </Nav>
+              <Nav
+                variant="pills"
+                className="justify-content-md-center inner fs-7 py-1"
+              >
+                <Row
+                  className="py-0"
+                  style={{
+                    backgroundColor: "grey",
+                    borderRadius: "30px",
+                  }}
+                >
+                  {mainTab.inner.map((tab, j) => {
+                    return (
+                      <Col key={j}>
+                        <Nav.Item
+                          style={{
+                            backgroundColor: "grey",
+                            borderRadius: "10px",
+                          }}
+                          onMouseEnter={() => {
+                            setTabs(main, j);
+                          }}
+                        >
+                          <Nav.Link
+                            active={j == inner}
+                            eventKey={j}
+                            onClick={() => {
+                              setTabs(main, j, true);
+                            }}
+                          >
+                            {tab.title}
+                          </Nav.Link>
+                        </Nav.Item>
+                      </Col>
+                    );
+                  })}
+                </Row>
+              </Nav>
+            </Container>
+          </Col>
         </Container>
       </Navbar>
 
