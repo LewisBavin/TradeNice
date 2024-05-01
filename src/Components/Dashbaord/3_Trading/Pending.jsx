@@ -11,7 +11,7 @@ const Pending = ({ account }) => {
   const [err, setErr] = useState(null);
   const [requests, setRequests] = useState({ inputs: [], outputs: [] });
   const [submit, setSubmit] = useState(false);
-  const [submits, setSubmits] = useState({})
+  const [submits, setSubmits] = useState({});
 
   useEffect(() => {
     let temp = [...requests.inputs, ...requests.outputs];
@@ -26,7 +26,7 @@ const Pending = ({ account }) => {
       { edits: [], removes: [], rejects: [], accepts: [] }
     );
     setSubmit(Object.keys(submits).some((key) => submits[key].length));
-    setSubmits(submits)
+    setSubmits(submits);
   }, [requests]);
 
   let updateDates = (e) => {
@@ -102,6 +102,7 @@ const Pending = ({ account }) => {
   let reqAction = (e, id) => {
     let eVal = e.target.value;
     let eName = e.target.name;
+
     let temp = { inputs: [...requests.inputs], outputs: [...requests.outputs] };
     let req =
       temp.inputs.find((el) => id == el.id) ||
@@ -113,7 +114,8 @@ const Pending = ({ account }) => {
       req.accept = eVal == "accept";
       req.reject = eVal == "reject";
       req[eVal] = eVal;
-    } else if (!!req.edit) {
+    }
+    if (!!req.edit) {
       let edits =
         req.edit == "edit"
           ? { ...req, [eName]: eVal }
@@ -124,8 +126,6 @@ const Pending = ({ account }) => {
     }
     setRequests({ ...requests, ...temp });
   };
-
-
 
   let requestElement = (req, user = true) => {
     let {
@@ -151,7 +151,6 @@ const Pending = ({ account }) => {
       edit: "text-primary",
     };
     let style = Object.keys(styles).find((style) => !!req[style]);
-
     return (
       <Form>
         <Row>
@@ -213,6 +212,7 @@ const Pending = ({ account }) => {
               }}
             />
           </Col>
+
           <Col>
             <Form.Control
               disabled={!user || !edit}
@@ -225,6 +225,7 @@ const Pending = ({ account }) => {
               }}
             />
           </Col>
+
           <Col xs={2}>
             <Form.Control
               name="total_volume"
@@ -244,7 +245,7 @@ const Pending = ({ account }) => {
               onChange={(e) => {
                 reqAction(e, id);
               }}
-              value={style ? style : ""}
+              defaultValue={style ? style : ""}
             >
               <option value="" disabled>
                 &darr;
@@ -273,40 +274,40 @@ const Pending = ({ account }) => {
     );
   };
   let submitChanges = async () => {
-    if (submits.removes.length){
+    if (submits.removes.length) {
       await axios.post(
         "http://localhost:6002/user/requests/remove",
         { submits },
         {
           headers: { token: account.user.token },
         }
-      )
+      );
     }
-    if (submits.rejects.length){
+    if (submits.rejects.length) {
       await axios.post(
         "http://localhost:6002/user/requests/reject",
         { submits },
         {
           headers: { token: account.user.token },
         }
-      )
+      );
     }
-    if (submits.accepts.length){
+    if (submits.accepts.length) {
       await axios.post(
         "http://localhost:6002/user/requests/accept",
         { submits },
         {
           headers: { token: account.user.token },
         }
-      )
+      );
     }
-};
+  };
   return (
     <>
       <Container className="text-center">
         <Row>
           <Form onSubmit={getRequests}>
-          <Row>
+            <Row>
               <Col className="text-primary d-flex justify-content-center align-items-center pt-3">
                 Filter bids & offers
               </Col>
@@ -350,7 +351,11 @@ const Pending = ({ account }) => {
       </Container>
       <Container>
         <Row className="justify-content-md-center px-5">
-            {submit && <Button variant="success" onClick={submitChanges}>Save Changes</Button>}
+          {submit && (
+            <Button variant="success" onClick={submitChanges}>
+              Save Changes
+            </Button>
+          )}
         </Row>
       </Container>
       <Container>
