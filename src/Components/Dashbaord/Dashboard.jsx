@@ -126,7 +126,8 @@ const Dashboard = ({ account }) => {
   let content = navMenu[account.view.main].inner[account.view.inner];
 
   return (
-    <div className="dashContainer">
+    <>
+      {" "}
       <Navbar
         expand="lg"
         className="bg-body-tertiary mx-5"
@@ -215,11 +216,10 @@ const Dashboard = ({ account }) => {
           </Col>
         </Container>
       </Navbar>
-
       <Container className="content">
         <div className="contents">{content.elem}</div>
       </Container>
-    </div>
+    </>
   );
 };
 

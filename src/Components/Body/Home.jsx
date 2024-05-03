@@ -4,6 +4,8 @@ import { useSelector, useDispatch } from "react-redux";
 import Dashboard from "../Dashbaord/Dashboard";
 import axios from "axios";
 import CreateUser from "../CreateUser";
+import Login from "../Login";
+import { Container } from "react-bootstrap";
 
 const Home = ({ account }) => {
   const dispatch = useDispatch();
@@ -20,16 +22,25 @@ const Home = ({ account }) => {
     dispatch(accountActions.logIn(user));
   };
 
-  const setCreate = () => {
-    dispatch(accountActions.setCreate(true));
+  const showCreate = () => {
+    dispatch(accountActions.showCreate(true));
   };
 
   return (
     <>
       {!account.loggedIn ? (
-        account.create ? (
-          <CreateUser account={account} />
-        ) : (
+        <Container className="loginContainer flx ai-c jc-c">
+          {account.create && <CreateUser account={account} />}
+          {!account.create && <Login account={account} />}
+        </Container>
+      ) : (
+        <Container className="dashContainer">
+          <Dashboard account={account} />
+        </Container>
+      )}
+
+     {/*  {!account.loggedIn ? (
+        account.create ? null : (
           <div className="loginContainer">
             <div className="header">Log in to Dashboard</div>
             <div className="login">
@@ -50,12 +61,10 @@ const Home = ({ account }) => {
               </form>
               <div className="alert">{!!account.msg && account.msg}</div>
             </div>
-            <button onClick={setCreate}>Don't have an account?</button>
+            <button onClick={showCreate}>Don't have an account?</button>
           </div>
         )
-      ) : (
-        <Dashboard account={account} />
-      )}
+      ) : null} */}
     </>
   );
 };

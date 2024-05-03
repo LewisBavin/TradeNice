@@ -1,16 +1,12 @@
-import React, { useState } from "react";
-import {
-  Toast,
-  ToastContainer,
-} from "react-bootstrap";
+import React, { useEffect, useState } from "react";
+import { Toast, ToastContainer } from "react-bootstrap";
 
-const MyToast = ({toastSettings}) => {
-  const [show, setShow] = useState(true);
-  let { strong, small, body, delay, variant } = toastSettings
-
+const MyToast = ({ toastSettings }) => {
+  let { strong, small, body, delay, variant, trigger } = toastSettings;
+  const [show, setShow] = useState(trigger || false);
   return (
     <>
-      <ToastContainer className="toast-container top-50 end-0 translate-middle-y p-3">
+      <ToastContainer className="toast-container position-fixed top-50 end-0 translate-middle-y p-3">
         <Toast
           onClose={() => {
             setShow(false);
