@@ -70,8 +70,7 @@ const CreateUser = ({ account }) => {
   };
 
   return (
-    <>
-      <div className="container flx col jc-c">
+      <div className="loginContainer flx col jc-c">
         <form
           className="flx col jc-c"
           method="GET"
@@ -125,7 +124,6 @@ const CreateUser = ({ account }) => {
           </div>
         ) : null}
       </div>
-    </>
   );
 };
 

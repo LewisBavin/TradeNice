@@ -55,25 +55,6 @@ main {
   margin: 0;
 }
 
-.dashContainer {
-  position: fixed;
-  top: 15%;
-  left: 50%;
-  transform: translate(-50%, -50%);
-}
-.content.container {
-  position: absolute;
-  transform: translateX(-50%);
-  left: 50%;
-  height: 75vh;
-  width: 90vw;
-  overflow-y: auto;
-}
-
-
-.contents{
-}
-
 footer,
 header {
   position: fixed;
@@ -90,13 +71,35 @@ header {
   top: 0;
 }
 
+.dashContainer {
+  position: fixed;
+  top: 15%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  width: 95vw;
+}
+
+.loginContainer {
+  transform: translate(-50%, 100%);
+}
+.content.container {
+  position: absolute;
+  transform: translateX(-50%);
+  left: 50%;
+  height: 75vh;
+  width: 90vw;
+  overflow-y: auto;
+}
+
+
+
+
+
 .root-container {
   width: 100vw;
 }
 
-.dashContainer {
-  width: 95vw;
-}
+
 
 .react-datepicker-wrapper {
   width: 100px;

@@ -6,7 +6,6 @@ import { arrObjByKeyVal } from "../usefulFuncs";
 const initial = {
   loggedIn: false,
   msg: null,
-  view: null,
   user: null,
   create: false,
   view: { main: 0, inner: 0 },
@@ -51,6 +50,12 @@ export const accountSlice = createSlice({
     setLoggedIn: (state) => {
       state.loggedIn = !state.loggedIn;
       setStore("account", state);
+    },
+    showLogin: (state) =>{
+      state.loggedIn = false;
+      state.create = false
+      setStore("account", state)
+
     },
     setView: (state, { payload }) => {
       state.view = payload;

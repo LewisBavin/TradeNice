@@ -1,17 +1,13 @@
 import React from "react";
 import Header from "./Body/Header";
 import Footer from "./Body/Footer";
-import Dashboard from "./Dashbaord/Dashboard";
-import Login from "./Login";
 import Home from "./Body/Home";
 
 import { Routes, Route } from "react-router";
-import { Link } from "react-router-dom";
-import { useEffect } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import { useNavigate } from "react-router-dom";
 import { accountActions, readAccount } from "../Utilities/Slices/AccountSlice";
-import { graphActions } from "../Utilities/Slices/GraphSlice";
+
 
 function Interface() {
   const dispatch = useDispatch();
@@ -21,6 +17,8 @@ function Interface() {
     dispatch(accountActions.setLoggedIn());
     navigate("/");
   };
+
+
 
   return (
     <>

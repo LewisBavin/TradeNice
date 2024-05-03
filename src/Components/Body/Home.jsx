@@ -1,11 +1,8 @@
 import React from "react";
 import { accountActions } from "../../Utilities/Slices/AccountSlice";
-import Login from "../Login";
 import { useSelector, useDispatch } from "react-redux";
 import Dashboard from "../Dashbaord/Dashboard";
 import axios from "axios";
-import sha256 from "sha256";
-const salt = "GasPower";
 import CreateUser from "../CreateUser";
 
 const Home = ({ account }) => {
@@ -16,11 +13,9 @@ const Home = ({ account }) => {
     let feilds = e.target;
     let email = feilds.email.value;
     let password = feilds.password.value;
-    console.log(feilds, email, password);
     let user = (
       await axios.post(`http://localhost:6002/user/login/`, { email, password })
     ).data.user;
-    console.log("hi")
 
     dispatch(accountActions.logIn(user));
   };
