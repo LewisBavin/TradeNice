@@ -90,10 +90,10 @@ const Create = () => {
           case true:
             let start = startOfDay(toDate(request.start_date));
             let end = startOfDay(toDate(request.end_date));
+            let today = startOfDay(new Date());
 
             switch (type == "date") {
               case true:
-                let today = startOfDay(new Date());
                 if (startOfDay(toDate(val)) < today) {
                   err[name] = "cannot be in past";
                   break;
@@ -111,24 +111,29 @@ const Create = () => {
                 }
                 break;
               default:
-                request.total_volume = Number(
-                  (differenceInDays(end, start) + 1) * val
-                );
             }
             break;
           default:
             if (type == "number") {
               request[name] = Number(val);
             }
-            if (name == "user_name") {
-              request.counter_id = state.users.filter(
-                (u) => u.name == val
-              )[0].id;
-            }
         }
     }
     if (name == "volume") {
       request[name] = Number(val);
+    }
+    if (name == "user_name") {
+      request.counter_id = state.users.filter((u) => u.name == val)[0].id;
+    }
+    if (request.volume && request.start_date && request.end_date) {
+      request.total_volume = Number(
+        (differenceInDays(
+          startOfDay(toDate(request.end_date)),
+          startOfDay(toDate(request.start_date))
+        ) +
+          1) *
+          request.volume
+      );
     }
     setState({ ...state, requests, errs });
   };
@@ -176,6 +181,7 @@ const Create = () => {
   let isBlanks = state.requests.some((req) =>
     Object.values(req).some((val) => !val)
   );
+
   return (
     <>
       <div className="requests container flx col jc-c ai-c">
@@ -244,24 +250,12 @@ const Create = () => {
                           </Form.Text>
                         </Col>
                         <Col>
-                          <Form.Select
-                            value={request.counter_id}
+                          <Form.Control
+                            defaultValue={request.counter_id}
                             name="counter_id"
                             disabled
-                            onChange={(e) => {
-                              handleChange(e, i);
-                            }}
-                          >
-                            <option value="" disabled>
-                              Counter ID
-                            </option>
-                            {state.users &&
-                              state.users.map((u, k) => (
-                                <option key={k} value={u.id}>
-                                  {u.id}
-                                </option>
-                              ))}
-                          </Form.Select>
+                            placeholder="Counter ID"
+                          ></Form.Control>
                         </Col>
                       </Row>
                       <Row className="py-2">
