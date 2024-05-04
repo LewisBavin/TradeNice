@@ -1,8 +1,6 @@
 import React from "react";
-import { getStore } from "../../Utilities/localStorage";
 import { useDispatch } from "react-redux";
-import { accountActions } from "../../Utilities/Slices/AccountSlice";
-import { useNavigate } from "react-router-dom";
+import { accountActions } from "../../Slices/AccountSlice";
 import axios from "axios";
 import Container from "react-bootstrap/Container";
 import Nav from "react-bootstrap/Nav";
@@ -13,16 +11,23 @@ function Header({ account }) {
   const dispatch = useDispatch();
 
   const logOut = async (e, type = "this") => {
-    console.log(type)
-    console.log(`http://localhost:6002/user/logout/${type}`)
     await axios.delete(`http://localhost:6002/user/logout/${type}`, {
       headers: { token: account.user.token },
     });
     dispatch(accountActions.logOut());
+    dispatch(
+      accountActions.setToast({
+        trigger: true,
+        strong: "Goodbye!",
+        small: "see you soon",
+        variant: "success",
+        body:
+          type == "this" ? "this session logged out" : "All devices logged out",
+      })
+    );
   };
 
   const showLogin = () => {
-    console.log("logn");
     dispatch(accountActions.showLogin());
   };
 
@@ -48,9 +53,13 @@ function Header({ account }) {
                   <NavDropdown.Item>Update Details</NavDropdown.Item>
                   <NavDropdown.Item>Contact Us</NavDropdown.Item>
                   <NavDropdown.Divider />
-                  <NavDropdown.Item onClick={(e) => {
+                  <NavDropdown.Item
+                    onClick={(e) => {
                       logOut(e);
-                    }}>Log Out</NavDropdown.Item>
+                    }}
+                  >
+                    Log Out
+                  </NavDropdown.Item>
                   <NavDropdown.Item
                     onClick={(e) => {
                       logOut(e, "all");

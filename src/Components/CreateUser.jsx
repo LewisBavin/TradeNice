@@ -3,10 +3,8 @@ import axios from "axios";
 import Joi, { valid } from "joi";
 import Button from "react-bootstrap/Button";
 import { useDispatch } from "react-redux";
-import { accountActions } from "../Utilities/Slices/AccountSlice";
-import sha256 from "sha256";
 import { Container, Form } from "react-bootstrap";
-import MyToast from "./MyToast";
+import { accountActions } from "../Slices/AccountSlice";
 
 const schema = Joi.object().keys({
   email: Joi.string()
@@ -26,14 +24,6 @@ const CreateUser = ({ account }) => {
   const dispatch = useDispatch();
   const [errs, setErrs] = useState({ email: "", name: "", password: "" });
   const [feilds, setFeilds] = useState({ email: "", name: "", password: "" });
-  const [toast, setToast] = useState({ trigger: false });
-
-  useEffect(() => {
-    toast.trigger &&
-      setTimeout(() => {
-        setToast({ ...toast, trigger: false });
-      }, 4000);
-  }, [toast]);
 
   let updateFeilds = async (e) => {
     let [name, value] = [e.target.name, e.target.value];
@@ -65,22 +55,28 @@ const CreateUser = ({ account }) => {
       ).data;
       returnErr ? setErrs({ ...returnErr, password: "" }) : null;
       if (returnMsg && user) {
-        setToast({
-          ...toast,
-          trigger: true,
-          strong: "Success!",
-          small: "Account created successfully",
-          body: returnMsg,
-        });
+        dispatch(
+          accountActions.setToast(
+            setToast({
+              trigger: true,
+              strong: "Success!",
+              small: "Account created successfully",
+              body: returnMsg,
+              variant: "success",
+            })
+          )
+        );
       }
     } catch (e) {
-      setToast({
-        ...toast,
-        trigger: true,
-        strong: "Error!",
-        small: "Database Error",
-        body: "Account not created",
-      });
+      dispatch(
+        accountActions.setToast({
+          trigger: true,
+          strong: "Error!",
+          small: "Database Error",
+          body: "Please Contact Admin",
+          variant: "warning",
+        })
+      );
     }
   };
 
@@ -118,7 +114,6 @@ const CreateUser = ({ account }) => {
           </Button>
         </Container>
       </Form>
-      {toast.trigger ? <MyToast toastSettings={toast} /> : null}
     </>
   );
 };

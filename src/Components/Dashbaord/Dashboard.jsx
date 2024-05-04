@@ -1,7 +1,7 @@
 import React from "react";
 import { useState } from "react";
 import { useDispatch } from "react-redux";
-import { accountActions } from "../../Utilities/Slices/AccountSlice";
+import { accountActions } from "../../Slices/AccountSlice";
 import {
   Accordion,
   Dropdown,

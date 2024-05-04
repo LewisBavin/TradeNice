@@ -3,10 +3,7 @@ import { getGridPricesAll } from "../../../Utilities/apiCalls";
 import Plot from "react-plotly.js";
 import { add, format } from "date-fns";
 import { useDispatch, useSelector } from "react-redux";
-import {
-  getSavedPrices,
-  graphActions,
-} from "../../../Utilities/Slices/GraphSlice";
+import { getSavedPrices, graphActions } from "../../../Slices/GraphSlice";
 import "react-datepicker/dist/react-datepicker.css";
 import DatePicker, { registerLocale, setDefaultLocale } from "react-datepicker";
 import enGB from "date-fns/locale/en-GB";

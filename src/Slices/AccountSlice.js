@@ -1,13 +1,12 @@
 import { createSlice } from "@reduxjs/toolkit";
-import { setStore, getStore } from "../localStorage";
-import { gasUsers } from "../systemUsers";
-import { arrObjByKeyVal } from "../usefulFuncs";
+import { setStore, getStore } from "../Utilities/localStorage";
 
 const initial = {
   loggedIn: false,
   user: null,
   create: false,
   view: { main: 0, inner: 0 },
+  toast: {trigger: false}
 };
 const initialState = !getStore("account") ? initial : getStore("account");
 
@@ -15,6 +14,10 @@ export const accountSlice = createSlice({
   name: "account",
   initialState: initialState,
   reducers: {
+    setToast: (state, {payload}) =>{
+      state.toast = payload
+      setStore ("account", state)
+    },
     showLogin: (state) => {
       state.loggedIn = false;
       state.create = false;
@@ -25,9 +28,9 @@ export const accountSlice = createSlice({
       setStore("account", state);
     },
     logIn: (state, { payload }) => {
-      state.user = payload;
+      state.user = payload.user
+      state.loggedIn = true
       state.create = false
-      state.loggedIn = !!state.user;
       setStore("account", state);
     },
     logOut: (state) => {
@@ -38,10 +41,6 @@ export const accountSlice = createSlice({
           delete state[key];
         }
       });
-      setStore("account", state);
-    },
-    setLoggedIn: (state) => {
-      state.loggedIn = !state.loggedIn;
       setStore("account", state);
     },
     setView: (state, { payload }) => {

@@ -1,5 +1,5 @@
 import React from "react";
-import { accountActions } from "../../Utilities/Slices/AccountSlice";
+import { accountActions } from "../../Slices/AccountSlice";
 import { useSelector, useDispatch } from "react-redux";
 import Dashboard from "../Dashbaord/Dashboard";
 import axios from "axios";
@@ -39,7 +39,7 @@ const Home = ({ account }) => {
         </Container>
       )}
 
-     {/*  {!account.loggedIn ? (
+      {/*  {!account.loggedIn ? (
         account.create ? null : (
           <div className="loginContainer">
             <div className="header">Log in to Dashboard</div>

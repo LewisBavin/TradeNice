@@ -3,7 +3,7 @@ import React, { useState } from "react";
 import {
   accountActions,
   readAccount,
-} from "../../../Utilities/Slices/AccountSlice";
+} from "../../../Slices/AccountSlice";
 import { useDispatch, useSelector } from "react-redux";
 import { differenceInDays, startOfDay, toDate } from "date-fns";
 import {

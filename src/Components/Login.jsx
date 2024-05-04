@@ -1,8 +1,11 @@
 import axios from "axios";
 import React, { useState } from "react";
 import { Button, Container, Form } from "react-bootstrap";
+import { useDispatch } from "react-redux";
+import { accountActions } from "../Slices/AccountSlice";
 
 const Login = ({ account }) => {
+  const dispatch = useDispatch();
   const [logins, setLogins] = useState({
     email: "",
     password: "",
@@ -15,12 +18,41 @@ const Login = ({ account }) => {
 
   let onSubmit = async (e) => {
     e.preventDefault();
-    let response = (
-      await axios.post(`http://localhost:6002/user/login/`, logins)
-    ).data;
-  };
 
-  let removePlaceholder = () => {};
+    try {
+      let response = (
+        await axios.post(`http://localhost:6002/user/login/`, logins)
+      ).data;
+      let { msg, user } = response;
+      dispatch(
+        accountActions.setToast(
+          user
+            ? {
+                trigger: true,
+                strong: "Success!",
+                small: "",
+                body: "Welcome Back " + user.name,
+                variant: "success"
+              }
+            : {
+                trigger: true,
+                strong: "Incorrect Credientials!",
+                body: "Please try again",
+                variant: "danger"
+              }
+        )
+      );
+      user && dispatch(accountActions.logIn({ user }));
+    } catch (e) {
+      dispatch(accountActions.setToast({
+        trigger: true,
+        strong: "Error!",
+        small: "Connection Error",
+        body: "Please Contact Admin",
+        variant: "warning"
+      }));
+    }
+  };
 
   return (
     <>
@@ -35,7 +67,6 @@ const Login = ({ account }) => {
                   name={name}
                   defaultValue={value}
                   placeholder={name}
-                  onClick={removePlaceholder}
                 ></Form.Control>
               </Container>
             );

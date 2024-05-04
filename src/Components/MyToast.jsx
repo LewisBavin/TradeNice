@@ -6,7 +6,7 @@ const MyToast = ({ toastSettings }) => {
   const [show, setShow] = useState(trigger || false);
   return (
     <>
-      <ToastContainer className="toast-container position-fixed top-50 end-0 translate-middle-y p-3">
+      <ToastContainer className="toast-container position-fixed top-0 start-50 translate-middle p-5 m-5">
         <Toast
           onClose={() => {
             setShow(false);
@@ -14,6 +14,7 @@ const MyToast = ({ toastSettings }) => {
           show={show}
           delay={!delay ? 5000 : delay}
           autohide
+          bg={!variant ? "" : variant}
         >
           <Toast.Header>
             <img
