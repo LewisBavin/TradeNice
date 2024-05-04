@@ -1,12 +1,12 @@
 import React, { useEffect, useState } from "react";
 import axios from "axios";
-import { Col, Row, Container, Form, Button } from "react-bootstrap";
+import { Col, Row, Container, Form, Button, Accordion } from "react-bootstrap";
 import { differenceInDays, format, startOfDay, toDate } from "date-fns";
 
 const Pending = ({ account }) => {
   const [dates, setDates] = useState({
-    start_date: format(new Date(2024, 3, 29), "yyyy-MM-dd"),
-    end_date: format(new Date(2024, 4, 12), "yyyy-MM-dd"),
+    start_date: format(new Date(), "yyyy-MM-dd"),
+    end_date: format(new Date(), "yyyy-MM-dd"),
   });
   const [err, setErr] = useState(null);
   const [requests, setRequests] = useState({ inputs: [], outputs: [] });
@@ -42,9 +42,9 @@ const Pending = ({ account }) => {
     if (start > end) {
       msg = "start must be before end";
     }
-    /* if (start < today || end < today) {
+    if (start < today || end < today) {
       msg = "dates in the past will have timed out.";
-    } */
+    }
     setDates(temp);
     setErr(msg);
   };
@@ -127,7 +127,7 @@ const Pending = ({ account }) => {
     setRequests({ ...requests, ...temp });
   };
 
-  let requestElement = (req, user = true) => {
+  let requestElement = (req, user = true, i) => {
     let {
       id,
       direction,
@@ -152,7 +152,7 @@ const Pending = ({ account }) => {
     };
     let style = Object.keys(styles).find((style) => !!req[style]);
     return (
-      <Form>
+      <Form key={i}>
         <Row>
           <Col xs={1}>
             <Form.Control
@@ -304,110 +304,160 @@ const Pending = ({ account }) => {
   };
   return (
     <>
-      <Container className="text-center">
-        <Row>
-          <Form onSubmit={getRequests}>
-            <Row>
-              <Col className="text-primary d-flex justify-content-center align-items-center pt-3">
-                Filter bids & offers
-              </Col>
-            </Row>
-            <Row>
-              <Col className="text-danger d-flex justify-content-center align-items-center">
-                {err}
-              </Col>
-            </Row>
-            <Row className="d-flex justify-content-center py-3">
-              <Col xs={3} className="d-flex align-items-center">
-                <Form.Text className="text-muted">Start Date</Form.Text>
-                <Form.Control
-                  type="date"
-                  name="start_date"
-                  value={!dates.start_date ? dates.end_date : dates.start_date}
-                  onChange={updateDates}
-                />
-              </Col>
-              <Col xs={3} className="d-flex align-items-center">
-                <Form.Text className="text-muted">End Date</Form.Text>
-                <Form.Control
-                  type="date"
-                  name="end_date"
-                  value={!dates.end_date ? dates.start_date : dates.end_date}
-                  onChange={updateDates}
-                />
-              </Col>
-              <Col xs={1} className="d-flex align-items-center">
-                <Button
-                  type="submit"
-                  disabled={!!err}
-                  variant={!!err ? "danger" : "success"}
-                >
-                  Go
-                </Button>
-              </Col>
-            </Row>
-          </Form>
-        </Row>
-      </Container>
       <Container>
-        <Row className="justify-content-md-center px-5">
-          {submit && (
-            <Button variant="success" onClick={submitChanges}>
-              Save Changes
-            </Button>
-          )}
-        </Row>
-      </Container>
-      <Container>
-        <Container>
-          <Row>Inputs</Row>
-          <Container>
-            <Row>Your Bids</Row>
-            {Object.entries(groupedUserBids).map(([name, reqs], i) => (
-              <Container key={i}>
-                <Row>{name}</Row>
-                {reqs.map((req, i) => (
-                  <Row key={i}>{requestElement(req)}</Row>
-                ))}
-              </Container>
-            ))}
-          </Container>
-          <Container>
-            <Row>Counterparty Offers</Row>
-            {Object.entries(groupedCounterOffers).map(([name, reqs], i) => (
-              <Container key={i}>
-                <Row>{name}</Row>
-                {reqs.map((req, i) => (
-                  <Row key={i}>{requestElement(req, false)}</Row>
-                ))}
-              </Container>
-            ))}
-          </Container>
+        <Container className="text-center">
+          <Row>
+            <Form onSubmit={getRequests}>
+              <Row>
+                <Col className="text-primary d-flex justify-content-center align-items-center pt-3">
+                  Filter bids & offers
+                </Col>
+              </Row>
+              <Row>
+                <Col className="text-danger d-flex justify-content-center align-items-center">
+                  {err}
+                </Col>
+              </Row>
+              <Row className="d-flex justify-content-center py-3">
+                <Col xs={3} className="d-flex align-items-center">
+                  <Form.Text className="text-muted">Start Date</Form.Text>
+                  <Form.Control
+                    type="date"
+                    name="start_date"
+                    value={
+                      !dates.start_date ? dates.end_date : dates.start_date
+                    }
+                    onChange={updateDates}
+                  />
+                </Col>
+                <Col xs={3} className="d-flex align-items-center">
+                  <Form.Text className="text-muted">End Date</Form.Text>
+                  <Form.Control
+                    type="date"
+                    name="end_date"
+                    value={!dates.end_date ? dates.start_date : dates.end_date}
+                    onChange={updateDates}
+                  />
+                </Col>
+                <Col xs={1} className="d-flex align-items-center">
+                  <Button
+                    type="submit"
+                    disabled={!!err}
+                    variant={!!err ? "danger" : "success"}
+                  >
+                    Go
+                  </Button>
+                </Col>
+              </Row>
+            </Form>
+          </Row>
         </Container>
         <Container>
-          <Row>Outputs</Row>
-          <Container>
-            <Row>Your Offers</Row>
-            {Object.entries(groupedUserOffers).map(([name, reqs], i) => (
-              <Container key={i}>
-                <Row>{name}</Row>
-                {reqs.map((req, i) => (
-                  <Row key={i}>{requestElement(req)}</Row>
-                ))}
-              </Container>
-            ))}
-          </Container>
-          <Container>
-            <Row>Counterparty Bids</Row>
-            {Object.entries(groupedCounterBids).map(([name, reqs], i) => (
-              <Container key={i}>
-                <Row>{name}</Row>
-                {reqs.map((req, i) => (
-                  <Row key={i}>{requestElement(req, false)}</Row>
-                ))}
-              </Container>
-            ))}
-          </Container>
+          <Row className="justify-content-md-center px-5">
+            {submit && (
+              <Button variant="success" onClick={submitChanges}>
+                Save Changes
+              </Button>
+            )}
+          </Row>
+        </Container>
+      </Container>
+      <Container>
+        <Container>
+          <Accordion>
+            <Accordion.Item>
+              <Accordion.Header>Inputs</Accordion.Header>
+              <Accordion.Body>
+                <Accordion>
+                  <Accordion.Item>
+                    <Accordion.Header>Your Bids</Accordion.Header>
+                    <Accordion.Body>
+                      {Object.entries(groupedUserBids).map(
+                        ([name, reqs], i) => (
+                          <Accordion key={i}>
+                            <Accordion.Item>
+                              <Accordion.Header>{name}</Accordion.Header>
+                              <Accordion.Body>
+                                {reqs.map((req, i) =>
+                                  requestElement(req, true, i)
+                                )}
+                              </Accordion.Body>
+                            </Accordion.Item>
+                          </Accordion>
+                        )
+                      )}
+                    </Accordion.Body>
+                  </Accordion.Item>
+                  <Accordion.Item>
+                    <Accordion.Header>Counterparty Offers</Accordion.Header>
+                    <Accordion.Body>
+                      {Object.entries(groupedCounterOffers).map(
+                        ([name, reqs], i) => (
+                          <Accordion key={i}>
+                            <Accordion.Item>
+                              <Accordion.Header>{name}</Accordion.Header>
+                              <Accordion.Body>
+                                {reqs.map((req, i) =>
+                                  requestElement(req, false, i)
+                                )}
+                              </Accordion.Body>
+                            </Accordion.Item>
+                          </Accordion>
+                        )
+                      )}
+                    </Accordion.Body>
+                  </Accordion.Item>
+                </Accordion>
+              </Accordion.Body>
+            </Accordion.Item>
+          </Accordion>
+          <Accordion>
+            <Accordion.Item>
+              <Accordion.Header>Outputs</Accordion.Header>
+              <Accordion.Body>
+                <Accordion>
+                  <Accordion.Item>
+                    <Accordion.Header>Your Offers</Accordion.Header>
+                    <Accordion.Body>
+                      {Object.entries(groupedUserOffers).map(
+                        ([name, reqs], i) => (
+                          <Accordion key={i}>
+                            <Accordion.Item>
+                              <Accordion.Header>{name}</Accordion.Header>
+                              <Accordion.Body>
+                                {reqs.map((req, i) =>
+                                  requestElement(req, true, i)
+                                )}
+                              </Accordion.Body>
+                            </Accordion.Item>
+                          </Accordion>
+                        )
+                      )}
+                    </Accordion.Body>
+                  </Accordion.Item>
+                  <Accordion.Item>
+                    <Accordion.Header>Counterparty Bids</Accordion.Header>
+                    <Accordion.Body>
+                      {Object.entries(groupedCounterBids).map(
+                        ([name, reqs], i) => (
+                          <Accordion key={i}>
+                            <Accordion.Item>
+                              <Accordion.Header>{name}</Accordion.Header>
+                              <Accordion.Body>
+                                {reqs.map((req, i) =>
+                                  requestElement(req, false, i)
+                                )}
+                              </Accordion.Body>
+                            </Accordion.Item>
+                          </Accordion>
+                        )
+                      )}
+                    </Accordion.Body>
+                  </Accordion.Item>
+                </Accordion>
+              </Accordion.Body>
+            </Accordion.Item>
+          </Accordion>
         </Container>
       </Container>
     </>

@@ -143,13 +143,9 @@ const Create = () => {
     sendRequests(state.requests);
   };
 
-  let test = (e) => {
-    console.log(e.target.name);
-  };
-
   let sendRequests = async (requests) => {
     try {
-      let { status, err } = (
+      let { results, err } = (
         await axios.post(
           "http://localhost:6002/user/requests/add",
           { requests },
@@ -158,18 +154,45 @@ const Create = () => {
           }
         )
       ).data;
-      let strong = !!err ? "Error! Bad Form Data" : "Success!";
-      let body = !!err ? "Requests failed to submit" : "Requests submitted!";
-      let variant = !!err ? "danger" : "success";
-      let toast = { ...state.toast, strong, body, variant, showToast: true };
-      setState({ ...state, toast });
+      if (results) {
+        let { insertId, affectedRows } = results;
+        setState({ ...state, requests: [] });
+        dispatch(
+          accountActions.setToast({
+            trigger: true,
+            strong: "Success!",
+            small: "requests sumbited",
+            body: `Go to pending to view - request ID(s): ${insertId} to ${
+              insertId + affectedRows - 1
+            }`,
+            variant: "success",
+            delay: 6000,
+          })
+        );
+      }
+      if (err) {
+        dispatch(
+          accountActions.setToast({
+            trigger: true,
+            strong: "Error!",
+            small: "Bad Form Data",
+            body: `Please review your inputs`,
+            variant: "danger",
+            delay: 6000,
+          })
+        );
+      }
     } catch (e) {
-      let strong = "Connection Error!";
-      let body = "Couldn't connect to database. Requests not submitted";
-      let variant = "danger";
-      let toast = { ...state.toast, strong, body, variant, showToast: true };
-      setState({ ...state, toast });
-    } finally {
+      dispatch(
+        accountActions.setToast({
+          trigger: true,
+          strong: "Error!",
+          small: "Connection Error",
+          body: `Please contact admin`,
+          variant: "warning",
+          delay: 6000,
+        })
+      );
     }
   };
 
@@ -191,9 +214,13 @@ const Create = () => {
         >
           {state.requests.map((request, i) => {
             let errs = [...state.errs][i];
-
             return (
-              <Form.Group key={i} onChange={test}>
+              <Form.Group
+                key={i}
+                onChange={(e) => {
+                  handleChange(e, i);
+                }}
+              >
                 <Container fluid>
                   <Row>
                     <Col className="position-relative">
@@ -212,10 +239,7 @@ const Create = () => {
                         <Col>
                           <Form.Select
                             name="direction"
-                            value={request.direction}
-                            onChange={(e) => {
-                              handleChange(e, i);
-                            }}
+                            defaultValue={request.direction}
                           >
                             <option value="" disabled>
                               Buy/Sell
@@ -229,11 +253,8 @@ const Create = () => {
                         </Col>
                         <Col>
                           <Form.Select
-                            value={request.user_name}
+                            defaultValue={request.user_name}
                             name="user_name"
-                            onChange={(e) => {
-                              handleChange(e, i);
-                            }}
                           >
                             <option value="" disabled>
                               From/To
@@ -267,10 +288,7 @@ const Create = () => {
                             <Form.Control
                               type="date"
                               name="start_date"
-                              value={request.start_date}
-                              onChange={(e) => {
-                                handleChange(e, i);
-                              }}
+                              defaultValue={request.start_date}
                             />
                           </div>
                           <Form.Text className="text-danger">
@@ -285,10 +303,7 @@ const Create = () => {
                             <Form.Control
                               type="date"
                               name="end_date"
-                              value={request.end_date}
-                              onChange={(e) => {
-                                handleChange(e, i);
-                              }}
+                              defaultValue={request.end_date}
                             />
                           </div>
                           <Form.Text className="text-danger">
@@ -302,14 +317,11 @@ const Create = () => {
                             <Form.Control
                               type="number"
                               name="volume"
-                              value={request.volume}
+                              defaultValue={request.volume}
                               disabled={
                                 !request.start_date || !request.end_date
                               }
                               placeholder="Volume"
-                              onChange={(e) => {
-                                handleChange(e, i);
-                              }}
                             />
                             <Form.Text className="text-muted">Th/day</Form.Text>
                           </div>
@@ -324,14 +336,11 @@ const Create = () => {
                             <Form.Control
                               type="number"
                               name="price"
-                              value={request.price}
+                              defaultValue={request.price}
                               disabled={
                                 !request.start_date || !request.end_date
                               }
                               placeholder="Price"
-                              onChange={(e) => {
-                                handleChange(e, i);
-                              }}
                             />
                             <Form.Text className="text-muted">/Th</Form.Text>
                           </div>
@@ -346,11 +355,8 @@ const Create = () => {
                               name="total_volume"
                               disabled
                               readOnly
-                              value={request.total_volume}
+                              defaultValue={request.total_volume}
                               placeholder="Total Volume"
-                              onChange={(e) => {
-                                handleChange(e, i);
-                              }}
                             />
                             <Form.Text className="text-muted">Th</Form.Text>
                           </div>
