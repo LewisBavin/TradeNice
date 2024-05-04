@@ -1,21 +1,9 @@
 import axios from "axios";
 import React, { useState } from "react";
-import {
-  accountActions,
-  readAccount,
-} from "../../../Slices/AccountSlice";
+import { accountActions, readAccount } from "../../../Slices/AccountSlice";
 import { useDispatch, useSelector } from "react-redux";
 import { differenceInDays, startOfDay, toDate } from "date-fns";
-import {
-  Button,
-  Row,
-  Col,
-  Form,
-  Container,
-  Toast,
-  ToastContainer,
-} from "react-bootstrap";
-import MyToast from "../../MyToast";
+import { Button, Row, Col, Form, Container } from "react-bootstrap";
 
 const Create = () => {
   const dispatch = useDispatch();
@@ -24,10 +12,7 @@ const Create = () => {
     requests: [],
     errs: [],
     users: account.users,
-    toast: {},
   });
-
-  const [show, setShow] = useState(false);
 
   const requestParams = {
     direction: "",
@@ -153,6 +138,10 @@ const Create = () => {
     sendRequests(state.requests);
   };
 
+  let test = (e) => {
+    console.log(e.target.name);
+  };
+
   let sendRequests = async (requests) => {
     try {
       let { status, err } = (
@@ -190,12 +179,15 @@ const Create = () => {
   return (
     <>
       <div className="requests container flx col jc-c ai-c">
-        <Form className={state.requests.length ? "border border-light" : ""} onSubmit={handleSubmit}>
+        <Form
+          className={state.requests.length ? "border border-light" : ""}
+          onSubmit={handleSubmit}
+        >
           {state.requests.map((request, i) => {
             let errs = [...state.errs][i];
 
             return (
-              <Form.Group key={i}>
+              <Form.Group key={i} onChange={test}>
                 <Container fluid>
                   <Row>
                     <Col className="position-relative">
@@ -402,7 +394,6 @@ const Create = () => {
           </Container>
         </Form>
       </div>
-      {state.toast.showToast && <MyToast toastSettings={{ ...state.toast }} />}
     </>
   );
 };
