@@ -53,6 +53,7 @@ body {
 
 main {
   margin: 0;
+  width: 100vw;
 }
 
 footer,
@@ -76,30 +77,22 @@ header {
   top: 15%;
   left: 50%;
   transform: translate(-50%, -50%);
-  width: 95vw;
+  min-width: 100vw;
 }
 
-.loginContainer {
-  transform: translate(-50%, 100%);
-}
-.content.container {
+
+.content.container, .loginContainer {
   position: absolute;
   transform: translateX(-50%);
   left: 50%;
   height: 75vh;
-  width: 90vw;
   overflow-y: auto;
+  min-width: 100vw;
 }
-
-
-
-
 
 .root-container {
   width: 100vw;
 }
-
-
 
 .react-datepicker-wrapper {
   width: 100px;
@@ -131,9 +124,9 @@ header {
   text-align: center;
 }
 
-.loginContainer{
- position: absolute;
- top: 50px;
+.loginContainer {
+  position: absolute;
+  top: 50px;
 }
 
 .nav-pills.outer {

@@ -5,9 +5,8 @@ import { useDispatch, useSelector } from "react-redux";
 import { differenceInDays, startOfDay, toDate } from "date-fns";
 import { Button, Row, Col, Form, Container } from "react-bootstrap";
 
-const Create = () => {
+const Create = ({account}) => {
   const dispatch = useDispatch();
-  let account = useSelector(readAccount);
   const [state, setState] = useState({
     requests: [],
     errs: [],

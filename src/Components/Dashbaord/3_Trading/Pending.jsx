@@ -1,6 +1,14 @@
 import React, { useEffect, useState } from "react";
 import axios from "axios";
-import { Col, Row, Container, Form, Button, Accordion } from "react-bootstrap";
+import {
+  Col,
+  Row,
+  Container,
+  Form,
+  Button,
+  Accordion,
+  FloatingLabel,
+} from "react-bootstrap";
 import { differenceInDays, format, startOfDay, toDate } from "date-fns";
 
 const Pending = ({ account }) => {
@@ -151,84 +159,118 @@ const Pending = ({ account }) => {
     return (
       <Form
         key={i}
-        className="d-flex"
+        className="flx"
         onChange={(e) => {
           reqAction(e, id);
         }}
       >
-        <Form.Control
-          name="id"
-          disabled
-          defaultValue={id}
-          className={style && styles[style]}
-        />
-        <Form.Control
-          name="direction"
-          disabled
-          defaultValue={direction}
-          className={style && styles[style]}
-        />
-        <Form.Control
-          type="date"
-          name="start_date"
-          disabled
-          className={style && styles[style]}
-          defaultValue={format(start_date, "yyyy-MM-dd")}
-        />
-        <Form.Control
-          type="date"
-          name="end_date"
-          disabled
-          className={style && styles[style]}
-          defaultValue={format(end_date, "yyyy-MM-dd")}
-        />
-        <Form.Control
-          disabled={!user || !edit}
-          name="volume"
-          type="number"
-          defaultValue={volume}
-          className={style && styles[style]}
-        />
-
-        <Form.Control
-          disabled={!user || !edit}
-          name="price"
-          type="number"
-          className={style && styles[style]}
-          defaultValue={price}
-        />
-
-        <Form.Control
-          name="total_volume"
-          type="number"
-          disabled
-          className={style && styles[style]}
-          value={total_volume}
-        />
-
-        <Form.Select
-          name="action"
-          className="text-center"
-          value={style ? style : ""}
-          onChange={() => {}}
-        >
-          <option value="">&darr;</option>
-          {user && <option value="edit">edit</option>}
-          {user && <option value="remove">remove</option>}
-          {!user && <option value="accept">accept</option>}
-          {!user && <option value="reject">reject</option>}
-        </Form.Select>
-
         <Row>
-          {(req.edit || req.accept || req.remove || req.reject) && (
-            <Button
-              onClick={(e) => {
-                reqRevert(e, id);
-              }}
+          <Col>
+            <FloatingLabel label="id" aria-setsize={1} xs={1}>
+              <Form.Control
+                name="id"
+                disabled
+                defaultValue={id}
+                className={style && styles[style]}
+              />
+            </FloatingLabel>
+          </Col>
+
+          <Col>
+            <FloatingLabel label="direction">
+              <Form.Control
+                name="direction"
+                disabled
+                defaultValue={direction}
+                className={style && styles[style]}
+              />
+            </FloatingLabel>
+          </Col>
+          <Col>
+            <FloatingLabel label="start">
+              <Form.Control
+                type="date"
+                name="start_date"
+                disabled
+                className={style && styles[style]}
+                defaultValue={format(start_date, "yyyy-MM-dd")}
+              />
+            </FloatingLabel>
+          </Col>
+          <Col>
+            <FloatingLabel label="end">
+              <Form.Control
+                type="date"
+                name="end_date"
+                disabled
+                className={style && styles[style]}
+                defaultValue={format(end_date, "yyyy-MM-dd")}
+              />
+            </FloatingLabel>
+          </Col>
+          <Col>
+            <FloatingLabel label="volume">
+              <Form.Control
+                disabled={!user || !edit}
+                name="volume"
+                type="number"
+                defaultValue={volume}
+                className={style && styles[style]}
+              />
+            </FloatingLabel>
+          </Col>
+          <Col>
+            <FloatingLabel label="price">
+              <Form.Control
+                disabled={!user || !edit}
+                name="price"
+                type="number"
+                className={style && styles[style]}
+                defaultValue={price}
+              />
+            </FloatingLabel>
+          </Col>
+          <Col>
+            <FloatingLabel label="total">
+              <Form.Control
+                name="total_volume"
+                type="number"
+                disabled
+                className={style && styles[style]}
+                value={total_volume}
+              />
+            </FloatingLabel>
+          </Col>
+          <Col xs={2}>
+            <Form.Select
+              name="action"
+              className="text-center text-info"
+              value={style ? style : ""}
+              onChange={() => {}}
             >
-              Cancel
-            </Button>
-          )}
+              <option value="">{style ? "cancel" : "action"}</option>
+              {user && (
+                <option value="edit">
+                  {style ? <>Edit &darr;</> : "Edit"}
+                </option>
+              )}
+              {user && (
+                <option value="remove">
+                  {style ? <>Remove &darr;</> : "Remove"}
+                </option>
+              )}
+              {!user && (
+                <option value="accept">
+                  {style ? <>Accept &darr;</> : "Accept"}
+                </option>
+              )}
+              {!user && (
+                <option value="reject">
+                  {style ? <>Reject &darr;</> : "Reject"}
+                </option>
+              )}
+            </Form.Select>
+          </Col>
         </Row>
       </Form>
     );

@@ -28,12 +28,25 @@ import Container from "react-bootstrap/Container";
 import Nav from "react-bootstrap/Nav";
 import Navbar from "react-bootstrap/Navbar";
 import NavDropdown from "react-bootstrap/NavDropdown";
+import axios from "axios";
 
 const Dashboard = ({ account }) => {
   const dispatch = useDispatch();
   const [state, setState] = useState({
     view: !account.view ? { main: 0, inner: 0 } : account.view,
   });
+
+  let getUsers = async () => {
+    let users = (
+      await axios.get("http://localhost:6002/user/get/users", {
+        headers: { token: account.user.token },
+      })
+    ).data.users;
+    setState({ ...state, users });
+    dispatch(accountActions.setUsers(users));
+  };
+
+  !state.users && getUsers()
 
   const navMenu = [
     {
@@ -42,7 +55,7 @@ const Dashboard = ({ account }) => {
         {
           title: "Create Trades",
           header: "Post Bids & Offers to Desired Counterparties",
-          elem: <Create />,
+          elem: <Create account={account}/>,
         },
         {
           title: "Pending Trades",
