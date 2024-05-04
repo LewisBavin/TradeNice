@@ -137,10 +137,6 @@ const Pending = ({ account }) => {
       total_volume,
       price,
       edit,
-      accept,
-      reject,
-      cancel,
-      remove,
     } = req;
     req.edit ? ({ volume, total_volume, price } = req.edit) : null;
 
@@ -151,124 +147,88 @@ const Pending = ({ account }) => {
       edit: "text-primary",
     };
     let style = Object.keys(styles).find((style) => !!req[style]);
+    console.log(style);
     return (
-      <Form key={i}>
+      <Form
+        key={i}
+        className="d-flex"
+        onChange={(e) => {
+          reqAction(e, id);
+        }}
+      >
+        <Form.Control
+          name="id"
+          disabled
+          defaultValue={id}
+          className={style && styles[style]}
+        />
+        <Form.Control
+          name="direction"
+          disabled
+          defaultValue={direction}
+          className={style && styles[style]}
+        />
+        <Form.Control
+          type="date"
+          name="start_date"
+          disabled
+          className={style && styles[style]}
+          defaultValue={format(start_date, "yyyy-MM-dd")}
+        />
+        <Form.Control
+          type="date"
+          name="end_date"
+          disabled
+          className={style && styles[style]}
+          defaultValue={format(end_date, "yyyy-MM-dd")}
+        />
+        <Form.Control
+          disabled={!user || !edit}
+          name="volume"
+          type="number"
+          defaultValue={volume}
+          className={style && styles[style]}
+        />
+
+        <Form.Control
+          disabled={!user || !edit}
+          name="price"
+          type="number"
+          className={style && styles[style]}
+          defaultValue={price}
+        />
+
+        <Form.Control
+          name="total_volume"
+          type="number"
+          disabled
+          className={style && styles[style]}
+          value={total_volume}
+        />
+
+        <Form.Select
+          name="action"
+          className="text-center"
+          value={style ? style : ""}
+          onChange={() => {}}
+        >
+          <option value="">&darr;</option>
+          {user && <option value="edit">edit</option>}
+          {user && <option value="remove">remove</option>}
+          {!user && <option value="accept">accept</option>}
+          {!user && <option value="reject">reject</option>}
+        </Form.Select>
+
         <Row>
-          <Col xs={1}>
-            <Form.Control
-              name="id"
-              disabled
-              value={id}
-              className={style && styles[style]}
-              onChange={(e) => {
-                reqAction(e, id);
+          {(req.edit || req.accept || req.remove || req.reject) && (
+            <Button
+              onClick={(e) => {
+                reqRevert(e, id);
               }}
-            />
-          </Col>
-          <Col xs={1}>
-            <Form.Control
-              name="direction"
-              disabled
-              value={direction}
-              className={style && styles[style]}
-              onChange={(e) => {
-                reqAction(e, id);
-              }}
-            />
-          </Col>
-          <Col xs={2}>
-            <Form.Control
-              type="date"
-              name="start_date"
-              disabled
-              className={style && styles[style]}
-              value={format(start_date, "yyyy-MM-dd")}
-              onChange={(e) => {
-                reqAction(e, id);
-              }}
-            />
-          </Col>
-          <Col xs={2}>
-            <Form.Control
-              type="date"
-              name="end_date"
-              disabled
-              className={style && styles[style]}
-              value={format(end_date, "yyyy-MM-dd")}
-              onChange={(e) => {
-                reqAction(e, id);
-              }}
-            />
-          </Col>
-          <Col xs={2}>
-            <Form.Control
-              disabled={!user || !edit}
-              name="volume"
-              type="number"
-              value={volume}
-              className={style && styles[style]}
-              onChange={(e) => {
-                reqAction(e, id);
-              }}
-            />
-          </Col>
-
-          <Col>
-            <Form.Control
-              disabled={!user || !edit}
-              name="price"
-              type="number"
-              className={style && styles[style]}
-              value={price}
-              onChange={(e) => {
-                reqAction(e, id);
-              }}
-            />
-          </Col>
-
-          <Col xs={2}>
-            <Form.Control
-              name="total_volume"
-              type="number"
-              disabled
-              className={style && styles[style]}
-              value={total_volume}
-              onChange={(e) => {
-                reqAction(e, id);
-              }}
-            />
-          </Col>
-          <Col xs={1}>
-            <Form.Select
-              name="action"
-              className="text-center"
-              onChange={(e) => {
-                reqAction(e, id);
-              }}
-              defaultValue={style ? style : ""}
             >
-              <option value="" disabled>
-                &darr;
-              </option>
-              {user && <option value="edit">edit</option>}
-              {user && <option value="remove">remove</option>}
-              {!user && <option value="accept">accept</option>}
-              {!user && <option value="reject">reject</option>}
-            </Form.Select>
-          </Col>
-        </Row>
-        <Row className="d-flex justify-content-center pb-3">
-          <Col xs={1}>
-            {(req.edit || req.accept || req.remove || req.reject) && (
-              <Button
-                onClick={(e) => {
-                  reqRevert(e, id);
-                }}
-              >
-                Cancel
-              </Button>
-            )}
-          </Col>
+              Cancel
+            </Button>
+          )}
         </Row>
       </Form>
     );
