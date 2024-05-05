@@ -10,8 +10,11 @@ import {
   FloatingLabel,
 } from "react-bootstrap";
 import { differenceInDays, format, startOfDay, toDate } from "date-fns";
+import { useDispatch } from "react-redux";
+import { accountActions, readAccount } from "../../../Slices/AccountSlice";
 
 const Pending = ({ account }) => {
+  const dispatch = useDispatch();
   const [dates, setDates] = useState({
     start_date: format(new Date(), "yyyy-MM-dd"),
     end_date: format(new Date(), "yyyy-MM-dd"),
@@ -94,12 +97,12 @@ const Pending = ({ account }) => {
   );
 
   let reqRevert = (e, id) => {
-    let eVal = e.target.value;
-    let eName = e.target.name;
     let temp = { inputs: [...requests.inputs], outputs: [...requests.outputs] };
-    let req =
-      temp.inputs.find((el) => id == el.id) ||
-      temp.outputs.find((el) => id == el.id);
+    let inputs = [...temp.inputs],
+      outputs = [...temp.outputs];
+    let inputReq = inputs[inputs.findIndex((el) => id == el.id)];
+    let outputReq = inputs[inputs.findIndex((el) => id == el.id)];
+    let req = !inputReq ? outputReq : inputReq;
     req.remove ? delete req.remove : null;
     req.accept ? delete req.accept : null;
     req.reject ? delete req.reject : null;
@@ -147,6 +150,7 @@ const Pending = ({ account }) => {
       edit,
     } = req;
     req.edit ? ({ volume, total_volume, price } = req.edit) : null;
+    id == 92 && console.log(volume, price, total_volume);
 
     let styles = {
       accept: "text-success",
@@ -155,7 +159,6 @@ const Pending = ({ account }) => {
       edit: "text-primary",
     };
     let style = Object.keys(styles).find((style) => !!req[style]);
-    console.log(style);
     return (
       <Form
         key={i}
@@ -166,7 +169,7 @@ const Pending = ({ account }) => {
       >
         <Row>
           <Col>
-            <FloatingLabel label="id" aria-setsize={1} xs={1}>
+            <FloatingLabel label="Id" aria-setsize={1} xs={1}>
               <Form.Control
                 name="id"
                 disabled
@@ -177,7 +180,7 @@ const Pending = ({ account }) => {
           </Col>
 
           <Col>
-            <FloatingLabel label="direction">
+            <FloatingLabel label="Dir">
               <Form.Control
                 name="direction"
                 disabled
@@ -187,7 +190,7 @@ const Pending = ({ account }) => {
             </FloatingLabel>
           </Col>
           <Col>
-            <FloatingLabel label="start">
+            <FloatingLabel label="Start">
               <Form.Control
                 type="date"
                 name="start_date"
@@ -198,7 +201,7 @@ const Pending = ({ account }) => {
             </FloatingLabel>
           </Col>
           <Col>
-            <FloatingLabel label="end">
+            <FloatingLabel label="End">
               <Form.Control
                 type="date"
                 name="end_date"
@@ -209,29 +212,29 @@ const Pending = ({ account }) => {
             </FloatingLabel>
           </Col>
           <Col>
-            <FloatingLabel label="volume">
+            <FloatingLabel label="Vol / Day">
               <Form.Control
                 disabled={!user || !edit}
                 name="volume"
                 type="number"
-                defaultValue={volume}
+                value={volume}
                 className={style && styles[style]}
               />
             </FloatingLabel>
           </Col>
           <Col>
-            <FloatingLabel label="price">
+            <FloatingLabel label="Price">
               <Form.Control
                 disabled={!user || !edit}
                 name="price"
                 type="number"
                 className={style && styles[style]}
-                defaultValue={price}
+                value={price}
               />
             </FloatingLabel>
           </Col>
           <Col>
-            <FloatingLabel label="total">
+            <FloatingLabel label="Tot Vol">
               <Form.Control
                 name="total_volume"
                 type="number"
@@ -248,7 +251,15 @@ const Pending = ({ account }) => {
               value={style ? style : ""}
               onChange={() => {}}
             >
-              <option value="">{style ? "cancel" : "action"}</option>
+              <option
+                disabled={!style}
+                onClick={(e) => {
+                  reqRevert(e, id);
+                }}
+                value=""
+              >
+                {style ? "Cancel" : "Action"}
+              </option>
               {user && (
                 <option value="edit">
                   {style ? <>Edit &darr;</> : "Edit"}
@@ -275,35 +286,62 @@ const Pending = ({ account }) => {
       </Form>
     );
   };
+
   let submitChanges = async () => {
-    if (submits.removes.length) {
-      await axios.post(
-        "http://localhost:6002/user/requests/remove",
-        { submits },
-        {
-          headers: { token: account.user.token },
-        }
-      );
-    }
-    if (submits.rejects.length) {
-      await axios.post(
-        "http://localhost:6002/user/requests/reject",
-        { submits },
-        {
-          headers: { token: account.user.token },
-        }
-      );
-    }
-    if (submits.accepts.length) {
-      await axios.post(
-        "http://localhost:6002/user/requests/accept",
-        { submits },
-        {
-          headers: { token: account.user.token },
-        }
+    try {
+      let response = (
+        await axios.post(
+          "http://localhost:6002/user/requests/changes",
+          { submits },
+          {
+            headers: { token: account.user.token },
+          }
+        )
+      ).data;
+      if (response) {
+        let body = Object.keys(response).reduce((accum, val) => {
+          let rows = response[val].affectedRows;
+          accum = (
+            <>
+              {accum}
+              <div>{`${rows} ${val} actioned successfully `}</div>
+            </>
+          );
+          return accum;
+        }, <></>);
+
+        dispatch(
+          accountActions.setToast({
+            trigger: true,
+            strong: "Success!",
+            body,
+            variant: "success",
+            delay: 5000,
+          })
+        );
+      } else {
+        dispatch(
+          accountActions.setToast({
+            trigger: true,
+            strong: "Error!",
+            body: "Nothing was changed",
+            variant: "danger",
+          })
+        );
+      }
+    } catch (e) {
+      dispatch(
+        accountActions.setToast({
+          trigger: true,
+          strong: "Error!",
+          small: "connection error",
+          body: "please contact admin",
+          variant: "warning",
+        })
       );
     }
   };
+
   return (
     <>
       <Container>
