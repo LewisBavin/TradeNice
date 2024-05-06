@@ -3,9 +3,16 @@ import React, { useState } from "react";
 import { accountActions, readAccount } from "../../../Slices/AccountSlice";
 import { useDispatch, useSelector } from "react-redux";
 import { differenceInDays, startOfDay, toDate } from "date-fns";
-import { Button, Row, Col, Form, Container } from "react-bootstrap";
+import {
+  Button,
+  Row,
+  Col,
+  Form,
+  Container,
+  FloatingLabel,
+} from "react-bootstrap";
 
-const Create = ({account}) => {
+const Create = ({ account }) => {
   const dispatch = useDispatch();
   const [state, setState] = useState({
     requests: [],
@@ -211,6 +218,19 @@ const Create = ({account}) => {
           className={state.requests.length ? "border border-light" : ""}
           onSubmit={handleSubmit}
         >
+          {state.requests.length ? (
+            <>
+              <Button
+                hidden={!state.requests.length}
+                disabled={isBlanks || areErrors}
+                type="Submit"
+                variant={isBlanks || areErrors ? "danger" : "success"}
+              >
+                Submit
+              </Button>
+              <div className="divider py-1 bg-secondary"></div>
+            </>
+          ) : null}
           {state.requests.map((request, i) => {
             let errs = [...state.errs][i];
             return (
@@ -379,16 +399,7 @@ const Create = ({account}) => {
                   +
                 </Button>
               </Col>
-              <Col>
-                <Button
-                  hidden={!state.requests.length}
-                  disabled={isBlanks || areErrors}
-                  type="Submit"
-                  variant={isBlanks || areErrors ? "danger" : "success"}
-                >
-                  Submit
-                </Button>
-              </Col>
+              <Col></Col>
             </Row>
           </Container>
         </Form>
