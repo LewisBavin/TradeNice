@@ -63,7 +63,7 @@ const Pending = ({ account, users }) => {
   let getRequests = async (e) => {
     e.preventDefault();
     let { status, err, inputs, outputs } = (
-      await axios.get("http://localhost:6002/user/get/Requests", {
+      await axios.get("http://localhost:6002/user/get/Requests/pending", {
         headers: {
           token: account.user.token,
           ...dates /* start_date: toDate(dates.start_date), end_date: toDate(dates.end_date) */,
@@ -161,127 +161,114 @@ const Pending = ({ account, users }) => {
     return (
       <Form
         key={i}
-        className="flx"
+        className="flx jc-c ai-c"
         onChange={(e) => {
           reqAction(e, id);
         }}
       >
-        <Row>
-          <Col xs={1}>
-            <FloatingLabel label="Id">
-              <Form.Control
-                name="id"
-                disabled
-                defaultValue={id}
-                className={style && styles[style]}
-              />
-            </FloatingLabel>
-          </Col>
+        <FloatingLabel label="Id">
+          <Form.Control
+            name="id"
+            disabled
+            defaultValue={id}
+            className={style && styles[style]}
+          />
+        </FloatingLabel>
 
-          <Col xs={1}>
-            <FloatingLabel label="Dir">
-              <Form.Control
-                name="direction"
-                disabled
-                defaultValue={direction}
-                className={style && styles[style]}
-              />
-            </FloatingLabel>
-          </Col>
-          <Col xs={2}>
-            <FloatingLabel label="Start">
-              <Form.Control
-                type="date"
-                name="start_date"
-                disabled
-                className={style && styles[style]}
-                defaultValue={format(start_date, "yyyy-MM-dd")}
-              />
-            </FloatingLabel>
-          </Col>
-          <Col xs={2}>
-            <FloatingLabel label="End">
-              <Form.Control
-                type="date"
-                name="end_date"
-                disabled
-                className={style && styles[style]}
-                defaultValue={format(end_date, "yyyy-MM-dd")}
-              />
-            </FloatingLabel>
-          </Col>
-          <Col xs={2}>
-            <FloatingLabel label="Vol / Day">
-              <Form.Control
-                disabled={!user || !edit}
-                name="volume"
-                type="number"
-                value={volume}
-                className={style && styles[style]}
-              />
-            </FloatingLabel>
-          </Col>
-          <Col xs={1}>
-            <FloatingLabel label="Price">
-              <Form.Control
-                disabled={!user || !edit}
-                name="price"
-                type="number"
-                className={style && styles[style]}
-                value={price}
-              />
-            </FloatingLabel>
-          </Col>
-          <Col xs={1}>
-            <FloatingLabel label="Tot Vol">
-              <Form.Control
-                name="total_volume"
-                type="number"
-                disabled
-                className={style && styles[style]}
-                value={total_volume}
-              />
-            </FloatingLabel>
-          </Col>
-          <Col xs={1}>
-            <Form.Select
-              name="action"
-              className="text-center text-info"
-              value={style ? style : ""}
-              onChange={() => {}}
-            >
-              <option
-                disabled={!style}
-                onClick={(e) => {
-                  reqRevert(e, id);
-                }}
-                value=""
-              >
-                {style ? "Cancel" : "Action"}
-              </option>
-              {user && (
-                <option value="edit">
-                  {style ? <>Edit &darr;</> : "Edit"}
-                </option>
-              )}
-              {user && (
-                <option value="remove">
-                  {style ? <>Remove &darr;</> : "Remove"}
-                </option>
-              )}
-              {!user && (
-                <option value="accept">
-                  {style ? <>Accept &darr;</> : "Accept"}
-                </option>
-              )}
-              {!user && (
-                <option value="reject">
-                  {style ? <>Reject &darr;</> : "Reject"}
-                </option>
-              )}
-            </Form.Select>
-          </Col>
-        </Row>
+        <FloatingLabel label="Dir">
+          <Form.Control
+            name="direction"
+            disabled
+            defaultValue={direction}
+            className={style && styles[style]}
+          />
+        </FloatingLabel>
+
+        <FloatingLabel label="Start">
+          <Form.Control
+            type="date"
+            name="start_date"
+            disabled
+            className={style && styles[style]}
+            defaultValue={format(start_date, "yyyy-MM-dd")}
+          />
+        </FloatingLabel>
+
+        <FloatingLabel label="End">
+          <Form.Control
+            type="date"
+            name="end_date"
+            disabled
+            className={style && styles[style]}
+            defaultValue={format(end_date, "yyyy-MM-dd")}
+          />
+        </FloatingLabel>
+
+        <FloatingLabel label="Vol / Day">
+          <Form.Control
+            disabled={!user || !edit}
+            name="volume"
+            type="number"
+            value={volume}
+            className={style && styles[style]}
+          />
+        </FloatingLabel>
+
+        <FloatingLabel label="Price">
+          <Form.Control
+            disabled={!user || !edit}
+            name="price"
+            type="number"
+            className={style && styles[style]}
+            value={price}
+          />
+        </FloatingLabel>
+
+        <FloatingLabel label="Tot Vol">
+          <Form.Control
+            name="total_volume"
+            type="number"
+            disabled
+            className={style && styles[style]}
+            value={total_volume}
+          />
+        </FloatingLabel>
+
+        <Form.Select
+          name="action"
+          className="text-center text-info"
+          style={{ maxWidth: "120px" }}
+          value={style ? style : ""}
+          onChange={() => {}}
+        >
+          <option
+            disabled={!style}
+            onClick={(e) => {
+              reqRevert(e, id);
+            }}
+            value=""
+          >
+            {style ? "Cancel" : "Action"}
+          </option>
+          {user && (
+            <option value="edit">{style ? <>Edit &darr;</> : "Edit"}</option>
+          )}
+          {user && (
+            <option value="remove">
+              {style ? <>Remove &darr;</> : "Remove"}
+            </option>
+          )}
+          {!user && (
+            <option value="accept">
+              {style ? <>Accept &darr;</> : "Accept"}
+            </option>
+          )}
+          {!user && (
+            <option value="reject">
+              {style ? <>Reject &darr;</> : "Reject"}
+            </option>
+          )}
+        </Form.Select>
       </Form>
     );
   };
@@ -300,14 +287,12 @@ const Pending = ({ account, users }) => {
       if (response) {
         let body = Object.keys(response).reduce((accum, val) => {
           let rows = response[val].affectedRows;
-          accum = (
-            <>
-              {accum}
-              <div>{`${rows} ${val} actioned successfully `}</div>
-            </>
-          );
+          accum = `${accum}
+          ${rows} ${val} actioned successfully.`;
+
           return accum;
-        }, <></>);
+        }, "");
+        setRequests({ inputs: [], outputs: [] });
 
         dispatch(
           accountActions.setToast({
@@ -392,7 +377,7 @@ const Pending = ({ account, users }) => {
           </Row>
         </Container>
         <Container>
-          <Row className="justify-content-md-center px-5">
+          <Row className="justify-content-md-center p-2">
             {submit && (
               <Button variant="success" onClick={submitChanges}>
                 Save Changes

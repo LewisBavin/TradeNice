@@ -169,6 +169,7 @@ const Create = ({ account, users }) => {
         );
       }
       if (err) {
+        console.log(err)
         dispatch(
           accountActions.setToast({
             trigger: true,

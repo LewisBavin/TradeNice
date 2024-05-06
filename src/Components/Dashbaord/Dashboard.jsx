@@ -79,12 +79,12 @@ const Dashboard = ({ account }) => {
         {
           title: "Agreed Trades",
           header: "View Your Matched Trades",
-          elem: <Agreed account={account} />,
+          elem: <Agreed account={account} users={users} />,
         },
         {
           title: "Dispute",
           header: "See An Issue With A Trade? Raise A Dispute",
-          elem: <Dispute account={account} />,
+          elem: <Dispute account={account} users={users} />,
         },
       ],
     },
