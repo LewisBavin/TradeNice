@@ -12,13 +12,14 @@ import {
   FloatingLabel,
 } from "react-bootstrap";
 
-const Create = ({ account }) => {
+const Create = ({ account, users }) => {
   const dispatch = useDispatch();
   const [state, setState] = useState({
     requests: [],
     errs: [],
-    users: account.users,
+    users
   });
+
 
   const requestParams = {
     direction: "",
@@ -31,15 +32,6 @@ const Create = ({ account }) => {
     price: "",
   };
 
-  let getUsers = async () => {
-    let users = (
-      await axios.get("http://localhost:6002/user/get/users", {
-        headers: { token: account.user.token },
-      })
-    ).data.users;
-    setState({ ...state, users });
-    dispatch(accountActions.setUsers(users));
-  };
 
   let addRequest = () => {
     let [requests, errs] = [[...state.requests], [...state.errs]];
@@ -202,8 +194,6 @@ const Create = ({ account }) => {
     }
   };
 
-  !state.users ? getUsers() : null;
-
   let areErrors = state.errs.some((err) =>
     Object.values(err).some((val) => !!val)
   );
@@ -213,24 +203,20 @@ const Create = ({ account }) => {
 
   return (
     <>
-      <div className="requests container flx col jc-c ai-c">
-        <Form
-          className={state.requests.length ? "border border-light" : ""}
-          onSubmit={handleSubmit}
+      <div className="requests container col flx jc-c ai-c">
+        <Button onClick={addRequest} variant="outline-success" className="my-1">
+          +
+        </Button>
+        <Button
+          hidden={!state.requests.length}
+          disabled={isBlanks || areErrors}
+          variant={isBlanks || areErrors ? "danger" : "success"}
+          onClick={handleSubmit}
+          className="my-1"
         >
-          {state.requests.length ? (
-            <>
-              <Button
-                hidden={!state.requests.length}
-                disabled={isBlanks || areErrors}
-                type="Submit"
-                variant={isBlanks || areErrors ? "danger" : "success"}
-              >
-                Submit
-              </Button>
-              <div className="divider py-1 bg-secondary"></div>
-            </>
-          ) : null}
+          Submit
+        </Button>
+        <Form className="border border-light d-flex">
           {state.requests.map((request, i) => {
             let errs = [...state.errs][i];
             return (
@@ -241,167 +227,120 @@ const Create = ({ account }) => {
                 }}
               >
                 <Container fluid>
-                  <Row>
-                    <Col className="position-relative">
-                      <Button
-                        onClick={() => {
-                          removeRequest(i);
-                        }}
-                        variant="outline-danger"
-                        className="position-absolute top-50 start-50 translate-middle"
-                      >
-                        -
-                      </Button>
-                    </Col>
-                    <Col xs={10}>
-                      <Row className="py-2">
-                        <Col>
-                          <Form.Select
-                            name="direction"
-                            defaultValue={request.direction}
-                          >
-                            <option value="" disabled>
-                              Buy/Sell
-                            </option>
-                            <option>Buy</option>
-                            <option>Sell</option>
-                          </Form.Select>
-                          <Form.Text className="text-danger">
-                            {errs.direction}
-                          </Form.Text>
-                        </Col>
-                        <Col>
-                          <Form.Select
-                            defaultValue={request.user_name}
-                            name="user_name"
-                          >
-                            <option value="" disabled>
-                              From/To
-                            </option>
-                            {state.users &&
-                              state.users.map((u, k) => (
-                                <option key={k} value={u.name}>
-                                  {u.name}
-                                </option>
-                              ))}
-                          </Form.Select>
-                          <Form.Text className="text-danger">
-                            {errs.user_name}
-                          </Form.Text>
-                        </Col>
-                        <Col>
-                          <Form.Control
-                            defaultValue={request.counter_id}
-                            name="counter_id"
-                            disabled
-                            placeholder="Counter ID"
-                          ></Form.Control>
-                        </Col>
-                      </Row>
-                      <Row className="py-2">
-                        <Col>
-                          <div className="flx">
-                            <Form.Text className="text-muted">
-                              Start Date
-                            </Form.Text>
-                            <Form.Control
-                              type="date"
-                              name="start_date"
-                              defaultValue={request.start_date}
-                            />
-                          </div>
-                          <Form.Text className="text-danger">
-                            {errs.start_date}
-                          </Form.Text>
-                        </Col>
-                        <Col>
-                          <div className="flx">
-                            <Form.Text className="text-muted">
-                              End Date
-                            </Form.Text>
-                            <Form.Control
-                              type="date"
-                              name="end_date"
-                              defaultValue={request.end_date}
-                            />
-                          </div>
-                          <Form.Text className="text-danger">
-                            {errs.end_date}
-                          </Form.Text>
-                        </Col>
-                      </Row>
-                      <Row className="py-2">
-                        <Col>
-                          <div className="flx">
-                            <Form.Control
-                              type="number"
-                              name="volume"
-                              defaultValue={request.volume}
-                              disabled={
-                                !request.start_date || !request.end_date
-                              }
-                              placeholder="Volume"
-                            />
-                            <Form.Text className="text-muted">Th/day</Form.Text>
-                          </div>
-                          <Form.Text className="text-danger">
-                            {errs.volume}
-                          </Form.Text>
-                        </Col>
+                  <FloatingLabel label="direction">
+                    <Form.Select
+                      name="direction"
+                      defaultValue={request.direction}
+                    >
+                      <option value="" disabled>
+                        Buy/Sell
+                      </option>
+                      <option>Buy</option>
+                      <option>Sell</option>
+                    </Form.Select>
+                    <Form.Text className="text-danger">
+                      {errs.direction}
+                    </Form.Text>
+                  </FloatingLabel>
 
-                        <Col>
-                          <div className="flx">
-                            <Form.Text className="text-muted">£</Form.Text>
-                            <Form.Control
-                              type="number"
-                              name="price"
-                              defaultValue={request.price}
-                              disabled={
-                                !request.start_date || !request.end_date
-                              }
-                              placeholder="Price"
-                            />
-                            <Form.Text className="text-muted">/Th</Form.Text>
-                          </div>
-                          <Form.Text className="text-danger">
-                            {errs.price}
-                          </Form.Text>
-                        </Col>
-                        <Col>
-                          <div className="flx">
-                            <Form.Control
-                              type="number"
-                              name="total_volume"
-                              disabled
-                              readOnly
-                              defaultValue={request.total_volume}
-                              placeholder="Total Volume"
-                            />
-                            <Form.Text className="text-muted">Th</Form.Text>
-                          </div>
-                        </Col>
-                      </Row>
-                    </Col>
-                  </Row>
+                  <FloatingLabel label="counterparty">
+                    <Form.Select
+                      defaultValue={request.user_name}
+                      name="user_name"
+                    >
+                      <option value="" disabled>
+                        From/To
+                      </option>
+                      {state.users &&
+                        state.users.map((u, k) => (
+                          <option key={k} value={u.name}>
+                            {u.name}
+                          </option>
+                        ))}
+                    </Form.Select>
+                    <Form.Text className="text-danger">
+                      {errs.user_name}
+                    </Form.Text>
+                  </FloatingLabel>
+
+                  <FloatingLabel label="counter id">
+                    <Form.Control
+                      defaultValue={request.counter_id}
+                      name="counter_id"
+                      disabled
+                      placeholder="Counter ID"
+                    ></Form.Control>
+                  </FloatingLabel>
+
+                  <FloatingLabel label="start">
+                    <Form.Control
+                      type="date"
+                      name="start_date"
+                      defaultValue={request.start_date}
+                    />
+
+                    <Form.Text className="text-danger">
+                      {errs.start_date}
+                    </Form.Text>
+                  </FloatingLabel>
+
+                  <FloatingLabel label="end">
+                    <Form.Control
+                      type="date"
+                      name="end_date"
+                      defaultValue={request.end_date}
+                    />
+                    <Form.Text className="text-danger">
+                      {errs.end_date}
+                    </Form.Text>
+                  </FloatingLabel>
+
+                  <FloatingLabel label="volume Th/day">
+                    <Form.Control
+                      type="number"
+                      name="volume"
+                      defaultValue={request.volume}
+                      disabled={!request.start_date || !request.end_date}
+                      placeholder="Volume"
+                    />
+
+                    <Form.Text className="text-danger">{errs.volume}</Form.Text>
+                  </FloatingLabel>
+
+                  <FloatingLabel label="price p/Th" className="text-wrap">
+                    <Form.Control
+                      type="number"
+                      name="price"
+                      defaultValue={request.price}
+                      disabled={!request.start_date || !request.end_date}
+                      placeholder="Price"
+                    />
+
+                    <Form.Text className="text-danger">{errs.price}</Form.Text>
+                  </FloatingLabel>
+
+                  <FloatingLabel label="total vol Th">
+                    <Form.Control
+                      type="number"
+                      name="total_volume"
+                      disabled
+                      readOnly
+                      defaultValue={request.total_volume}
+                      placeholder="Total Volume"
+                    />
+                  </FloatingLabel>
+                  <Button
+                    onClick={() => {
+                      removeRequest(i);
+                    }}
+                    variant="outline-danger"
+                  >
+                    -
+                  </Button>
                 </Container>
-                <div className="divider py-1 bg-secondary"></div>
               </Form.Group>
             );
           })}
-          <Container fluid>
-            <Row>
-              <Col>
-                <Button
-                  onClick={addRequest}
-                  variant="outline-success"
-                  className=""
-                >
-                  +
-                </Button>
-              </Col>
-              <Col></Col>
-            </Row>
-          </Container>
         </Form>
       </div>
     </>

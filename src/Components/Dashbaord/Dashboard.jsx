@@ -35,18 +35,32 @@ const Dashboard = ({ account }) => {
   const [state, setState] = useState({
     view: !account.view ? { main: 0, inner: 0 } : account.view,
   });
+  const [users, setUsers] = useState(account.users);
 
-  let getUsers = async () => {
-    let users = (
-      await axios.get("http://localhost:6002/user/get/users", {
-        headers: { token: account.user.token },
-      })
-    ).data.users;
-    setState({ ...state, users });
-    dispatch(accountActions.setUsers(users));
-  };
-
-  !state.users && getUsers()
+  useEffect(() => {
+    if (!users) {
+      (async function getUsers() {
+        let users = (
+          await axios.get("http://localhost:6002/user/get/users", {
+            headers: { token: account.user.token },
+          })
+        ).data.users;
+        if (users) {
+          setUsers(users);
+          dispatch(accountActions.setUsers(users));
+        } else {
+          dispatch(
+            accountActions.setToast({
+              trigger: true,
+              strong: "Session error",
+              variant: "danger",
+              body: "Please log out and in again",
+            })
+          );
+        }
+      })();
+    }
+  }, [users]);
 
   const navMenu = [
     {
@@ -55,12 +69,12 @@ const Dashboard = ({ account }) => {
         {
           title: "Create Trades",
           header: "Post Bids & Offers to Desired Counterparties",
-          elem: <Create account={account}/>,
+          elem: <Create account={account} users={users} />,
         },
         {
           title: "Pending Trades",
           header: "Edit Your Pending Trades & Action Counterparty Trades",
-          elem: <Pending account={account} />,
+          elem: <Pending account={account} users={users} />,
         },
         {
           title: "Agreed Trades",
@@ -140,7 +154,6 @@ const Dashboard = ({ account }) => {
 
   return (
     <>
-      {" "}
       <Navbar
         expand="lg"
         className="bg-body-tertiary mx-5"
@@ -151,7 +164,11 @@ const Dashboard = ({ account }) => {
       >
         <Container>
           <Col xs={2}>
-            <Navbar.Brand href="#home" className="text-center text-wrap fs-8" xs={2}>
+            <Navbar.Brand
+              href="#home"
+              className="text-center text-wrap fs-8"
+              xs={2}
+            >
               {content.header}
             </Navbar.Brand>
           </Col>
@@ -201,7 +218,6 @@ const Dashboard = ({ account }) => {
                         <Nav.Item
                           style={{
                             backgroundColor: "grey",
-       
                           }}
                           onMouseEnter={() => {
                             setTabs(main, j);

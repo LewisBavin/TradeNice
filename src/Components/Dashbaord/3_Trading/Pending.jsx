@@ -13,7 +13,7 @@ import { differenceInDays, format, startOfDay, toDate } from "date-fns";
 import { useDispatch } from "react-redux";
 import { accountActions, readAccount } from "../../../Slices/AccountSlice";
 
-const Pending = ({ account }) => {
+const Pending = ({ account, users }) => {
   const dispatch = useDispatch();
   const [dates, setDates] = useState({
     start_date: format(new Date(), "yyyy-MM-dd"),
@@ -150,7 +150,6 @@ const Pending = ({ account }) => {
       edit,
     } = req;
     req.edit ? ({ volume, total_volume, price } = req.edit) : null;
-    id == 92 && console.log(volume, price, total_volume);
 
     let styles = {
       accept: "text-success",
@@ -168,8 +167,8 @@ const Pending = ({ account }) => {
         }}
       >
         <Row>
-          <Col>
-            <FloatingLabel label="Id" aria-setsize={1} xs={1}>
+          <Col xs={1}>
+            <FloatingLabel label="Id">
               <Form.Control
                 name="id"
                 disabled
@@ -179,7 +178,7 @@ const Pending = ({ account }) => {
             </FloatingLabel>
           </Col>
 
-          <Col>
+          <Col xs={1}>
             <FloatingLabel label="Dir">
               <Form.Control
                 name="direction"
@@ -189,7 +188,7 @@ const Pending = ({ account }) => {
               />
             </FloatingLabel>
           </Col>
-          <Col>
+          <Col xs={2}>
             <FloatingLabel label="Start">
               <Form.Control
                 type="date"
@@ -200,7 +199,7 @@ const Pending = ({ account }) => {
               />
             </FloatingLabel>
           </Col>
-          <Col>
+          <Col xs={2}>
             <FloatingLabel label="End">
               <Form.Control
                 type="date"
@@ -211,7 +210,7 @@ const Pending = ({ account }) => {
               />
             </FloatingLabel>
           </Col>
-          <Col>
+          <Col xs={2}>
             <FloatingLabel label="Vol / Day">
               <Form.Control
                 disabled={!user || !edit}
@@ -222,7 +221,7 @@ const Pending = ({ account }) => {
               />
             </FloatingLabel>
           </Col>
-          <Col>
+          <Col xs={1}>
             <FloatingLabel label="Price">
               <Form.Control
                 disabled={!user || !edit}
@@ -233,7 +232,7 @@ const Pending = ({ account }) => {
               />
             </FloatingLabel>
           </Col>
-          <Col>
+          <Col xs={1}>
             <FloatingLabel label="Tot Vol">
               <Form.Control
                 name="total_volume"
@@ -244,7 +243,7 @@ const Pending = ({ account }) => {
               />
             </FloatingLabel>
           </Col>
-          <Col xs={2}>
+          <Col xs={1}>
             <Form.Select
               name="action"
               className="text-center text-info"
@@ -343,7 +342,7 @@ const Pending = ({ account }) => {
   };
 
   return (
-    <>
+    <div className="flx jc-c ai-c col">
       <Container>
         <Container className="text-center">
           <Row>
@@ -402,105 +401,101 @@ const Pending = ({ account }) => {
           </Row>
         </Container>
       </Container>
-      <Container>
-        <Container>
-          <Accordion>
-            <Accordion.Item>
-              <Accordion.Header>Inputs</Accordion.Header>
-              <Accordion.Body>
-                <Accordion>
-                  <Accordion.Item>
-                    <Accordion.Header>Your Bids</Accordion.Header>
-                    <Accordion.Body>
-                      {Object.entries(groupedUserBids).map(
-                        ([name, reqs], i) => (
-                          <Accordion key={i}>
-                            <Accordion.Item>
-                              <Accordion.Header>{name}</Accordion.Header>
-                              <Accordion.Body>
-                                {reqs.map((req, i) =>
-                                  requestElement(req, true, i)
-                                )}
-                              </Accordion.Body>
-                            </Accordion.Item>
-                          </Accordion>
-                        )
-                      )}
-                    </Accordion.Body>
-                  </Accordion.Item>
-                  <Accordion.Item>
-                    <Accordion.Header>Counterparty Offers</Accordion.Header>
-                    <Accordion.Body>
-                      {Object.entries(groupedCounterOffers).map(
-                        ([name, reqs], i) => (
-                          <Accordion key={i}>
-                            <Accordion.Item>
-                              <Accordion.Header>{name}</Accordion.Header>
-                              <Accordion.Body>
-                                {reqs.map((req, i) =>
-                                  requestElement(req, false, i)
-                                )}
-                              </Accordion.Body>
-                            </Accordion.Item>
-                          </Accordion>
-                        )
-                      )}
-                    </Accordion.Body>
-                  </Accordion.Item>
-                </Accordion>
-              </Accordion.Body>
-            </Accordion.Item>
-          </Accordion>
-          <Accordion>
-            <Accordion.Item>
-              <Accordion.Header>Outputs</Accordion.Header>
-              <Accordion.Body>
-                <Accordion>
-                  <Accordion.Item>
-                    <Accordion.Header>Your Offers</Accordion.Header>
-                    <Accordion.Body>
-                      {Object.entries(groupedUserOffers).map(
-                        ([name, reqs], i) => (
-                          <Accordion key={i}>
-                            <Accordion.Item>
-                              <Accordion.Header>{name}</Accordion.Header>
-                              <Accordion.Body>
-                                {reqs.map((req, i) =>
-                                  requestElement(req, true, i)
-                                )}
-                              </Accordion.Body>
-                            </Accordion.Item>
-                          </Accordion>
-                        )
-                      )}
-                    </Accordion.Body>
-                  </Accordion.Item>
-                  <Accordion.Item>
-                    <Accordion.Header>Counterparty Bids</Accordion.Header>
-                    <Accordion.Body>
-                      {Object.entries(groupedCounterBids).map(
-                        ([name, reqs], i) => (
-                          <Accordion key={i}>
-                            <Accordion.Item>
-                              <Accordion.Header>{name}</Accordion.Header>
-                              <Accordion.Body>
-                                {reqs.map((req, i) =>
-                                  requestElement(req, false, i)
-                                )}
-                              </Accordion.Body>
-                            </Accordion.Item>
-                          </Accordion>
-                        )
-                      )}
-                    </Accordion.Body>
-                  </Accordion.Item>
-                </Accordion>
-              </Accordion.Body>
-            </Accordion.Item>
-          </Accordion>
-        </Container>
-      </Container>
-    </>
+      <div className="accordionContainer">
+        <Accordion>
+          <Accordion.Item>
+            <Accordion.Header>Inputs</Accordion.Header>
+            <Accordion.Body>
+              <Accordion>
+                <Accordion.Item>
+                  <Accordion.Header>Your Bids</Accordion.Header>
+                  <Accordion.Body>
+                    {Object.entries(groupedUserBids).map(([id, reqs], i) => (
+                      <Accordion key={i}>
+                        <Accordion.Item>
+                          <Accordion.Header>
+                            {users.find((user) => user.id == id).name}
+                          </Accordion.Header>
+                          <Accordion.Body>
+                            {reqs.map((req, i) => requestElement(req, true, i))}
+                          </Accordion.Body>
+                        </Accordion.Item>
+                      </Accordion>
+                    ))}
+                  </Accordion.Body>
+                </Accordion.Item>
+                <Accordion.Item>
+                  <Accordion.Header>Counterparty Offers</Accordion.Header>
+                  <Accordion.Body>
+                    {Object.entries(groupedCounterOffers).map(
+                      ([id, reqs], i) => (
+                        <Accordion key={i}>
+                          <Accordion.Item>
+                            <Accordion.Header>
+                              {users.find((user) => user.id == id).name}
+                            </Accordion.Header>
+                            <Accordion.Body>
+                              {reqs.map((req, i) =>
+                                requestElement(req, false, i)
+                              )}
+                            </Accordion.Body>
+                          </Accordion.Item>
+                        </Accordion>
+                      )
+                    )}
+                  </Accordion.Body>
+                </Accordion.Item>
+              </Accordion>
+            </Accordion.Body>
+          </Accordion.Item>
+        </Accordion>
+        <Accordion>
+          <Accordion.Item>
+            <Accordion.Header>Outputs</Accordion.Header>
+            <Accordion.Body>
+              <Accordion>
+                <Accordion.Item>
+                  <Accordion.Header>Your Offers</Accordion.Header>
+                  <Accordion.Body>
+                    {Object.entries(groupedUserOffers).map(([id, reqs], i) => (
+                      <Accordion key={i}>
+                        <Accordion.Item>
+                          <Accordion.Header>
+                            {users.find((user) => user.id == id).name}
+                          </Accordion.Header>
+                          <Accordion.Body>
+                            {reqs.map((req, i) => requestElement(req, true, i))}
+                          </Accordion.Body>
+                        </Accordion.Item>
+                      </Accordion>
+                    ))}
+                  </Accordion.Body>
+                </Accordion.Item>
+                <Accordion.Item>
+                  <Accordion.Header>Counterparty Bids</Accordion.Header>
+                  <Accordion.Body>
+                    {Object.entries(groupedCounterBids).map(([id, reqs], i) => (
+                      <Accordion key={i}>
+                        <Accordion.Item>
+                          <Accordion.Header>
+                            {users.find((user) => user.id == id).name}
+                          </Accordion.Header>
+                          <Accordion.Body>
+                            {reqs.map((req, i) =>
+                              requestElement(req, false, i)
+                            )}
+                          </Accordion.Body>
+                        </Accordion.Item>
+                      </Accordion>
+                    ))}
+                  </Accordion.Body>
+                </Accordion.Item>
+              </Accordion>
+            </Accordion.Body>
+          </Accordion.Item>
+        </Accordion>
+      </div>
+    </div>
   );
 };
 
