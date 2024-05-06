@@ -151,7 +151,7 @@ const Dashboard = ({ account }) => {
       >
         <Container>
           <Col xs={2}>
-            <Navbar.Brand href="#home" className="text-center text-wrap" xs={2}>
+            <Navbar.Brand href="#home" className="text-center text-wrap fs-8" xs={2}>
               {content.header}
             </Navbar.Brand>
           </Col>
@@ -165,7 +165,6 @@ const Dashboard = ({ account }) => {
                   className="py-0"
                   style={{
                     backgroundColor: "grey",
-                    borderRadius: "40px",
                   }}
                 >
                   {navMenu.map((tab, i) => {
@@ -174,7 +173,6 @@ const Dashboard = ({ account }) => {
                         <Nav.Item
                           style={{
                             backgroundColor: "darkgrey",
-                            borderRadius: "30px",
                           }}
                           onMouseEnter={() => {
                             setTabs(i);
@@ -195,7 +193,6 @@ const Dashboard = ({ account }) => {
                   className="py-0"
                   style={{
                     backgroundColor: "grey",
-                    borderRadius: "30px",
                   }}
                 >
                   {mainTab.inner.map((tab, j) => {
@@ -204,7 +201,7 @@ const Dashboard = ({ account }) => {
                         <Nav.Item
                           style={{
                             backgroundColor: "grey",
-                            borderRadius: "10px",
+       
                           }}
                           onMouseEnter={() => {
                             setTabs(main, j);

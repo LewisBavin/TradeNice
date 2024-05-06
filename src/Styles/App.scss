@@ -78,6 +78,18 @@ header {
   left: 50%;
   transform: translate(-50%, -50%);
   min-width: 100vw;
+
+  .navbar-nav{
+    .nav-item{
+      border-radius: 0;
+    }
+    
+    .col{
+      background-color: red;
+      margin: 0; padding: 0;
+      
+    }
+  }
 }
 
 
@@ -85,9 +97,16 @@ header {
   position: absolute;
   transform: translateX(-50%);
   left: 50%;
-  height: 75vh;
+  height: 73vh;
   overflow-y: auto;
-  min-width: 100vw;
+  min-width: 95vw;
+}
+
+.content.container{
+  background-color: rgba(173, 216, 230, 0.699);
+  padding: 1rem 1rem 1rem 1rem;
+  margin: 1rem 1rem 1rem 1rem;
+  border-radius: 1rem;
 }
 
 .contents{
@@ -127,8 +146,15 @@ header {
   }
 }
 
-.requests.container * {
-  text-align: center;
+.requests.container {
+  *{
+    text-align: center;
+  }
+  form{
+    background-color: rgba(0, 0, 0, 0.5);
+    border-radius: 1rem;
+
+  }
 }
 
 .loginContainer {

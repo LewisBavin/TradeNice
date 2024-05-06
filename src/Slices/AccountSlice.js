@@ -23,8 +23,8 @@ export const accountSlice = createSlice({
       state.create = false;
       setStore("account", state);
     },
-    showCreate: (state, { payload }) => {
-      state.create = payload;
+    showCreate: (state) => {
+      state.create = true;
       setStore("account", state);
     },
     logIn: (state, { payload }) => {

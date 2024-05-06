@@ -43,7 +43,7 @@ function Header({ account }) {
               {account.loggedIn ? (
                 <NavDropdown
                   className="position-absolute end-0 translate-middle"
-                  title="Account"
+                  title={account.user.name}
                   id="basic-nav-dropdown"
                 >
                   <NavDropdown.Header>

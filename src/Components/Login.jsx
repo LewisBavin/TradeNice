@@ -32,25 +32,27 @@ const Login = ({ account }) => {
                 strong: "Success!",
                 small: "",
                 body: "Welcome Back " + user.name,
-                variant: "success"
+                variant: "success",
               }
             : {
                 trigger: true,
                 strong: "Incorrect Credientials!",
                 body: "Please try again",
-                variant: "danger"
+                variant: "danger",
               }
         )
       );
       user && dispatch(accountActions.logIn({ user }));
     } catch (e) {
-      dispatch(accountActions.setToast({
-        trigger: true,
-        strong: "Error!",
-        small: "Connection Error",
-        body: "Please Contact Admin",
-        variant: "warning"
-      }));
+      dispatch(
+        accountActions.setToast({
+          trigger: true,
+          strong: "Error!",
+          small: "Connection Error",
+          body: "Please Contact Admin",
+          variant: "warning",
+        })
+      );
     }
   };
 
@@ -71,7 +73,18 @@ const Login = ({ account }) => {
               </Container>
             );
           })}
-          <Button type="submit">Go</Button>
+          <Button variant="success" type="submit">
+            Go
+          </Button>
+          <Button
+            variant="warning"
+            className="my-5"
+            onClick={() => {
+              dispatch(accountActions.showCreate());
+            }}
+          >
+            Don't have an account?
+          </Button>
         </Container>
       </Form>
     </>
