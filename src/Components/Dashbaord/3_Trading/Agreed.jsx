@@ -24,12 +24,12 @@ const Agreed = ({ account, users }) => {
   const [err, setErr] = useState(null);
 
   useEffect(() => {
-    let Buys = matched.filter(
+    let Buys = [...matched].filter(
         (t) =>
           (t.user_id == account.user.user_id && t.direction == "B") ||
           (t.counter_id == account.user.user_id && t.direction == "S")
       ),
-      Sells = matched.filter(
+      Sells = [...matched].filter(
         (t) =>
           (t.user_id == account.user.user_id && t.direction == "S") ||
           (t.counter_id == account.user.user_id && t.direction == "B")
@@ -70,18 +70,16 @@ const Agreed = ({ account, users }) => {
     setMatched(matched);
   };
 
-  let toggleCheck = (e, i) => {
-    let temp = [...matched];
-    let check = temp.find((m) => m.id == matched[i].id);
-    check.checked = !check.checked;
-    setMatched([...temp]);
+  let toggleCheck = (key, i) => {
+    let temp = [...splits[key]]
+    temp[i].checked = !temp[i].checked
+    setSplits({...splits, [key]: temp})
   };
 
-  let addComment = (e, i) => {
-    let temp = [...matched];
-    let comment = temp.find((m) => m.id == matched[i].id);
-    comment.comment = e.target.value;
-    setMatched([...temp]);
+  let addComment = (e, key,i) => {
+    let temp = [...splits[key]]
+    temp[i].comment = e.target.value
+    setSplits({...splits, [key]: temp})
   };
 
   let userName = (userID) =>
@@ -267,11 +265,10 @@ const Agreed = ({ account, users }) => {
                         </FloatingLabel>
                         <Form.Check
                           type="checkbox"
-                          label="dispute"
-                          value={t.checked}
-                          onChange={(e) => {
-                            toggleCheck(e, i);
-                          }}
+                          label={String(!t.disputed ? "dispute" : "disputed")}
+                          value={!t.disputed ? t.checked : true}
+                          disabled={t.disputed}
+                          onChange={() => toggleCheck(key, i)}
                         ></Form.Check>
                       </div>
                       {t.checked && (
@@ -279,9 +276,7 @@ const Agreed = ({ account, users }) => {
                           <FloatingLabel label="Notify counterparty of your dispute, if they agree the trade will be removed from the system. Enter your comments here:">
                             <Form.Control
                               value={t.comment ? t.comment : ""}
-                              onChange={(e) => {
-                                addComment(e, i);
-                              }}
+                              onChange={(e)=>addComment(e,key, i)}
                             />
                           </FloatingLabel>
                         </div>

@@ -274,6 +274,7 @@ const Pending = ({ account, users }) => {
   };
 
   let submitChanges = async () => {
+    console.log(submits)
     try {
       let response = (
         await axios.post(
