@@ -23,7 +23,7 @@ const Agreed = ({ account, users }) => {
   });
   const [err, setErr] = useState(null);
 
-  useEffect(() => {
+  useEffect(() =>{
     let Buys = [...matched].filter(
         (t) =>
           (t.user_id == account.user.user_id && t.direction == "B") ||
@@ -41,8 +41,7 @@ const Agreed = ({ account, users }) => {
     let temp = { ...dates, [e.target.name]: e.target.value };
     let msg = null;
     let start = toDate(temp.start_date),
-      end = toDate(temp.end_date),
-      today = startOfDay(new Date());
+      end = toDate(temp.end_date);
 
     if (start == "Invalid Date" || end == "Invalid Date") {
       msg = "plese select valid dated";
@@ -50,9 +49,7 @@ const Agreed = ({ account, users }) => {
     if (start > end) {
       msg = "start must be before end";
     }
-    if (start < today || end < today) {
-      msg = "dates in the past will have timed out.";
-    }
+
     setDates(temp);
     setErr(msg);
   };
@@ -71,15 +68,15 @@ const Agreed = ({ account, users }) => {
   };
 
   let toggleCheck = (key, i) => {
-    let temp = [...splits[key]]
-    temp[i].checked = !temp[i].checked
-    setSplits({...splits, [key]: temp})
+    let temp = [...splits[key]];
+    temp[i].checked = !temp[i].checked;
+    setSplits({ ...splits, [key]: temp });
   };
 
-  let addComment = (e, key,i) => {
-    let temp = [...splits[key]]
-    temp[i].comment = e.target.value
-    setSplits({...splits, [key]: temp})
+  let addComment = (e, key, i) => {
+    let temp = [...splits[key]];
+    temp[i].comment = e.target.value;
+    setSplits({ ...splits, [key]: temp });
   };
 
   let userName = (userID) =>
@@ -107,7 +104,8 @@ const Agreed = ({ account, users }) => {
             accountActions.setToast({
               trigger: true,
               strong: "Success!",
-              body: "disputes raised with counterparty",
+              small: "disputes raised with counterparty",
+              body: "head over to disputes to check progress",
               variant: "success",
               delay: 5000,
             })
@@ -276,7 +274,7 @@ const Agreed = ({ account, users }) => {
                           <FloatingLabel label="Notify counterparty of your dispute, if they agree the trade will be removed from the system. Enter your comments here:">
                             <Form.Control
                               value={t.comment ? t.comment : ""}
-                              onChange={(e)=>addComment(e,key, i)}
+                              onChange={(e) => addComment(e, key, i)}
                             />
                           </FloatingLabel>
                         </div>

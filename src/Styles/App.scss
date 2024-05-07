@@ -3,15 +3,16 @@
 
   &.col {
     flex-direction: column;
-  }
-  &.col-r {
-    flex-direction: column-reverse;
+    &-r {
+      flex-direction: column-reverse;
+    }
   }
   &.row {
     flex-direction: row;
-  }
-  &.row-r {
-    flex-direction: row-reverse;
+
+    &-r {
+      flex-direction: row-reverse;
+    }
   }
 
   &.jc-c {
@@ -38,6 +39,13 @@
   }
   &.ai-e {
     align-items: end;
+  }
+
+  &.jc-str {
+    justify-content: stretch;
+  }
+  &.ai-str {
+    align-items: stretch;
   }
 }
 
@@ -79,21 +87,21 @@ header {
   transform: translate(-50%, -50%);
   min-width: 100vw;
 
-  .navbar-nav{
-    .nav-item{
+  .navbar-nav {
+    .nav-item {
       border-radius: 0;
     }
-    
-    .col{
+
+    .col {
       background-color: red;
-      margin: 0; padding: 0;
-      
+      margin: 0;
+      padding: 0;
     }
   }
 }
 
-
-.content.container, .loginContainer {
+.content.container,
+.loginContainer {
   position: absolute;
   transform: translateX(-50%);
   left: 50%;
@@ -102,18 +110,18 @@ header {
   min-width: 95vw;
 }
 
-.content.container{
+.content.container {
   background-color: rgba(173, 216, 230, 0.699);
   padding: 1rem 1rem 1rem 1rem;
   margin: 1rem 1rem 1rem 1rem;
   border-radius: 1rem;
 }
 
-.contents{
+.contents {
   padding: 1rem 1rem 1rem 1rem;
   margin: 1rem 1rem 1rem 1rem;
   border-radius: 1rem;
-  background-color: lightblue
+  background-color: lightblue;
 }
 
 .root-container {
@@ -147,13 +155,12 @@ header {
 }
 
 .requests.container {
-  *{
+  * {
     text-align: center;
   }
-  form{
+  form {
     background-color: rgba(0, 0, 0, 0.5);
     border-radius: 1rem;
-
   }
 }
 
@@ -182,30 +189,26 @@ input.form-control.strikethrough {
   text-decoration: line-through;
 }
 
-
-.accordionContainer{
+.accordionContainer {
   margin: 0;
   padding: 0;
   width: 100%;
 }
-.accordion{
+.accordion {
   width: 100%;
-  .accordion-button{
+  .accordion-button {
     padding: 0.3rem;
-  
-    
   }
 
-  .accordion-body{
-    padding: 0.5rem 1rem 
+  .accordion-body {
+    padding: 0.5rem 1rem;
   }
-  .col{
+  .col {
     padding: 0;
 
-
-    label, input, select input.form-control{
-
+    label,
+    input,
+    select input.form-control {
     }
-
   }
 }

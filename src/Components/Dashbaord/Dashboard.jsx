@@ -2,16 +2,7 @@ import React from "react";
 import { useState } from "react";
 import { useDispatch } from "react-redux";
 import { accountActions } from "../../Slices/AccountSlice";
-import {
-  Accordion,
-  Dropdown,
-  DropdownMenu,
-  DropdownToggle,
-  NavbarText,
-  NavItem,
-  Row,
-  Col,
-} from "react-bootstrap";
+import { Row, Col } from "react-bootstrap";
 import Prices from "./1_Market/Prices";
 import Flows from "./1_Market/Flows";
 import Noms from "./2_Balance/Noms";
@@ -27,7 +18,6 @@ import { useEffect } from "react";
 import Container from "react-bootstrap/Container";
 import Nav from "react-bootstrap/Nav";
 import Navbar from "react-bootstrap/Navbar";
-import NavDropdown from "react-bootstrap/NavDropdown";
 import axios from "axios";
 
 const Dashboard = ({ account }) => {
@@ -35,19 +25,19 @@ const Dashboard = ({ account }) => {
   const [state, setState] = useState({
     view: !account.view ? { main: 0, inner: 0 } : account.view,
   });
-  const [users, setUsers] = useState(account.users);
+  const [users, setUsers] = useState();
 
   useEffect(() => {
     if (!users) {
       (async function getUsers() {
-        let users = (
+        let gotUsers = (
           await axios.get("http://localhost:6002/user/get/users", {
             headers: { token: account.user.token },
           })
         ).data.users;
-        if (users) {
-          setUsers(users);
-          dispatch(accountActions.setUsers(users));
+        if (gotUsers) {
+          dispatch(accountActions.setUsers(gotUsers));
+          setUsers(gotUsers);
         } else {
           dispatch(
             accountActions.setToast({
@@ -78,12 +68,12 @@ const Dashboard = ({ account }) => {
         },
         {
           title: "Agreed Trades",
-          header: "View Your Matched Trades",
+          header: "View Your Matched Trades & Raise Disputes",
           elem: <Agreed account={account} users={users} />,
         },
         {
           title: "Dispute",
-          header: "See An Issue With A Trade? Raise A Dispute",
+          header: "Check Dispute Statuses",
           elem: <Dispute account={account} users={users} />,
         },
       ],
@@ -243,7 +233,7 @@ const Dashboard = ({ account }) => {
         </Container>
       </Navbar>
       <Container className="content">
-        <div className="contents">{content.elem}</div>
+        {users && <div className="contents">{content.elem}</div>}
       </Container>
     </>
   );

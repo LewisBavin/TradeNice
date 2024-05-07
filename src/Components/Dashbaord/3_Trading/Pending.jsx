@@ -11,7 +11,7 @@ import {
 } from "react-bootstrap";
 import { differenceInDays, format, startOfDay, toDate } from "date-fns";
 import { useDispatch } from "react-redux";
-import { accountActions, readAccount } from "../../../Slices/AccountSlice";
+import { accountActions} from "../../../Slices/AccountSlice";
 
 const Pending = ({ account, users }) => {
   const dispatch = useDispatch();
@@ -274,7 +274,6 @@ const Pending = ({ account, users }) => {
   };
 
   let submitChanges = async () => {
-    console.log(submits)
     try {
       let response = (
         await axios.post(
