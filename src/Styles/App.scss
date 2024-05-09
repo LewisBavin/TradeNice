@@ -205,10 +205,22 @@ input.form-control.strikethrough {
   }
   .col {
     padding: 0;
+  }
+}
 
-    label,
-    input,
-    select input.form-control {
-    }
+.plotContainer {
+  position: relative;
+
+  .navs {
+    width: 100%;
+    position: absolute;
+    top: 19%;
+    transform: translateY(-50%);
+    z-index: 10;
+    gap: 10rem;
+  }
+  #modebar,
+  .modebar-container {
+    display: none;
   }
 }
