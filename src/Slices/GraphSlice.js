@@ -13,13 +13,8 @@ export const graphSlice = createSlice({
       state.dateRange.end = end ? end : start;
     },
     setAll: (state, {payload}) =>{
-
-      state.all = payload
+      state.prices= payload
       setStore("graph", state)
-    },
-    initialiseGridPrices: (state, { payload }) => {
-      state.prices = payload;
-
     },
   },
 });

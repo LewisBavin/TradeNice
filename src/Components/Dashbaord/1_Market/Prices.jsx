@@ -1,7 +1,18 @@
 import React, { useEffect, useRef, useState } from "react";
 import { getGridPricesAll } from "../../../Utilities/apiCalls";
 import Plot from "react-plotly.js";
-import { add, format, toDate } from "date-fns";
+import {
+  add,
+  format,
+  startOfMonth,
+  startOfYear,
+  startOfDecade,
+  toDate,
+  endOfMonth,
+  endOfYear,
+  endOfDecade,
+  addDays,
+} from "date-fns";
 import { useDispatch, useSelector } from "react-redux";
 import {
   getSavedPrices,
@@ -12,201 +23,111 @@ import "react-datepicker/dist/react-datepicker.css";
 import enGB from "date-fns/locale/en-GB";
 import { setDefaultOptions } from "date-fns";
 import { setStore } from "../../../Utilities/localStorage";
-import { Button, Form, Spinner, Row, Col } from "react-bootstrap";
+import {
+  Button,
+  Form,
+  Spinner,
+  Row,
+  Col,
+  FloatingLabel,
+} from "react-bootstrap";
 setDefaultOptions(enGB);
 
-const Prices = () => {
+const Prices = ({ allPrices }) => {
   const dispatch = useDispatch();
   const graph = useSelector(readGraph);
   const [dates, setDates] = useState({
     start: format(new Date(), "yyyy-MM-dd"),
     end: format(new Date(), "yyyy-MM-dd"),
   });
-  const [prices, setPrices] = useState(graph.prices);
-  const [all, setAll] = useState({});
-  const [filtered, setFiltered] = useState({
-    uk: { x: [], y: [] },
-    eu: { x: [], y: [] },
-  });
+  const [prices, setPrices] = useState();
+  const [all, setAll] = useState();
   const [rangeType, setRangeType] = useState({
-    hourly: "on",
-    daily: "off",
-    monthly: "off",
-    yearly: "off",
-    all: "off",
-    custom: "off",
+    hourly: {
+      val: true,
+      step: 1,
+      func(start) {
+        return {
+          start: format(toDate(start), "yyyy-MM-dd"),
+          end: format(toDate(start), "yyyy-MM-dd"),
+        };
+      },
+    },
+    daily: {
+      val: false,
+      step: 24,
+      func(start) {
+        return {
+          start: format(startOfMonth(start), "yyyy-MM-dd"),
+          end: format(endOfMonth(start), "yyyy-MM-dd"),
+        };
+      },
+    },
+    monthly: {
+      val: false,
+      step: 744,
+      func(start) {
+        return {
+          start: format(startOfYear(start), "yyyy-MM-dd"),
+          end: format(endOfYear(start), "yyyy-MM-dd"),
+        };
+      },
+    },
   });
-
-  useEffect(() => {
-    !prices &&
-      (async function getPrices() {
-        let allPrices = (await getGridPricesAll()).data.records;
-
-        let prices = allPrices.reduce(
-          (accum, val) => {
-            let key = val.PriceArea == "SYSTEM" ? "uk" : "eu";
-            accum[key].x.push(val.HourUTC);
-            accum[key].y.push(val.SpotPriceEUR / 100);
-            return accum;
-          },
-          { uk: { x: [], y: [] }, eu: { x: [], y: [] } }
-        );
-        let test = allPrices.reduce(
-          (accum, val) => {
-            accum[val.PriceArea == "SYSTEM" ? "uk" : "eu"].push({
-              x: val.HourUTC,
-              y: val.SpotPriceEUR / 100,
-            });
-            return accum;
-          },
-          { uk: [], eu: [] }
-        );
-        console.log(test);
-        setPrices(prices);
-        setAll(test);
-        dispatch(graphActions.setAll(test));
-        dispatch(graphActions.initialiseGridPrices(prices));
-      })();
-  }, [prices]);
-
-  useEffect(() => {
-    let filter = { ...all };
-    Object.keys(filter).forEach(
-      (key) =>
-        (filter[key] = filter[key].filter(
-          (points, i) => toDate(points.x) >= toDate(dates.start)
-        ))
-    );
-    console.log(filter);
-  }, [dates]);
-
-  let updateDates = (e) => {
-    setDates({ ...dates, [e.target.name]: e.target.value });
-  };
+  const [selectedRadio, setSelected] = useState(rangeType.hourly);
 
   let changeRadio = (e, key) => {
     let radios = { ...rangeType };
-    Object.keys(radios).forEach((k) => (radios[k] = k == key ? "on" : "off"));
+    Object.entries(radios).forEach(
+      ([rKey, obj]) => (radios[rKey] = { ...obj, val: key == rKey })
+    );
+    let selected = Object.values(radios).find((obj) => obj.val);
+    setSelected(selected);
     setRangeType(radios);
+    setDates(selected.func(dates.start));
+  };
+
+  useEffect(() => {
+    allPrices && !all && setAll(allPrices);
+  });
+
+  useEffect(() => {
+    let filter = { ...all };
+    let { step } = selectedRadio;
+    Object.keys(filter).forEach((key) => {
+      filter[key] = filter[key]
+        .filter(
+          (points, i) =>
+            toDate(points.x) >= toDate(dates.start) &&
+            toDate(points.x) <= addDays(toDate(dates.end), 1) &&
+            !(i % step)
+        )
+        .reduce(
+          (acum, points) => {
+            acum.x.push(points.x);
+            acum.y.push(points.y);
+            return acum;
+          },
+          { x: [], y: [] }
+        );
+    });
+    setPrices(filter);
+  }, [dates, all]);
+
+  let updateDates = (e) => {
+    setDates(selectedRadio.func(e.target.value));
+  };
+
+  let cycleDates = (left = true) => {
+    let start = left
+      ? addDays(toDate(dates.start), -1)
+      : addDays(toDate(dates.end), 1);
+    setDates(selectedRadio.func(start));
   };
 
   return (
     <div className="plotContainer flx col jc-c ai-c">
-      <div className="dates flx col jc-c ai-c">
-        <div className="flx">
-          {Object.keys(rangeType).map((key, i) => (
-            <Form.Check
-              key={i}
-              type="radio"
-              name="dateRange"
-              label={key}
-              value={rangeType[key]}
-              onClick={(e) => {
-                changeRadio(e, key);
-              }}
-            ></Form.Check>
-          ))}
-        </div>
-        <Form onSubmit={updateDates} onChange={updateDates}>
-          <Row className="d-flex justify-content-center py-3">
-            <Col xs={5} className="d-flex align-items-center">
-              <Form.Text className="text-muted">Start Date</Form.Text>
-              <Form.Control
-                type="date"
-                name="start"
-                value={dates.start}
-                onChange={() => {}}
-              />
-            </Col>
-            <Col xs={5} className="d-flex align-items-center">
-              <Form.Text className="text-muted">End Date</Form.Text>
-              <Form.Control
-                type="date"
-                name="end"
-                value={dates.end}
-                onChange={() => {}}
-              />
-            </Col>
-            <Col xs={1} className="d-flex align-items-center">
-              <Button type="submit">Go</Button>
-            </Col>
-          </Row>
-        </Form>
-      </div>
-      <div className="navs flx jc-c">
-        <Button>&larr;</Button>
-        <Button>&rarr;</Button>
-      </div>
-      {prices ? (
-        <Plot
-          data={[
-            {
-              ...prices.uk,
-              type: "scatter",
-              mode: "lines",
-              marker: { color: "red" },
-              name: "UK Grid: £/therm",
-            },
-            {
-              ...prices.eu,
-              type: "scatter",
-              mode: "lines",
-              marker: { color: "blue" },
-              name: "EU Grid: €/therm",
-            },
-          ]}
-          layout={{
-            width: 1250,
-            height: 650,
-            title: "Grid Gas Prices",
-            xaxis: {
-              rangeselector: {
-                buttons: [
-                  {
-                    step: "year",
-                    stepmode: "backward",
-                    count: 1,
-                    label: "Yearly",
-                  },
-                  {
-                    step: "month",
-                    stepmode: "backward",
-                    count: 1,
-                    label: "Monthly",
-                  },
-                  {
-                    step: "day",
-                    stepmode: "backward",
-                    count: 1,
-                    label: "Daily",
-                  },
-                  {
-                    step: "hour",
-                    stepmode: "backward",
-                    count: 1,
-                    label: "Hourly",
-                  },
-                  {
-                    step: "all",
-                    label: "show all",
-                  },
-                  {
-                    step: "day",
-                    stepmode: "todate",
-                    count: 1,
-                    label: "Today",
-                  },
-                ],
-              },
-              rangeslider: {},
-            },
-            yaxis: {
-              title: "Gas Grid Prices",
-              autorange: true,
-            },
-          }}
-        />
-      ) : (
+      {!all ? (
         <Button variant="primary" disabled>
           <Spinner
             as="span"
@@ -215,8 +136,80 @@ const Prices = () => {
             role="status"
             aria-hidden="true"
           />
-          grabbing...
+          getting prices...
         </Button>
+      ) : (
+        <>
+          <div className="dates flx col jc-c ai-c">
+            <div className="flx">
+              {Object.keys(rangeType).map((key, i) => (
+                <Form.Check
+                  key={i}
+                  type="radio"
+                  name="dateRange"
+                  label={key}
+                  checked={rangeType[key].val}
+                  onChange={(e) => {
+                    changeRadio(e, key);
+                  }}
+                ></Form.Check>
+              ))}
+            </div>
+            <Form onSubmit={updateDates} onChange={updateDates} className="flx">
+              <FloatingLabel label="start">
+                <Form.Control
+                  type="date"
+                  name="start"
+                  value={dates.start}
+                  onChange={() => {}}
+                />
+              </FloatingLabel>
+
+              <FloatingLabel label="end">
+                <Form.Control
+                disabled
+                readOnly
+                  type="date"
+                  name="end"
+                  value={dates.end}
+                />
+              </FloatingLabel>
+            </Form>
+            <div className="navs flx jc-c">
+              <Button onClick={cycleDates}>&larr;</Button>
+              <Button onClick={() => cycleDates(false)}>&rarr;</Button>
+            </div>
+          </div>
+
+          <Plot
+            data={[
+              {
+                ...prices.uk,
+                type: "scatter",
+                mode: "lines",
+                marker: { color: "red" },
+                name: "UK Grid: £/therm",
+              },
+              {
+                ...prices.eu,
+                type: "scatter",
+                mode: "lines",
+                marker: { color: "blue" },
+                name: "EU Grid: €/therm",
+              },
+            ]}
+            config={{ responsive: true }}
+            layout={{
+              title: "Grid Gas Prices",
+              xaxis: {},
+              legend: {},
+              yaxis: {
+                title: "Gas Grid Prices",
+                autorange: true,
+              },
+            }}
+          />
+        </>
       )}
     </div>
   );

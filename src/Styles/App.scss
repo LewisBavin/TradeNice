@@ -52,6 +52,7 @@
 html,
 body {
   margin: auto 0;
+  
 }
 
 body {
@@ -209,15 +210,26 @@ input.form-control.strikethrough {
 }
 
 .plotContainer {
-  position: relative;
 
-  .navs {
+  .js-plotly-plot{
     width: 100%;
-    position: absolute;
-    top: 19%;
-    transform: translateY(-50%);
+    height: 50vh;
+    *{
+      border-radius: 5rem;
+    }
+  }
+
+  .dates{
+    position: relative;
     z-index: 10;
-    gap: 10rem;
+
+    .navs {
+      width: 100%;
+      position: absolute;
+      top: 60%;
+      transform: translateY(-50%);
+      gap: 18rem;
+    }
   }
   #modebar,
   .modebar-container {

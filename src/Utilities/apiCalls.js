@@ -18,7 +18,7 @@ export const getGridPricesAll = () => {
   return axios.get(
     `https://api.energidataservice.dk/dataset/Elspotprices?` +
       `start=` +
-      `2020-01-01` +
+      `2019-01-01` +
       `&filter={"PriceArea":["SYSTEM", "DK1"]}&sort=HourUTC`
   );
 };

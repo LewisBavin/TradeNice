@@ -1,6 +1,6 @@
 import React from "react";
 import { useState } from "react";
-import { useDispatch } from "react-redux";
+import { useDispatch, useSelector } from "react-redux";
 import { accountActions } from "../../Slices/AccountSlice";
 import { Row, Col } from "react-bootstrap";
 import Prices from "./1_Market/Prices";
@@ -19,16 +19,39 @@ import Container from "react-bootstrap/Container";
 import Nav from "react-bootstrap/Nav";
 import Navbar from "react-bootstrap/Navbar";
 import axios from "axios";
+import { getGridPricesAll } from "../../Utilities/apiCalls";
+import { graphActions, readGraph } from "../../Slices/GraphSlice";
 
 const Dashboard = ({ account }) => {
   const dispatch = useDispatch();
+  const graph = useSelector(readGraph);
   const [state, setState] = useState({
     view: !account.view ? { main: 0, inner: 0 } : account.view,
   });
-  const [users, setUsers] = useState();
+  const [users, setUsers] = useState(account.users);
+  const [prices, setPrices] = useState(graph.prices);
 
   useEffect(() => {
-    if (!users) {
+    !prices &&
+      (async function getPrices() {
+        let allPrices = (await getGridPricesAll()).data.records;
+        let prices = allPrices.reduce(
+          (accum, val) => {
+            accum[val.PriceArea == "SYSTEM" ? "uk" : "eu"].push({
+              x: val.HourUTC,
+              y: val.SpotPriceEUR / 100,
+            });
+            return accum;
+          },
+          { uk: [], eu: [] }
+        );
+        setPrices(prices);
+        dispatch(graphActions.setAll(prices));
+      })();
+  }, [prices]);
+
+  useEffect(() => {
+    !users &&
       (async function getUsers() {
         let gotUsers = (
           await axios.get("http://localhost:6002/user/get/users", {
@@ -36,8 +59,8 @@ const Dashboard = ({ account }) => {
           })
         ).data.users;
         if (gotUsers) {
-          dispatch(accountActions.setUsers(gotUsers));
           setUsers(gotUsers);
+          dispatch(accountActions.setUsers(gotUsers));
         } else {
           dispatch(
             accountActions.setToast({
@@ -49,10 +72,24 @@ const Dashboard = ({ account }) => {
           );
         }
       })();
-    }
   }, [users]);
 
   const navMenu = [
+    {
+      title: "Your Balances",
+      inner: [
+        {
+          title: "Net Balances",
+          header: "Your Overall Gas Balances",
+          elem: <Allocs account={account} />,
+        },
+        {
+          title: "Transput Nominations",
+          header: "Nominate your projected production inputs and offtakes into the Grid",
+          elem: <Noms account={account} />,
+        },
+      ],
+    },
     {
       title: "Trading",
       inner: [
@@ -78,28 +115,14 @@ const Dashboard = ({ account }) => {
         },
       ],
     },
-    {
-      title: "Your Balances",
-      inner: [
-        {
-          title: "Current",
-          header: "Your Current and Future Nominated Balances",
-          elem: <Noms account={account} />,
-        },
-        {
-          title: "Historic",
-          header: "Your Historic Allocated Balances",
-          elem: <Allocs account={account} />,
-        },
-      ],
-    },
+
     {
       title: "Market Overview",
       inner: [
         {
           title: "Gas Prices",
           header: "UK and EU Gas Spot Prices",
-          elem: <Prices account={account} />,
+          elem: <Prices account={account} allPrices={prices} />,
         },
         {
           title: "Grid Flows",
