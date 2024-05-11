@@ -1,6 +1,14 @@
 import { addDays, format, startOfDay, toDate } from "date-fns";
 import React, { useState } from "react";
-import { Accordion, Button, FloatingLabel, Form } from "react-bootstrap";
+import {
+  Accordion,
+  Button,
+  Col,
+  Container,
+  FloatingLabel,
+  Form,
+  Row,
+} from "react-bootstrap";
 
 const Balance = ({ account, users }) => {
   const [transputs, setTransputs] = useState([]);
@@ -9,8 +17,8 @@ const Balance = ({ account, users }) => {
     format(startOfDay(new Date()), "yyyy-MM-dd")
   );
 
-  const innerKeys = ["Inputs", "Outputs"];
   const mainKeys = ["Nominated", "Allocated"];
+  const innerKeys = ["Inputs", "Outputs"];
 
   let filterData = (type, main, inner) => {
     if (type == "transputs") {
@@ -78,28 +86,211 @@ const Balance = ({ account, users }) => {
           <Button onClick={() => cycleDates(false)}>&rarr;</Button>
         </Form>
       </div>
-      <div className="content flx">
-        {Object.entries(balance).map(([key, main], i) => (
-          <Accordion>
-            <Accordion.Item>
-              <Accordion.Header>{key}</Accordion.Header>
-              <Accordion.Body>
-                {Object.entries(main).map(([innerKey, inner], j) => (
-                  <Accordion>
-                    <Accordion.Item className="flx">
-                      <Accordion.Header>{innerKey}</Accordion.Header>
+
+      <Container className="balance">
+        <Row className="header">
+          <Col xs={1}>Balance</Col>
+          <Col>
+            <Container>
+              <Row>
+                <Col xs={2}></Col>
+                <Col>Nominations</Col>
+                <Col>Allocations</Col>
+              </Row>
+            </Container>
+          </Col>
+        </Row>
+        <Row className="inputs">
+          <Col xs={1}>Inputs</Col>
+          <Col>
+            <Container>
+              <Row>
+                <Col>
+                  <Accordion className="mainAccordion">
+                    <Accordion.Item>
+                      <Accordion.Header>
+                        <Container>
+                          <Row>
+                            <Col xs={2}>Total</Col>
+                            <Col>net noms</Col>
+                            <Col>net allocs</Col>
+                          </Row>
+                        </Container>
+                      </Accordion.Header>
                       <Accordion.Body>
-                        <div>jfdsklfjaskldfjlk</div>
-                        <div>jfdsklafjdslakjfklds</div>
+                        <Accordion>
+                          <Accordion.Item>
+                            <Accordion.Header>
+                              <Container>
+                                <Row>
+                                  <Col xs={2}>Trade Buys</Col>
+                                  <Col>nom total </Col>
+                                  <Col>all total</Col>
+                                </Row>
+                              </Container>
+                            </Accordion.Header>
+                            <Accordion.Body>
+                              <Container>
+                                <Row>
+                                  <Col xs={2}></Col>
+                                  <Col>
+                                    here is a boring list of all the trade
+                                    details in the systerm
+                                  </Col>
+                                  <Col>
+                                    similarly but for allocs lets see what the
+                                    layout looks like
+                                  </Col>
+                                </Row>
+                              </Container>
+                            </Accordion.Body>
+                          </Accordion.Item>
+                        </Accordion>
+
+                        <Container>
+                          <Row>
+                            <Col>
+                              <Accordion>
+                                <Accordion.Item>
+                                  <Accordion.Header>
+                                    <Container>
+                                      <Row>
+                                        <Col xs={2}>Grid Inputs</Col>
+                                        <Col>nom total </Col>
+                                        <Col>all total</Col>
+                                      </Row>
+                                    </Container>
+                                  </Accordion.Header>
+                                  <Accordion.Body>
+                                    <Container>
+                                      <Row>
+                                        <Col xs={2}></Col>
+                                        <Col>
+                                          here is a boring list of all the trade
+                                          details in the systerm
+                                        </Col>
+                                        <Col>
+                                          similarly but for allocs lets see what
+                                          the layout looks like
+                                        </Col>
+                                      </Row>
+                                    </Container>
+                                  </Accordion.Body>
+                                </Accordion.Item>
+                              </Accordion>
+                            </Col>
+                          </Row>
+                        </Container>
                       </Accordion.Body>
                     </Accordion.Item>
                   </Accordion>
-                ))}
-              </Accordion.Body>
-            </Accordion.Item>
-          </Accordion>
-        ))}
-      </div>
+                </Col>
+              </Row>
+            </Container>
+          </Col>
+        </Row>
+        <Row className="outputs">
+          <Col xs={1}>Outputs</Col>
+          <Col>
+            <Container>
+              <Row>
+                <Col>
+                  <Accordion className="mainAccordion">
+                    <Accordion.Item>
+                      <Accordion.Header>
+                        <Container>
+                          <Row>
+                            <Col xs={2}>Total</Col>
+                            <Col>net noms</Col>
+                            <Col>net allocs</Col>
+                          </Row>
+                        </Container>
+                      </Accordion.Header>
+                      <Accordion.Body>
+                        <Accordion>
+                          <Accordion.Item>
+                            <Accordion.Header>
+                              <Container>
+                                <Row>
+                                  <Col xs={2}>Trade Buys</Col>
+                                  <Col>nom total </Col>
+                                  <Col>all total</Col>
+                                </Row>
+                              </Container>
+                            </Accordion.Header>
+                            <Accordion.Body>
+                              <Container>
+                                <Row>
+                                  <Col xs={2}></Col>
+                                  <Col>
+                                    here is a boring list of all the trade
+                                    details in the systerm
+                                  </Col>
+                                  <Col>
+                                    similarly but for allocs lets see what the
+                                    layout looks like
+                                  </Col>
+                                </Row>
+                              </Container>
+                            </Accordion.Body>
+                          </Accordion.Item>
+                        </Accordion>
+
+                        <Container>
+                          <Row>
+                            <Col>
+                              <Accordion>
+                                <Accordion.Item>
+                                  <Accordion.Header>
+                                    <Container>
+                                      <Row>
+                                        <Col xs={2}>Grid Inputs</Col>
+                                        <Col>nom total </Col>
+                                        <Col>all total</Col>
+                                      </Row>
+                                    </Container>
+                                  </Accordion.Header>
+                                  <Accordion.Body>
+                                    <Container>
+                                      <Row>
+                                        <Col xs={2}></Col>
+                                        <Col>
+                                          here is a boring list of all the trade
+                                          details in the systerm
+                                        </Col>
+                                        <Col>
+                                          similarly but for allocs lets see what
+                                          the layout looks like
+                                        </Col>
+                                      </Row>
+                                    </Container>
+                                  </Accordion.Body>
+                                </Accordion.Item>
+                              </Accordion>
+                            </Col>
+                          </Row>
+                        </Container>
+                      </Accordion.Body>
+                    </Accordion.Item>
+                  </Accordion>
+                </Col>
+              </Row>
+            </Container>
+          </Col>
+        </Row>
+        <Row className="nets">
+          <Col xs={1}>Net Balance</Col>
+          <Col>
+            <Container>
+              <Row>
+                <Col xs={2}></Col>
+                <Col>Nomination Net</Col>
+                <Col>Allocations Net</Col>
+              </Row>
+            </Container>
+          </Col>
+        </Row>
+      </Container>
     </div>
   );
 };

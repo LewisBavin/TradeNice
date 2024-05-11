@@ -52,7 +52,6 @@
 html,
 body {
   margin: auto 0;
-  
 }
 
 body {
@@ -210,16 +209,15 @@ input.form-control.strikethrough {
 }
 
 .plotContainer {
-
-  .js-plotly-plot{
+  .js-plotly-plot {
     width: 100%;
     height: 50vh;
-    *{
+    * {
       border-radius: 5rem;
     }
   }
 
-  .dates{
+  .dates {
     position: relative;
     z-index: 10;
 
@@ -234,5 +232,40 @@ input.form-control.strikethrough {
   #modebar,
   .modebar-container {
     display: none;
+  }
+}
+
+.balance {
+  * {
+    text-align: center;
+  }
+  .accordion-body {
+    padding: 0.2rem 0;
+  }
+
+  .Inputs {
+    .accordion-button {
+      background-color: lightgreen;
+    }
+    .total {
+      .accordion-button {
+        background-color: rgba(0, 100, 0, 0.5);
+        color: white;
+      }
+    }
+    .accordion-body {
+      background-color: rgb(197, 252, 197);
+    }
+  }
+  .outputs {
+    .accordion-button {
+      background-color: mistyrose;
+    }
+    .total {
+      .accordion-button {
+        background-color: rgb(252, 200, 194);
+        color: white;
+      }
+    }
   }
 }

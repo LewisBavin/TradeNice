@@ -39,7 +39,7 @@ const Prices = ({ allPrices }) => {
   const graph = useSelector(readGraph);
   const [dates, setDates] = useState({
     start: format(startOfDay(new Date()), "yyyy-MM-dd"),
-    end: format(nstartOfDay(new Date()), "yyyy-MM-dd"),
+    end: format(startOfDay(new Date()), "yyyy-MM-dd"),
   });
   const [prices, setPrices] = useState();
   const [all, setAll] = useState();
@@ -120,10 +120,7 @@ const Prices = ({ allPrices }) => {
   };
 
   let cycleDates = (left = true) => {
-    let start = left
-      ? addDays(toDate(dates.start), -1)
-      : addDays(toDate(dates.end), 1);
-    setDates(selectedRadio.func(start));
+    setDates(selectedRadio.func(addDays(toDate(dates.start), left ? -1 : 1)));
   };
 
   return (
@@ -168,8 +165,8 @@ const Prices = ({ allPrices }) => {
 
               <FloatingLabel label="end">
                 <Form.Control
-                disabled
-                readOnly
+                  disabled
+                  readOnly
                   type="date"
                   name="end"
                   value={dates.end}
