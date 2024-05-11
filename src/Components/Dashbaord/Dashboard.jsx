@@ -6,7 +6,7 @@ import { Row, Col } from "react-bootstrap";
 import Prices from "./1_Market/Prices";
 import Flows from "./1_Market/Flows";
 import Noms from "./2_Balance/Noms";
-import Allocs from "./2_Balance/Allocs";
+
 import Create from "./3_Trading/Create";
 import Pending from "./3_Trading/Pending";
 import Agreed from "./3_Trading/Agreed";
@@ -21,6 +21,7 @@ import Navbar from "react-bootstrap/Navbar";
 import axios from "axios";
 import { getGridPricesAll } from "../../Utilities/apiCalls";
 import { graphActions, readGraph } from "../../Slices/GraphSlice";
+import Balance from "./2_Balance/Balance";
 
 const Dashboard = ({ account }) => {
   const dispatch = useDispatch();
@@ -81,11 +82,12 @@ const Dashboard = ({ account }) => {
         {
           title: "Net Balances",
           header: "Your Overall Gas Balances",
-          elem: <Allocs account={account} />,
+          elem: <Balance account={account} />,
         },
         {
           title: "Transput Nominations",
-          header: "Nominate your projected production inputs and offtakes into the Grid",
+          header:
+            "Nominate your projected production inputs and offtakes into the Grid",
           elem: <Noms account={account} />,
         },
       ],
