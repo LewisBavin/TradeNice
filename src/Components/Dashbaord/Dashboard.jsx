@@ -82,7 +82,7 @@ const Dashboard = ({ account }) => {
         {
           title: "Net Balances",
           header: "Your Overall Gas Balances",
-          elem: <Balance account={account} />,
+          elem: <Balance account={account} users={users} />,
         },
         {
           title: "Transput Nominations",

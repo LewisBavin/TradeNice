@@ -12,6 +12,7 @@ import {
   endOfYear,
   endOfDecade,
   addDays,
+  startOfDay,
 } from "date-fns";
 import { useDispatch, useSelector } from "react-redux";
 import {
@@ -37,8 +38,8 @@ const Prices = ({ allPrices }) => {
   const dispatch = useDispatch();
   const graph = useSelector(readGraph);
   const [dates, setDates] = useState({
-    start: format(new Date(), "yyyy-MM-dd"),
-    end: format(new Date(), "yyyy-MM-dd"),
+    start: format(startOfDay(new Date()), "yyyy-MM-dd"),
+    end: format(nstartOfDay(new Date()), "yyyy-MM-dd"),
   });
   const [prices, setPrices] = useState();
   const [all, setAll] = useState();
