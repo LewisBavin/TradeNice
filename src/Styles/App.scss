@@ -238,33 +238,48 @@ input.form-control.strikethrough {
 .balance {
   * {
     text-align: center;
+    color: black;
   }
+  .col-2 {
+    text-align: right;
+  }
+
   .accordion-body {
     padding: 0.2rem 0;
   }
 
   .Inputs {
-    .accordion-button {
-      background-color: lightgreen;
-    }
-    .total {
-      .accordion-button {
-        background-color: rgba(0, 100, 0, 0.5);
-        color: white;
+    .accordion {
+      &.total {
+        .accordion-button {
+          background-color: rgba(0, 100, 0, 0.5);
+        }
+      }
+      &.inner {
+        .accordion-button {
+          background-color: lightgreen;
+        }
+      }
+      .accordion-body {
+        background-color: rgb(197, 252, 197);
       }
     }
-    .accordion-body {
-      background-color: rgb(197, 252, 197);
-    }
   }
-  .outputs {
-    .accordion-button {
-      background-color: mistyrose;
-    }
-    .total {
-      .accordion-button {
-        background-color: rgb(252, 200, 194);
-        color: white;
+
+  .Outputs {
+    .accordion {
+      &.total {
+        .accordion-button {
+          background-color: rgb(252, 200, 194);
+        }
+      }
+      &.inner {
+        .accordion-button {
+          background-color: mistyrose;
+        }
+      }
+      .accordion-body {
+        background-color: rgb(255, 240, 239);
       }
     }
   }

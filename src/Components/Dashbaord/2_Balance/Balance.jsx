@@ -17,49 +17,56 @@ const Balance = ({ account, users }) => {
     format(startOfDay(new Date()), "yyyy-MM-dd")
   );
 
-  const mainKeys = ["Nominated", "Allocated"];
-  const innerKeys = ["Inputs", "Outputs"];
+  const mainKeys = ["Inputs", "Outputs"];
+  const innerKeys = ["Transputs", "Trades"];
+  const babyKeys = ["Nominations", "Allocations"];
 
-  let filterData = (type, main, inner) => {
-    if (type == "transputs") {
+  let filterData = (main, inner, baby) => {
+    if (inner == "Transputs") {
       return transputs.filter(
-        (t) => t.transput == (main == "inputs" ? "I" : "O")
+        (t) => t.transput == (main == "Inputs" ? "I" : "O")
       );
     }
-    return trades
-      .filter((t) =>
-        (main = "inputs")
-          ? (t.user_id == account.user.user_id && t.directoin == "B") ||
-            (t.counter_id == account.user.user_id && t.directoin == "S")
-          : (t.user_id == account.user.user_id && t.directoin == "S") ||
-            (t.counter_id == account.user.user_id && t.directoin == "B")
-      )
-      .filter((t) => (inner == "allocated" ? t.accepted == 1 : t));
+    return trades.filter((t) =>
+      main == "Inputs"
+        ? (baby = "Nominations")
+          ? (t.user_id == account.user.id && t.direction == "B") ||
+            (t.counter_id == account.user.id && t.direction == "B")
+          : t
+        : t
+    );
+  };
+
+  let nameData = (main, inner) => {
+    return main == "Inputs"
+      ? inner == "Transputs"
+        ? "Grid Inputs"
+        : "Trade Buys"
+      : inner == "Transputs"
+      ? "Grid Offtakes"
+      : "Trade Sells";
   };
 
   const balance = mainKeys.reduce((mainAcum, main) => {
     mainAcum[main] = innerKeys.reduce((innerAcum, inner) => {
       innerAcum[inner] = {
-        transputs: filterData("transputs", main, inner),
-        transputsTotal() {
-          return this.transputs.reduce((acum, t) => acum + t.volume, 0);
-        },
-        trades: filterData("trades", main, inner),
-        tradesTotal() {
-          return this.trades.reduce((acum, t) => acum + t.volume, 0);
-        },
-        total() {
-          return this.tradesTotal() + this.transputsTotal();
+        ...babyKeys.reduce((babyAcum, baby) => {
+          babyAcum[baby] = {
+            details: filterData(main, inner, baby),
+            total() {
+              return this.details.reduce((acum, t) => acum + t, 0);
+            },
+          };
+          return babyAcum;
+        }, {}),
+        name: nameData(main, inner),
+        totals() {
+          let tot = this.Nominations.total();
+          return {};
         },
       };
-
       return innerAcum;
     }, {});
-    mainAcum[main] = {
-      ...mainAcum[main],
-      ["Net Total:"]:
-        mainAcum[main].Inputs.total() - mainAcum[main].Outputs.total(),
-    };
     return mainAcum;
   }, {});
 
@@ -94,190 +101,79 @@ const Balance = ({ account, users }) => {
             <Container>
               <Row>
                 <Col xs={2}></Col>
-                <Col>Nominations</Col>
-                <Col>Allocations</Col>
+                {babyKeys.map((babyKey, i) => (
+                  <Col key={i}>{babyKey}</Col>
+                ))}
               </Row>
             </Container>
           </Col>
         </Row>
-        <Row className="inputs">
-          <Col xs={1}>Inputs</Col>
-          <Col>
-            <Container>
-              <Row>
-                <Col>
-                  <Accordion className="mainAccordion">
-                    <Accordion.Item>
-                      <Accordion.Header>
-                        <Container>
-                          <Row>
-                            <Col xs={2}>Total</Col>
-                            <Col>net noms</Col>
-                            <Col>net allocs</Col>
-                          </Row>
-                        </Container>
-                      </Accordion.Header>
-                      <Accordion.Body>
-                        <Accordion>
-                          <Accordion.Item>
-                            <Accordion.Header>
-                              <Container>
-                                <Row>
-                                  <Col xs={2}>Trade Buys</Col>
-                                  <Col>nom total </Col>
-                                  <Col>all total</Col>
-                                </Row>
-                              </Container>
-                            </Accordion.Header>
-                            <Accordion.Body>
-                              <Container>
-                                <Row>
-                                  <Col xs={2}></Col>
-                                  <Col>
-                                    here is a boring list of all the trade
-                                    details in the systerm
-                                  </Col>
-                                  <Col>
-                                    similarly but for allocs lets see what the
-                                    layout looks like
-                                  </Col>
-                                </Row>
-                              </Container>
-                            </Accordion.Body>
-                          </Accordion.Item>
-                        </Accordion>
-
-                        <Container>
-                          <Row>
-                            <Col>
-                              <Accordion>
-                                <Accordion.Item>
-                                  <Accordion.Header>
-                                    <Container>
-                                      <Row>
-                                        <Col xs={2}>Grid Inputs</Col>
-                                        <Col>nom total </Col>
-                                        <Col>all total</Col>
-                                      </Row>
-                                    </Container>
-                                  </Accordion.Header>
-                                  <Accordion.Body>
-                                    <Container>
-                                      <Row>
-                                        <Col xs={2}></Col>
-                                        <Col>
-                                          here is a boring list of all the trade
-                                          details in the systerm
+        {Object.entries(balance).map(([mainKey, mainObj], i) => (
+          <Row key={i} className={mainKey}>
+            <Col xs={1}>{mainKey}</Col>
+            <Col>
+              <Container>
+                <Row>
+                  <Col>
+                    <Accordion className="total">
+                      <Accordion.Item>
+                        <Accordion.Header>
+                          <Container>
+                            <Row>
+                              <Col xs={2}>Total</Col>
+                              {babyKeys.map((babyKey, i) => (
+                                <Col key={i}>
+                                  {mainObj.Transputs[babyKey].total() +
+                                    mainObj.Trades[babyKey].total()}
+                                </Col>
+                              ))}
+                            </Row>
+                          </Container>
+                        </Accordion.Header>
+                        <Accordion.Body>
+                          {Object.values(mainObj).map((innerObj, i) => (
+                            <Accordion key={i} className="inner">
+                              <Accordion.Item>
+                                <Accordion.Header>
+                                  <Container>
+                                    <Row>
+                                      <Col xs={2}>{innerObj.name}</Col>
+                                      {babyKeys.map((babyKey, i) => (
+                                        <Col key={i}>
+                                          {innerObj[babyKey].total()}
                                         </Col>
-                                        <Col>
-                                          similarly but for allocs lets see what
-                                          the layout looks like
+                                      ))}
+                                    </Row>
+                                  </Container>
+                                </Accordion.Header>
+                                <Accordion.Body>
+                                  <Container>
+                                    <Row>
+                                      <Col xs={2}></Col>
+                                      {babyKeys.map((babyKey, i) => (
+                                        <Col key={i}>
+                                          {innerObj[babyKey].details.map(
+                                            (transaction, i) => {
+                                              <div>jfdklsajflskjfdkla</div>;
+                                            }
+                                          )}
                                         </Col>
-                                      </Row>
-                                    </Container>
-                                  </Accordion.Body>
-                                </Accordion.Item>
-                              </Accordion>
-                            </Col>
-                          </Row>
-                        </Container>
-                      </Accordion.Body>
-                    </Accordion.Item>
-                  </Accordion>
-                </Col>
-              </Row>
-            </Container>
-          </Col>
-        </Row>
-        <Row className="outputs">
-          <Col xs={1}>Outputs</Col>
-          <Col>
-            <Container>
-              <Row>
-                <Col>
-                  <Accordion className="mainAccordion">
-                    <Accordion.Item>
-                      <Accordion.Header>
-                        <Container>
-                          <Row>
-                            <Col xs={2}>Total</Col>
-                            <Col>net noms</Col>
-                            <Col>net allocs</Col>
-                          </Row>
-                        </Container>
-                      </Accordion.Header>
-                      <Accordion.Body>
-                        <Accordion>
-                          <Accordion.Item>
-                            <Accordion.Header>
-                              <Container>
-                                <Row>
-                                  <Col xs={2}>Trade Buys</Col>
-                                  <Col>nom total </Col>
-                                  <Col>all total</Col>
-                                </Row>
-                              </Container>
-                            </Accordion.Header>
-                            <Accordion.Body>
-                              <Container>
-                                <Row>
-                                  <Col xs={2}></Col>
-                                  <Col>
-                                    here is a boring list of all the trade
-                                    details in the systerm
-                                  </Col>
-                                  <Col>
-                                    similarly but for allocs lets see what the
-                                    layout looks like
-                                  </Col>
-                                </Row>
-                              </Container>
-                            </Accordion.Body>
-                          </Accordion.Item>
-                        </Accordion>
-
-                        <Container>
-                          <Row>
-                            <Col>
-                              <Accordion>
-                                <Accordion.Item>
-                                  <Accordion.Header>
-                                    <Container>
-                                      <Row>
-                                        <Col xs={2}>Grid Inputs</Col>
-                                        <Col>nom total </Col>
-                                        <Col>all total</Col>
-                                      </Row>
-                                    </Container>
-                                  </Accordion.Header>
-                                  <Accordion.Body>
-                                    <Container>
-                                      <Row>
-                                        <Col xs={2}></Col>
-                                        <Col>
-                                          here is a boring list of all the trade
-                                          details in the systerm
-                                        </Col>
-                                        <Col>
-                                          similarly but for allocs lets see what
-                                          the layout looks like
-                                        </Col>
-                                      </Row>
-                                    </Container>
-                                  </Accordion.Body>
-                                </Accordion.Item>
-                              </Accordion>
-                            </Col>
-                          </Row>
-                        </Container>
-                      </Accordion.Body>
-                    </Accordion.Item>
-                  </Accordion>
-                </Col>
-              </Row>
-            </Container>
-          </Col>
-        </Row>
+                                      ))}
+                                    </Row>
+                                  </Container>
+                                </Accordion.Body>
+                              </Accordion.Item>
+                            </Accordion>
+                          ))}
+                        </Accordion.Body>
+                      </Accordion.Item>
+                    </Accordion>
+                  </Col>
+                </Row>
+              </Container>
+            </Col>
+          </Row>
+        ))}
         <Row className="nets">
           <Col xs={1}>Net Balance</Col>
           <Col>
