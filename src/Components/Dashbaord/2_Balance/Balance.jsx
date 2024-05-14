@@ -1,5 +1,6 @@
+import axios from "axios";
 import { addDays, format, startOfDay, toDate } from "date-fns";
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import {
   Accordion,
   Button,
@@ -11,15 +12,14 @@ import {
 } from "react-bootstrap";
 
 const Balance = ({ account, users }) => {
+  const mainKeys = ["Inputs", "Outputs"];
+  const innerKeys = ["Transputs", "Trades"];
+  const babyKeys = ["Nominations", "Allocations"];
   const [transputs, setTransputs] = useState([]);
   const [trades, setTrades] = useState([]);
   const [date, setDate] = useState(
     format(startOfDay(new Date()), "yyyy-MM-dd")
   );
-
-  const mainKeys = ["Inputs", "Outputs"];
-  const innerKeys = ["Transputs", "Trades"];
-  const babyKeys = ["Nominations", "Allocations"];
 
   let filterData = (main, inner, baby) => {
     if (inner == "Transputs") {
@@ -27,14 +27,16 @@ const Balance = ({ account, users }) => {
         (t) => t.transput == (main == "Inputs" ? "I" : "O")
       );
     }
-    return trades.filter((t) =>
-      main == "Inputs"
-        ? (baby = "Nominations")
-          ? (t.user_id == account.user.id && t.direction == "B") ||
-            (t.counter_id == account.user.id && t.direction == "B")
-          : t
-        : t
-    );
+    console.log(account.user.id);
+    return trades
+      .filter((t) =>
+        main == "Inputs"
+          ? (t.user_id == account.user.user_id && t.direction == "B") ||
+            (t.counter_id == account.user.user_id && t.direction == "S")
+          : (t.user_id == account.user.user_id && t.direction == "S") ||
+            (t.counter_id == account.user.user_id && t.direction == "B")
+      )
+      .filter((t) => (baby == "Allocations" ? t.accepted : t));
   };
 
   let nameData = (main, inner) => {
@@ -47,6 +49,23 @@ const Balance = ({ account, users }) => {
       : "Trade Sells";
   };
 
+  useEffect(() => {
+    (async function getData() {
+      let { trades, transputs } = (
+        await axios.get("http://localhost:6002/user/get/requests/valid", {
+          headers: {
+            token: account.user.token,
+            start_date: date,
+            end_date: date,
+          },
+        })
+      ).data;
+      console.log(trades);
+      setTrades(trades);
+      setTransputs(transputs);
+    })();
+  }, [date]);
+
   const balance = mainKeys.reduce((mainAcum, main) => {
     mainAcum[main] = innerKeys.reduce((innerAcum, inner) => {
       innerAcum[inner] = {
@@ -54,16 +73,12 @@ const Balance = ({ account, users }) => {
           babyAcum[baby] = {
             details: filterData(main, inner, baby),
             total() {
-              return this.details.reduce((acum, t) => acum + t, 0);
+              return this.details.reduce((acum, t) => acum + t.volume, 0);
             },
           };
           return babyAcum;
         }, {}),
         name: nameData(main, inner),
-        totals() {
-          let tot = this.Nominations.total();
-          return {};
-        },
       };
       return innerAcum;
     }, {});
@@ -75,6 +90,19 @@ const Balance = ({ account, users }) => {
   };
 
   console.log(balance);
+
+  let toggleShow = (e) => {
+    e.currentTarget.classList.toggle("show");
+  };
+
+  let userNames = (id) =>
+    String(
+      id
+        ? id == account.user.user_id
+          ? account.user.name
+          : users.find((u) => u.id == id).name
+        : ""
+    );
 
   return (
     <div className="balance flx col ai-c jc-c">
@@ -94,9 +122,8 @@ const Balance = ({ account, users }) => {
         </Form>
       </div>
 
-      <Container className="balance">
+      <Container className="balance flx col">
         <Row className="header">
-          <Col xs={1}>Balance</Col>
           <Col>
             <Container>
               <Row>
@@ -110,7 +137,6 @@ const Balance = ({ account, users }) => {
         </Row>
         {Object.entries(balance).map(([mainKey, mainObj], i) => (
           <Row key={i} className={mainKey}>
-            <Col xs={1}>{mainKey}</Col>
             <Col>
               <Container>
                 <Row>
@@ -119,8 +145,8 @@ const Balance = ({ account, users }) => {
                       <Accordion.Item>
                         <Accordion.Header>
                           <Container>
-                            <Row>
-                              <Col xs={2}>Total</Col>
+                            <Row className="totals">
+                              <Col xs={2}>{"Total " + mainKey}</Col>
                               {babyKeys.map((babyKey, i) => (
                                 <Col key={i}>
                                   {mainObj.Transputs[babyKey].total() +
@@ -135,7 +161,7 @@ const Balance = ({ account, users }) => {
                             <Accordion key={i} className="inner">
                               <Accordion.Item>
                                 <Accordion.Header>
-                                  <Container>
+                                  <Container className="breakdowns">
                                     <Row>
                                       <Col xs={2}>{innerObj.name}</Col>
                                       {babyKeys.map((babyKey, i) => (
@@ -152,11 +178,92 @@ const Balance = ({ account, users }) => {
                                       <Col xs={2}></Col>
                                       {babyKeys.map((babyKey, i) => (
                                         <Col key={i}>
-                                          {innerObj[babyKey].details.map(
-                                            (transaction, i) => {
-                                              <div>jfdklsajflskjfdkla</div>;
-                                            }
-                                          )}
+                                          <div className="flx col ai-c">
+                                            {innerObj[babyKey].details.map(
+                                              (t, i) => (
+                                                <div className="flx" key={i}>
+                                                  {t.volume}
+                                                  <div
+                                                    onMouseEnter={toggleShow}
+                                                    onMouseLeave={toggleShow}
+                                                    className="detailsContainer"
+                                                  >
+                                                    <Button className="small flx jc-c ai-c">
+                                                      i
+                                                    </Button>
+                                                    <div className="flx col details">
+                                                      <FloatingLabel label="ID">
+                                                        <Form.Control
+                                                          disabled
+                                                          value={t.id}
+                                                        />
+                                                      </FloatingLabel>
+                                                      <FloatingLabel label="Requested by">
+                                                        <Form.Control
+                                                          disabled
+                                                          value={userNames(
+                                                            t.user_id
+                                                          )}
+                                                        />
+                                                        <FloatingLabel label="Direction">
+                                                          <Form.Control
+                                                            disabled
+                                                            value={
+                                                              t.direction ||
+                                                              t.transput
+                                                            }
+                                                          />
+                                                        </FloatingLabel>
+                                                      </FloatingLabel>
+                                                      <FloatingLabel
+                                                        label={
+                                                          babyKey ==
+                                                          "Nominations"
+                                                            ? "Counterparty"
+                                                            : "Accepted By"
+                                                        }
+                                                      >
+                                                        <Form.Control
+                                                          disabled
+                                                          value={
+                                                            userNames(
+                                                              t.counter_id
+                                                            ) || "GRID"
+                                                          }
+                                                        />
+                                                      </FloatingLabel>
+                                                      <FloatingLabel label="Start">
+                                                        <Form.Control
+                                                          disabled
+                                                          value={format(
+                                                            toDate(
+                                                              t.start_date
+                                                            ),
+                                                            "yyyy-MM-dd"
+                                                          )}
+                                                        />
+                                                      </FloatingLabel>
+                                                      <FloatingLabel label="End">
+                                                        <Form.Control
+                                                          disabled
+                                                          value={format(
+                                                            toDate(t.end_date),
+                                                            "yyyy-MM-dd"
+                                                          )}
+                                                        />
+                                                      </FloatingLabel>
+                                                      <FloatingLabel label="Daily Volume">
+                                                        <Form.Control
+                                                          disabled
+                                                          value={t.volume}
+                                                        />
+                                                      </FloatingLabel>
+                                                    </div>
+                                                  </div>
+                                                </div>
+                                              )
+                                            )}
+                                          </div>
                                         </Col>
                                       ))}
                                     </Row>
@@ -175,13 +282,18 @@ const Balance = ({ account, users }) => {
           </Row>
         ))}
         <Row className="nets">
-          <Col xs={1}>Net Balance</Col>
           <Col>
             <Container>
-              <Row>
-                <Col xs={2}></Col>
-                <Col>Nomination Net</Col>
-                <Col>Allocations Net</Col>
+              <Row className="totals">
+                <Col xs={2}>Net Balance</Col>
+                {babyKeys.map((key, i) => (
+                  <Col key={i}>
+                    {balance.Inputs.Trades[key].total() +
+                      balance.Inputs.Transputs[key].total() -
+                      balance.Outputs.Trades[key].total() -
+                      balance.Outputs.Transputs[key].total()}
+                  </Col>
+                ))}
               </Row>
             </Container>
           </Col>

@@ -236,9 +236,23 @@ input.form-control.strikethrough {
 }
 
 .balance {
+
+  gap: 1rem;
+  button.small{
+    height: 20px;
+    width: 20px;
+    padding: 0;
+    margin: 0;
+    border-radius: 1rem;
+    z-index: 20;
+    font-size: smaller;
+  }
+  font-weight: 100;
+  
   * {
     text-align: center;
     color: black;
+
   }
   .col-2 {
     text-align: right;
@@ -247,6 +261,15 @@ input.form-control.strikethrough {
   .accordion-body {
     padding: 0.2rem 0;
   }
+
+  .total{
+
+    &.accordion{
+      border-radius: 5rem;
+    }
+  }
+
+
 
   .Inputs {
     .accordion {
@@ -282,5 +305,41 @@ input.form-control.strikethrough {
         background-color: rgb(255, 240, 239);
       }
     }
+  }
+
+  .totals{
+    font-weight: bolder;
+  }
+
+
+
+  .breakdowns{
+    font-weight:500
+  }
+
+  .detailsContainer{
+    position: relative;
+    overflow: hidden;
+
+    &.show{
+      overflow: visible;
+      z-index: 500;
+    }
+
+
+    .details{
+     position: absolute;
+     transform: translate(-125%,-50%);
+     top: 0;
+;     width: max-content;
+
+    }
+  }
+
+  .nets *{
+    border-radius: 2rem;
+    font-weight: bolder;
+    background-color: darkblue;
+    color: white;
   }
 }
