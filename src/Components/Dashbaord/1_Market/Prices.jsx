@@ -1,42 +1,24 @@
 import React, { useEffect, useRef, useState } from "react";
-import { getGridPricesAll } from "../../../Utilities/apiCalls";
 import Plot from "react-plotly.js";
 import {
-  add,
   format,
   startOfMonth,
   startOfYear,
-  startOfDecade,
   toDate,
   endOfMonth,
   endOfYear,
-  endOfDecade,
   addDays,
   startOfDay,
 } from "date-fns";
 import { useDispatch, useSelector } from "react-redux";
-import {
-  getSavedPrices,
-  graphActions,
-  readGraph,
-} from "../../../Slices/GraphSlice";
+import { readGraph } from "../../../Slices/GraphSlice";
 import "react-datepicker/dist/react-datepicker.css";
 import enGB from "date-fns/locale/en-GB";
 import { setDefaultOptions } from "date-fns";
-import { setStore } from "../../../Utilities/localStorage";
-import {
-  Button,
-  Form,
-  Spinner,
-  Row,
-  Col,
-  FloatingLabel,
-} from "react-bootstrap";
+import { Button, Form, Spinner, FloatingLabel } from "react-bootstrap";
 setDefaultOptions(enGB);
 
 const Prices = ({ allPrices }) => {
-  const dispatch = useDispatch();
-  const graph = useSelector(readGraph);
   const [dates, setDates] = useState({
     start: format(startOfDay(new Date()), "yyyy-MM-dd"),
     end: format(startOfDay(new Date()), "yyyy-MM-dd"),
@@ -120,7 +102,11 @@ const Prices = ({ allPrices }) => {
   };
 
   let cycleDates = (left = true) => {
-    setDates(selectedRadio.func(addDays(toDate(dates.start), left ? -1 : 1)));
+    setDates(
+      selectedRadio.func(
+        addDays(toDate(left ? dates.start : dates.end), left ? -1 : 1)
+      )
+    );
   };
 
   return (

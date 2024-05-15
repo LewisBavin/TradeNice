@@ -23,7 +23,7 @@ const Agreed = ({ account, users }) => {
   });
   const [err, setErr] = useState(null);
 
-  useEffect(() =>{
+  useEffect(() => {
     let Buys = [...matched].filter(
         (t) =>
           (t.user_id == account.user.user_id && t.direction == "B") ||
@@ -135,73 +135,57 @@ const Agreed = ({ account, users }) => {
 
   return (
     <div className="flx jc-c ai-c col">
-      <Container>
-        <Container className="text-center">
-          <Row>
-            <Form onSubmit={getMatched}>
-              <Row>
-                <Col className="text-primary d-flex justify-content-center align-items-center pt-3">
-                  Filter Matched Trades
-                </Col>
-              </Row>
-              <Row>
-                <Col className="text-danger d-flex justify-content-center align-items-center">
-                  {err}
-                </Col>
-              </Row>
-              <Row className="d-flex justify-content-center py-3">
-                <Col xs={3} className="d-flex align-items-center">
-                  <Form.Text className="text-muted">Start Date</Form.Text>
-                  <Form.Control
-                    type="date"
-                    name="start_date"
-                    value={
-                      !dates.start_date ? dates.end_date : dates.start_date
-                    }
-                    onChange={updateDates}
-                  />
-                </Col>
-                <Col xs={3} className="d-flex align-items-center">
-                  <Form.Text className="text-muted">End Date</Form.Text>
-                  <Form.Control
-                    type="date"
-                    name="end_date"
-                    value={!dates.end_date ? dates.start_date : dates.end_date}
-                    onChange={updateDates}
-                  />
-                </Col>
-                <Col xs={1} className="d-flex align-items-center">
-                  <Button
-                    type="submit"
-                    disabled={!!err}
-                    variant={!!err ? "danger" : "success"}
-                  >
-                    Go
-                  </Button>
-                </Col>
-              </Row>
-            </Form>
-          </Row>
-        </Container>
-        <Container>
-          <Row className="justify-content-md-center p-2">
-            {submit && (
-              <Button
-                disabled={haultSubmit}
-                variant={haultSubmit ? "danger" : "success"}
-                onClick={submitChanges}
-              >
-                Send Disputes
-              </Button>
-            )}
-          </Row>
-        </Container>
+      <Container className="dates">
+        <div className="flx jc-c text-warning">{err}</div>
+        <Form
+          onSubmit={getMatched}
+          className="d-flex justify-content-md-center"
+        >
+          <FloatingLabel label="start">
+            <Form.Control
+              type="date"
+              name="start_date"
+              value={!dates.start_date ? dates.end_date : dates.start_date}
+              onChange={updateDates}
+            />
+          </FloatingLabel>
+
+          <FloatingLabel label="end">
+            <Form.Control
+              type="date"
+              name="end_date"
+              value={!dates.end_date ? dates.start_date : dates.end_date}
+              onChange={updateDates}
+            />
+          </FloatingLabel>
+          <Button
+            type="submit"
+            disabled={!!err}
+            variant={!!err ? "danger" : "success"}
+          >
+            Go
+          </Button>
+        </Form>
       </Container>
       <Container>
-        <Accordion>
-          {Object.entries(splits).map(([key, arr], j) => {
-            return (
-              <Accordion.Item key={j}>
+        <Row className="justify-content-md-center p-2">
+          {submit && (
+            <Button
+              disabled={haultSubmit}
+              variant={haultSubmit ? "danger" : "success"}
+              onClick={submitChanges}
+            >
+              Send Disputes
+            </Button>
+          )}
+        </Row>
+      </Container>
+
+      <Container className="accordionContainer">
+        {Object.entries(splits).map(([key, arr], j) => (
+          <div className={key == "Buys" ? "Inputs" : "Outputs"}>
+            <Accordion key={j} className="total">
+              <Accordion.Item>
                 <Accordion.Header>{key}</Accordion.Header>
                 <Accordion.Body>
                   {arr.map((t, i) => (
@@ -283,9 +267,10 @@ const Agreed = ({ account, users }) => {
                   ))}
                 </Accordion.Body>
               </Accordion.Item>
-            );
-          })}
-        </Accordion>
+            </Accordion>
+          </div>
+        ))}
+        )
       </Container>
     </div>
   );

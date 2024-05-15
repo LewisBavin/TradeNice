@@ -164,79 +164,49 @@ const Dispute = ({ account, users }) => {
 
   return (
     <div className="flx jc-c ai-c col">
-      <Container>
-        <Container className="text-center">
-          <Row>
-            <Form onSubmit={getMatched}>
-              <Row>
-                <Col className="text-primary d-flex justify-content-center align-items-center pt-3">
-                  Filter Disputes
-                </Col>
-              </Row>
-              <Row>
-                <Col className="text-danger d-flex justify-content-center align-items-center">
-                  {err}
-                </Col>
-              </Row>
-              <Row className="d-flex justify-content-center py-3">
-                <Col xs={3} className="d-flex align-items-center">
-                  <Form.Text className="text-muted">Start Date</Form.Text>
-                  <Form.Control
-                    type="date"
-                    name="start_date"
-                    value={
-                      !dates.start_date ? dates.end_date : dates.start_date
-                    }
-                    onChange={updateDates}
-                  />
-                </Col>
-                <Col xs={3} className="d-flex align-items-center">
-                  <Form.Text className="text-muted">End Date</Form.Text>
-                  <Form.Control
-                    type="date"
-                    name="end_date"
-                    value={!dates.end_date ? dates.start_date : dates.end_date}
-                    onChange={updateDates}
-                  />
-                </Col>
-                <Col xs={1} className="d-flex align-items-center">
-                  <Button
-                    type="submit"
-                    disabled={!!err}
-                    variant={!!err ? "danger" : "success"}
-                  >
-                    Go
-                  </Button>
-                </Col>
-              </Row>
-            </Form>
-          </Row>
-        </Container>
-        <Container>
-          <Row className="justify-content-md-center p-2">
-            {submit && (
-              <Button
-                disabled={haultSubmit}
-                variant={haultSubmit ? "danger" : "success"}
-                onClick={submitChanges}
-              >
-                Send Disputes
-              </Button>
-            )}
-          </Row>
-        </Container>
+      <Container className="dates">
+        <div className="flx jc-c text-warning">{err}</div>
+        <Form
+          onSubmit={getMatched}
+          className="d-flex justify-content-md-center"
+        >
+          <FloatingLabel label="start">
+            <Form.Control
+              type="date"
+              name="start_date"
+              value={!dates.start_date ? dates.end_date : dates.start_date}
+              onChange={updateDates}
+            />
+          </FloatingLabel>
+
+          <FloatingLabel label="end">
+            <Form.Control
+              type="date"
+              name="end_date"
+              value={!dates.end_date ? dates.start_date : dates.end_date}
+              onChange={updateDates}
+            />
+          </FloatingLabel>
+          <Button
+            type="submit"
+            disabled={!!err}
+            variant={!!err ? "danger" : "success"}
+          >
+            Go
+          </Button>
+        </Form>
       </Container>
-      <Container>
-        <Accordion>
-          {Object.entries(splits).map(([key, innerObj], i) => (
-            <Accordion key={i}>
+      <Container className="accordionContainer">
+        {Object.entries(splits).map(([key, innerObj], i) => (
+          <div className={key == "Pending" ? "Inputs" : "Outputs"}>
+            <Accordion key={i} className="total">
               <Accordion.Item>
                 <Accordion.Header>
                   {key + " Disputes - Trades Still Honoured"}
                 </Accordion.Header>
                 <Accordion.Body>
                   {Object.entries(innerObj).map(([innerKey, arr], j) => (
-                    <Accordion key={j}>
+                    <Accordion key={j} className="inner">
                       <Accordion.Item>
                         <Accordion.Header>
                           {"Raised By " + innerKey}
@@ -387,97 +357,8 @@ const Dispute = ({ account, users }) => {
                 </Accordion.Body>
               </Accordion.Item>
             </Accordion>
-          ))}
-        </Accordion>
-
-        {/* <Accordion>
-          {Object.entries(splits).map(([key, innerObj], i) => (
-            <Accordion.Item >
-              <Accordion.Header>{"Disputes Raised By " + key}</Accordion.Header>
-              <Accordion.Body>
-                {Object.entries(innerObj).map(([innerKey, arr],j)=>{
-                    <Accordion.Item key={j}>
-                        <Accordion.Header>{innerKey}<Accordion.Header/>
-                            <Accordion.Body>
-
-                            <Accordion.Body/>
-            <Accordion.Item/>
-                })}
-                {arr.map((t, i) => (
-                  <Form key={i} className=" col ai-c jc-c">
-                    <div className="flx ai-c jc-c">
-                      <FloatingLabel label="Id">
-                        <Form.Control disabled defaultValue={t.trade_id} />
-                      </FloatingLabel>
-                      <FloatingLabel label="User">
-                        <Form.Control
-                          disabled
-                          defaultValue={userName(t.user_id)}
-                        />
-                      </FloatingLabel>
-                      <FloatingLabel label="Dir">
-                        <Form.Control disabled defaultValue={t.direction} />
-                      </FloatingLabel>
-                      <FloatingLabel label="Counter">
-                        <Form.Control
-                          disabled
-                          defaultValue={userName(t.counter_id)}
-                        />
-                      </FloatingLabel>
-                      <FloatingLabel label="Start">
-                        <Form.Control
-                          disabled
-                          defaultValue={format(t.start_date, "yyyy-MM-dd")}
-                        />
-                      </FloatingLabel>
-                      <FloatingLabel label="End">
-                        <Form.Control
-                          disabled
-                          defaultValue={format(t.end_date, "yyyy-MM-dd")}
-                        />
-                      </FloatingLabel>
-                      <FloatingLabel label="Vol / Day">
-                        <Form.Control disabled defaultValue={t.volume} />
-                      </FloatingLabel>
-                      <FloatingLabel label="Price">
-                        <Form.Control disabled defaultValue={t.price} />
-                      </FloatingLabel>
-                      <FloatingLabel label="Tot Vol">
-                        <Form.Control disabled defaultValue={t.total_volume} />
-                      </FloatingLabel>
-                      <FloatingLabel
-                        label="Dispute Raised By"
-                        style={{ minWidth: "160px" }}
-                      >
-                        <Form.Control
-                          disabled
-                          defaultValue={userName(t.dispute_user_id)}
-                        />
-                      </FloatingLabel>
-                    </div>
-
-                    <div>
-                      <Form.Text>
-                        {key == "You"
-                          ? "Counterparty has yet to accept your dispute"
-                          : "Please review their"}
-                      </Form.Text>
-                      <Form.Text>
-                        {key == "You"
-                          ? "Your Dispute Comments:"
-                          : "Their Dispute Comments"}
-                      </Form.Text>
-                      <Form.Control
-                        value={t.comment ? t.comment : ""}
-                        onChange={(e) => addComment(e, key, i)}
-                      />
-                    </div>
-                  </Form>
-                ))}
-              </Accordion.Body>
-            </Accordion.Item>
-          ))}
-        </Accordion> */}
+          </div>
+        ))}
       </Container>
     </div>
   );

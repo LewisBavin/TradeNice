@@ -32,7 +32,7 @@ function Header({ account }) {
   };
 
   return (
-    <Navbar expand="lg" className="bg-body-tertiary">
+    <Navbar>
       <Container>
         <Navbar.Brand>
           <div>TradeNice :)</div>

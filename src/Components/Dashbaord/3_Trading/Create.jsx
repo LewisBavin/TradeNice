@@ -203,7 +203,7 @@ const Create = ({ account, users }) => {
   return (
     <>
       <div className="requests container col flx jc-c ai-c">
-        <Button onClick={addRequest} variant="outline-success" className="my-1">
+        <Button onClick={addRequest} variant="success" className="my-1">
           +
         </Button>
         <Button
@@ -215,7 +215,7 @@ const Create = ({ account, users }) => {
         >
           Submit
         </Button>
-        <Form className="border border-light d-flex">
+        <Form className="border border-light d-flex create">
           {state.requests.map((request, i) => {
             let errs = [...state.errs][i];
             return (
@@ -332,7 +332,7 @@ const Create = ({ account, users }) => {
                     onClick={() => {
                       removeRequest(i);
                     }}
-                    variant="outline-danger"
+                    variant="danger"
                   >
                     -
                   </Button>

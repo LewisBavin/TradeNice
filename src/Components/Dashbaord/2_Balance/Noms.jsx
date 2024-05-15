@@ -60,15 +60,15 @@ const Noms = ({ account, users }) => {
 
           resultsWD && resultsDA
             ? (function NominationsRefreshed() {
-              dispatch(
-                accountActions.setToast({
-                  trigger: true,
-                  strong: "Success!",
-                  body: "Within-day & Day-ahead nominations refreshed",
-                  variant: "success",
-                  delay: 3000,
-                })
-              );
+                dispatch(
+                  accountActions.setToast({
+                    trigger: true,
+                    strong: "Success!",
+                    body: "Within-day & Day-ahead nominations refreshed",
+                    variant: "success",
+                    delay: 3000,
+                  })
+                );
                 setTransputs({
                   Input: {
                     ...transputs.Input,

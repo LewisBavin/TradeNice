@@ -49,9 +49,25 @@
   }
 }
 
+:root {
+  --mainColor: darkSlateGrey;
+  --mainColorLight: rgb(78, 131, 131);
+  --mainColorLighter: rgb(137, 234, 234);
+  --mainColorDark: rgb(38, 65, 65);
+  --mainColorDarker: rgb(25, 42, 42);
+  --accentColor: steelblue;
+  --accentColorLight: rgb(84, 159, 220);
+  --accentColorLighter: rgb(166, 215, 255);
+  --accentColorDark: rgb(67, 112, 149);
+  --accentColorDarker: rgb(50, 92, 126);
+}
+
 html,
 body {
   margin: auto 0;
+  background-color: var(--mainColorDarker);
+  color: var(--mainColorDarker);
+  filter: saturate(75%);
 }
 
 body {
@@ -70,117 +86,144 @@ header {
   width: 100%;
   margin: 0;
   height: fit-content;
-  background-color: blue;
   z-index: 5;
+  background-color: var(--accentColorDarker);
+  color: var(--accentColorLighter);
 }
 footer {
   bottom: 0;
 }
 header {
   top: 0;
-}
 
-.dashContainer {
-  position: fixed;
-  top: 15%;
-  left: 50%;
-  transform: translate(-50%, -50%);
-  min-width: 100vw;
-
-  .navbar-nav {
-    .nav-item {
-      border-radius: 0;
-    }
-
-    .col {
-      background-color: red;
-      margin: 0;
-      padding: 0;
-    }
+  * {
+    color: var(--accentColorLighter);
   }
-}
-
-.content.container,
-.loginContainer {
-  position: absolute;
-  transform: translateX(-50%);
-  left: 50%;
-  height: 73vh;
-  overflow-y: auto;
-  min-width: 95vw;
-}
-
-.content.container {
-  background-color: rgba(173, 216, 230, 0.699);
-  padding: 1rem 1rem 1rem 1rem;
-  margin: 1rem 1rem 1rem 1rem;
-  border-radius: 1rem;
-}
-
-.contents {
-  padding: 1rem 1rem 1rem 1rem;
-  margin: 1rem 1rem 1rem 1rem;
-  border-radius: 1rem;
-  background-color: lightblue;
 }
 
 .root-container {
   width: 100vw;
 }
 
-.react-datepicker-wrapper {
-  width: 100px;
-
-  & .requestInput {
-    width: 100px;
-  }
-}
-
-.requestInput {
-  width: 100%;
-  text-align: center;
-}
-
-.requests.row {
-  &.err {
-    color: darkred;
-  }
-
-  & > .col {
-    width: 100px;
-
-    display: flex;
-    justify-content: center;
-  }
-}
-
-.requests.container {
-  * {
-    text-align: center;
-  }
-  form {
-    background-color: rgba(0, 0, 0, 0.5);
-    border-radius: 1rem;
-  }
-}
-
+.dashContainer,
 .loginContainer {
-  position: absolute;
-  top: 50px;
-}
+  position: fixed;
+  top: 15%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  min-width: 100vw;
 
-.nav-pills.outer {
-  .nav-link.active,
-  .show > .nav-link {
-    background-color: darkblue;
+  .nav {
+    * {
+      background-color: unset;
+    }
+    background-color: var(--mainColorDark);
+
+    .nav-pills {
+      &.outer {
+        .nav-link {
+          background-color: var(--mainColor);
+          color: var(--mainColorLighter);
+          filter: saturate(120%);
+          &.active,
+          .show > .nav-link {
+            background-color: var(--mainColorLight);
+            color: black;
+            filter: saturate(120%);
+          }
+        }
+      }
+      &.inner {
+        .nav-link {
+          background-color: var(--mainColor);
+          color: var(--mainColorLighter);
+          &.active,
+          .show > .nav-link {
+            background-color: var(--mainColorLighter);
+            color: black;
+          }
+        }
+      }
+    }
+    filter: saturate(50%);
+  }
+  .content {
+    gap: 0.5rem;
+
+    &.container,
+    .loginContainer {
+      position: absolute;
+      transform: translateX(-50%);
+      left: 50%;
+      height: 73vh;
+      overflow-y: auto;
+      min-width: 95vw;
+      background-color: var(--accentColorDarker);
+
+      padding: 1rem;
+      border-radius: 1rem;
+
+      .contents {
+        padding: 1rem;
+        border-radius: 1rem;
+        background-color: var(--accentColorDark);
+
+        &.header {
+          display: flex;
+          justify-content: center;
+          font-size: 1.5rem;
+          font-style: italic;
+          font-weight: 500;
+          padding: 0;
+          color: var(--mainColorDark);
+        }
+      }
+    }
+    .loginContainer {
+      position: absolute;
+      top: 50px;
+    }
   }
 }
 
-.form-control,
-select,
-option {
-  font-size: 0.8rem;
-  text-align: center;
+.normal {
+  background-color: var(--accentColorDarker);
+}
+
+form {
+  &.create {
+    background-color: var(--mainColorDark);
+    padding: 0.5rem;
+  }
+  .form-floating > {
+    .form-control,
+    .form-select {
+      background-color: var(--accentColorDarker);
+      color: var(--accentColorLighter);
+
+      &-plaintext,
+      &:focus,
+      &:not(:placeholder-shown) {
+        & ~ label::after {
+          background-color: var(--accentColorDarker);
+        }
+        & ~ label {
+          color: var(--mainColorLighter);
+        }
+      }
+    }
+    .form-control,
+    .form-select {
+      &:disabled {
+        background-color: var(--accentColorDark);
+        color: var(--accentColorLighter);
+
+        & ~ label {
+          color: var(--mainColorLighter);
+        }
+      }
+    }
+  }
 }
 
 .strikethrough,
@@ -190,22 +233,25 @@ input.form-control.strikethrough {
 }
 
 .accordionContainer {
-  margin: 0;
-  padding: 0;
   width: 100%;
 }
 .accordion {
   width: 100%;
   .accordion-button {
-    padding: 0.3rem;
   }
 
   .accordion-body {
-    padding: 0.5rem 1rem;
   }
   .col {
-    padding: 0;
   }
+}
+
+.totals {
+  font-weight: bolder;
+}
+
+.breakdowns {
+  font-weight: 500;
 }
 
 .plotContainer {
@@ -235,10 +281,9 @@ input.form-control.strikethrough {
   }
 }
 
-.balance {
-
+.accordionContainer {
   gap: 1rem;
-  button.small{
+  button.small {
     height: 20px;
     width: 20px;
     padding: 0;
@@ -248,11 +293,9 @@ input.form-control.strikethrough {
     font-size: smaller;
   }
   font-weight: 100;
-  
+
   * {
     text-align: center;
-    color: black;
-
   }
   .col-2 {
     text-align: right;
@@ -262,14 +305,11 @@ input.form-control.strikethrough {
     padding: 0.2rem 0;
   }
 
-  .total{
-
-    &.accordion{
+  .total {
+    &.accordion {
       border-radius: 5rem;
     }
   }
-
-
 
   .Inputs {
     .accordion {
@@ -307,39 +347,39 @@ input.form-control.strikethrough {
     }
   }
 
-  .totals{
+  .totals {
     font-weight: bolder;
   }
 
-
-
-  .breakdowns{
-    font-weight:500
+  .breakdowns {
+    font-weight: 500;
   }
 
-  .detailsContainer{
+  .detailsContainer {
     position: relative;
     overflow: hidden;
 
-    &.show{
+    &.show {
       overflow: visible;
       z-index: 500;
     }
 
-
-    .details{
-     position: absolute;
-     transform: translate(-125%,-50%);
-     top: 0;
-;     width: max-content;
-
+    .details {
+      position: absolute;
+      transform: translate(-125%, -50%);
+      top: 0;
+      width: max-content;
     }
   }
 
-  .nets *{
+  .nets *,
+  .imbalance * {
     border-radius: 2rem;
     font-weight: bolder;
-    background-color: darkblue;
+    background-color: var(--accentColorDarker);
     color: white;
+  }
+  .imbalance * {
+    background-color: var(--accentColorLight);
   }
 }

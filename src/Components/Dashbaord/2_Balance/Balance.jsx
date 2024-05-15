@@ -108,21 +108,26 @@ const Balance = ({ account, users }) => {
     <div className="balance flx col ai-c jc-c">
       <div className="dates">
         <Form className="flx">
-          <Button onClick={cycleDates}>&larr;</Button>
+          <Button className="normal" onClick={cycleDates}>
+            &larr;
+          </Button>
           <FloatingLabel label="Gas Date">
             <Form.Control
               type="date"
+              placeholder="yyyy-dd-mm"
               value={date}
               onChange={(e) => {
                 setDate(e.target.value);
               }}
             />
           </FloatingLabel>
-          <Button onClick={() => cycleDates(false)}>&rarr;</Button>
+          <Button className="normal" onClick={() => cycleDates(false)}>
+            &rarr;
+          </Button>
         </Form>
       </div>
 
-      <Container className="balance flx col">
+      <Container className="balance accordionContainer flx col">
         <Row className="header">
           <Col>
             <Container>
@@ -191,7 +196,7 @@ const Balance = ({ account, users }) => {
                                                     <Button className="small flx jc-c ai-c">
                                                       i
                                                     </Button>
-                                                    <div className="flx col details">
+                                                    <Form className="details"><div className="flx col details">
                                                       <FloatingLabel label="ID">
                                                         <Form.Control
                                                           disabled
@@ -258,7 +263,23 @@ const Balance = ({ account, users }) => {
                                                           value={t.volume}
                                                         />
                                                       </FloatingLabel>
-                                                    </div>
+                                                      <FloatingLabel
+                                                        label={
+                                                          babyKey ==
+                                                          "Nominations"
+                                                            ? "Created"
+                                                            : "Accepted"
+                                                        }
+                                                      >
+                                                        <Form.Control
+                                                          disabled
+                                                          value={format(
+                                                            toDate(t.timestamp),
+                                                            "yyyy-MM-dd hh:MM:ss"
+                                                          )}
+                                                        />
+                                                      </FloatingLabel>
+                                                    </div></Form>
                                                   </div>
                                                 </div>
                                               )
@@ -292,6 +313,24 @@ const Balance = ({ account, users }) => {
                       balance.Inputs.Transputs[key].total() -
                       balance.Outputs.Trades[key].total() -
                       balance.Outputs.Transputs[key].total()}
+                  </Col>
+                ))}
+              </Row>
+            </Container>
+          </Col>
+        </Row>
+        <Row className="imbalance">
+          <Col>
+            <Container>
+              <Row className="totals">
+                <Col xs={2}>Imabalancing</Col>
+                {babyKeys.map((key, i) => (
+                  <Col key={i}>
+                    {(balance.Inputs.Trades[key].total() +
+                      balance.Inputs.Transputs[key].total() -
+                      balance.Outputs.Trades[key].total() -
+                      balance.Outputs.Transputs[key].total()) *
+                      50}
                   </Col>
                 ))}
               </Row>

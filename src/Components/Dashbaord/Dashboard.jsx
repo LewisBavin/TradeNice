@@ -87,7 +87,7 @@ const Dashboard = ({ account }) => {
         {
           title: "Transput Nominations",
           header:
-            "Nominate your projected production inputs and offtakes into the Grid",
+            "Nominate Projected Grid Inputs & Outputs",
           elem: <Noms account={account} />,
         },
       ],
@@ -171,93 +171,65 @@ const Dashboard = ({ account }) => {
     <>
       <Navbar
         expand="lg"
-        className="bg-body-tertiary mx-5"
+        className="nav"
         style={{ borderRadius: "30px" }}
         onMouseLeave={() => {
           lastTabs();
         }}
       >
         <Container>
-          <Col xs={2}>
-            <Navbar.Brand
-              href="#home"
-              className="text-center text-wrap fs-8"
-              xs={2}
-            >
-              {content.header}
-            </Navbar.Brand>
-          </Col>
           <Col>
             <Container className="text-center text-nowrap px-5">
               <Nav
                 variant="pills"
-                className="justify-content-md-center outer fs-6 py-1"
+                className="justify-content-md-center outer fs-4 py-0"
               >
-                <Row
-                  className="py-0"
-                  style={{
-                    backgroundColor: "grey",
-                  }}
-                >
-                  {navMenu.map((tab, i) => {
-                    return (
-                      <Col key={i}>
-                        <Nav.Item
-                          style={{
-                            backgroundColor: "darkgrey",
-                          }}
-                          onMouseEnter={() => {
-                            setTabs(i);
-                          }}
-                        >
-                          <Nav.Link active={i == main}>{tab.title}</Nav.Link>
-                        </Nav.Item>
-                      </Col>
-                    );
-                  })}
-                </Row>
+                {navMenu.map((tab, i) => {
+                  return (
+                    <Col key={i}>
+                      <Nav.Item
+                        onMouseEnter={() => {
+                          setTabs(i);
+                        }}
+                      >
+                        <Nav.Link active={i == main}>{tab.title}</Nav.Link>
+                      </Nav.Item>
+                    </Col>
+                  );
+                })}
               </Nav>
               <Nav
                 variant="pills"
-                className="justify-content-md-center inner fs-7 py-1"
+                className="justify-content-md-center inner fs-7"
               >
-                <Row
-                  className="py-0"
-                  style={{
-                    backgroundColor: "grey",
-                  }}
-                >
-                  {mainTab.inner.map((tab, j) => {
-                    return (
-                      <Col key={j}>
-                        <Nav.Item
-                          style={{
-                            backgroundColor: "grey",
-                          }}
-                          onMouseEnter={() => {
-                            setTabs(main, j);
+                {mainTab.inner.map((tab, j) => {
+                  return (
+                    <Col key={j}>
+                      <Nav.Item
+                        onMouseEnter={() => {
+                          setTabs(main, j);
+                        }}
+                      >
+                        <Nav.Link
+                          active={j == inner}
+                          eventKey={j}
+                          onClick={() => {
+                            setTabs(main, j, true);
                           }}
                         >
-                          <Nav.Link
-                            active={j == inner}
-                            eventKey={j}
-                            onClick={() => {
-                              setTabs(main, j, true);
-                            }}
-                          >
-                            {tab.title}
-                          </Nav.Link>
-                        </Nav.Item>
-                      </Col>
-                    );
-                  })}
-                </Row>
+                          {tab.title}
+                        </Nav.Link>
+                      </Nav.Item>
+                    </Col>
+                  );
+                })}
               </Nav>
             </Container>
           </Col>
         </Container>
       </Navbar>
-      <Container className="content">
+      <Container className="content flx col">
+        {users && <div className="contents header">{content.header}</div>}
         {users && <div className="contents">{content.elem}</div>}
       </Container>
     </>
