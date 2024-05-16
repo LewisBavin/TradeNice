@@ -108,7 +108,7 @@ header {
 .dashContainer,
 .loginContainer {
   position: fixed;
-  top: 15%;
+  top: 12%;
   left: 50%;
   transform: translate(-50%, -50%);
   min-width: 100vw;
@@ -117,25 +117,25 @@ header {
     * {
       background-color: unset;
     }
-    background-color: var(--mainColorDark);
+    background-color: var(--mainColor);
 
     .nav-pills {
       &.outer {
         .nav-link {
-          background-color: var(--mainColor);
+          background-color: var(--mainColorLight);
           color: var(--mainColorLighter);
-          filter: saturate(120%);
+          filter: saturate(140%);
           &.active,
           .show > .nav-link {
-            background-color: var(--mainColorLight);
+            background-color: var(--mainColorLighter);
             color: black;
-            filter: saturate(120%);
+            filter: saturate(140%);
           }
         }
       }
       &.inner {
         .nav-link {
-          background-color: var(--mainColor);
+          background-color: var(--mainColorLight);
           color: var(--mainColorLighter);
           &.active,
           .show > .nav-link {
@@ -150,17 +150,17 @@ header {
   .content {
     gap: 0.5rem;
 
-    &.container,
-    .loginContainer {
+    &.container {
       position: absolute;
       transform: translateX(-50%);
       left: 50%;
-      height: 73vh;
+      height: 77vh;
       overflow-y: auto;
       min-width: 95vw;
       background-color: var(--accentColorDarker);
 
       padding: 1rem;
+      margin-top: 0.5rem;
       border-radius: 1rem;
 
       .contents {
@@ -179,21 +179,31 @@ header {
         }
       }
     }
-    .loginContainer {
-      position: absolute;
-      top: 50px;
-    }
   }
+}
+
+.loginContainer{
+  top: 20%
 }
 
 .normal {
   background-color: var(--accentColorDarker);
 }
 
+.balance,
+.dispute {
+  gap: 1rem;
+}
+
 form {
-  &.create {
+  &.create,
+  &.noms {
     background-color: var(--mainColorDark);
+    color: var(--accentColorLight);
     padding: 0.5rem;
+    .form-text{
+      color: var(--accentColorLight);
+    }
   }
   .form-floating > {
     .form-control,
@@ -232,29 +242,16 @@ input.form-control.strikethrough {
   text-decoration: line-through;
 }
 
-.accordionContainer {
+.full {
   width: 100%;
-}
-.accordion {
-  width: 100%;
-  .accordion-button {
-  }
 
-  .accordion-body {
+  .wap {
+    justify-self: end;
   }
-  .col {
-  }
-}
-
-.totals {
-  font-weight: bolder;
-}
-
-.breakdowns {
-  font-weight: 500;
 }
 
 .plotContainer {
+  gap: 1rem;
   .js-plotly-plot {
     width: 100%;
     height: 50vh;
@@ -272,7 +269,7 @@ input.form-control.strikethrough {
       position: absolute;
       top: 60%;
       transform: translateY(-50%);
-      gap: 18rem;
+      gap: 21rem;
     }
   }
   #modebar,
@@ -281,7 +278,19 @@ input.form-control.strikethrough {
   }
 }
 
+.highlight {
+  background-color: var(--accentColor);
+  color: white;
+  border-radius: 1rem;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  font-size: larger;
+  font-weight: bolder;
+}
+
 .accordionContainer {
+  width: 100%;
   gap: 1rem;
   button.small {
     height: 20px;
@@ -366,7 +375,7 @@ input.form-control.strikethrough {
 
     .details {
       position: absolute;
-      transform: translate(-125%, -50%);
+      transform: translate(-125%, -70%);
       top: 0;
       width: max-content;
     }

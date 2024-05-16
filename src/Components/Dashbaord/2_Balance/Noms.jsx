@@ -182,7 +182,7 @@ const Noms = ({ account, users }) => {
 
   return (
     <>
-      <div className="requests container flx col jc-c ai-c">
+      <div className="flx col jc-c ai-c">
         <Button onClick={() => toggleRefresh(true)}>Get Latest Noms</Button>
 
         <div className="flx">
@@ -199,7 +199,7 @@ const Noms = ({ account, users }) => {
                 }`}</Form.Text>
               </Form>
               <Container>
-                <Form className="border border-light">
+                <Form className="border border-light noms">
                   <Form.Text>Create New Nomination</Form.Text>
                   <Container>
                     <FloatingLabel label="Transput Type">

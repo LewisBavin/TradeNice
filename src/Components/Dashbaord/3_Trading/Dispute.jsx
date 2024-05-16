@@ -163,7 +163,7 @@ const Dispute = ({ account, users }) => {
   };
 
   return (
-    <div className="flx jc-c ai-c col">
+    <div className="flx jc-c ai-c col balance">
       <Container className="dates">
         <div className="flx jc-c text-warning">{err}</div>
         <Form
@@ -198,8 +198,8 @@ const Dispute = ({ account, users }) => {
       </Container>
       <Container className="accordionContainer">
         {Object.entries(splits).map(([key, innerObj], i) => (
-          <div className={key == "Pending" ? "Inputs" : "Outputs"}>
-            <Accordion key={i} className="total">
+          <div key={i} className={key == "Pending" ? "Inputs" : "Outputs"}>
+            <Accordion  className="total">
               <Accordion.Item>
                 <Accordion.Header>
                   {key + " Disputes - Trades Still Honoured"}
@@ -276,7 +276,7 @@ const Dispute = ({ account, users }) => {
                                   />
                                 </FloatingLabel>
                                 <FloatingLabel
-                                  label="Dispute Raised By"
+                                  label="Raised By"
                                   style={{ minWidth: "160px" }}
                                 >
                                   <Form.Control
@@ -299,6 +299,7 @@ const Dispute = ({ account, users }) => {
                                     <Form.Control
                                       disabled
                                       as="textarea"
+                                      style={{height: "150px"}}
                                       defaultValue={trade.comment}
                                     />
                                   </FloatingLabel>
@@ -308,6 +309,7 @@ const Dispute = ({ account, users }) => {
                                     <Form.Control
                                       disabled={!content[key][innerKey].edit}
                                       as="textarea"
+                                      style={{height: "150px"}}
                                       value={trade.reject_comment}
                                       onChange={(e) =>
                                         addComment(e, key, innerKey, k)

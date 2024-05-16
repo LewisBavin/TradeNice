@@ -10,8 +10,6 @@ import {
   addDays,
   startOfDay,
 } from "date-fns";
-import { useDispatch, useSelector } from "react-redux";
-import { readGraph } from "../../../Slices/GraphSlice";
 import "react-datepicker/dist/react-datepicker.css";
 import enGB from "date-fns/locale/en-GB";
 import { setDefaultOptions } from "date-fns";
@@ -88,7 +86,7 @@ const Prices = ({ allPrices }) => {
         .reduce(
           (acum, points) => {
             acum.x.push(points.x);
-            acum.y.push(points.y);
+            acum.y.push(points.y *  100);
             return acum;
           },
           { x: [], y: [] }
@@ -172,18 +170,20 @@ const Prices = ({ allPrices }) => {
                 type: "scatter",
                 mode: "lines",
                 marker: { color: "red" },
-                name: "UK Grid: £/therm",
+                name: "UK Grid: p/therm",
               },
               {
                 ...prices.eu,
                 type: "scatter",
                 mode: "lines",
                 marker: { color: "blue" },
-                name: "EU Grid: €/therm",
+                name: "EU Grid: ¢/therm",
               },
             ]}
             config={{ responsive: true }}
             layout={{
+              plot_bgcolor: "grey",
+              paper_bgcolor: "lightgrey",
               title: "Grid Gas Prices",
               xaxis: {},
               legend: {},
@@ -191,6 +191,7 @@ const Prices = ({ allPrices }) => {
                 title: "Gas Grid Prices",
                 autorange: true,
               },
+              
             }}
           />
         </>

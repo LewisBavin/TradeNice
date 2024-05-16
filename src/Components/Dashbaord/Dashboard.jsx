@@ -86,8 +86,7 @@ const Dashboard = ({ account }) => {
         },
         {
           title: "Transput Nominations",
-          header:
-            "Nominate Projected Grid Inputs & Outputs",
+          header: "Nominate Projected Grid Inputs & Outputs",
           elem: <Noms account={account} />,
         },
       ],
@@ -166,7 +165,6 @@ const Dashboard = ({ account }) => {
   let { main, inner } = view;
   let mainTab = navMenu[main];
   let content = navMenu[account.view.main].inner[account.view.inner];
-
   return (
     <>
       <Navbar
@@ -228,6 +226,7 @@ const Dashboard = ({ account }) => {
           </Col>
         </Container>
       </Navbar>
+
       <Container className="content flx col">
         {users && <div className="contents header">{content.header}</div>}
         {users && <div className="contents">{content.elem}</div>}

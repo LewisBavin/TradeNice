@@ -41,6 +41,7 @@ export const accountSlice = createSlice({
           delete state[key];
         }
       });
+      setStore("graph", null)
       setStore("account", state);
     },
     setView: (state, { payload }) => {

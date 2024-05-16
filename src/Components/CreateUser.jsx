@@ -56,15 +56,13 @@ const CreateUser = ({ account }) => {
       returnErr ? setErrs({ ...returnErr, password: "" }) : null;
       if (returnMsg && user) {
         dispatch(
-          accountActions.setToast(
-            setToast({
-              trigger: true,
-              strong: "Success!",
-              small: "Account created successfully",
-              body: returnMsg,
-              variant: "success",
-            })
-          )
+          accountActions.setToast({
+            trigger: true,
+            strong: "Success!",
+            small: "Account created successfully",
+            body: returnMsg,
+            variant: "success",
+          })
         );
       }
     } catch (e) {

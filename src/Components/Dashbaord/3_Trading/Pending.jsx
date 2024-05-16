@@ -171,7 +171,7 @@ const Pending = ({ account, users }) => {
             name="id"
             disabled
             defaultValue={id}
-            className={style && styles[style]}
+         
           />
         </FloatingLabel>
 
@@ -180,7 +180,7 @@ const Pending = ({ account, users }) => {
             name="direction"
             disabled
             defaultValue={direction}
-            className={style && styles[style]}
+  
           />
         </FloatingLabel>
 
@@ -189,7 +189,7 @@ const Pending = ({ account, users }) => {
             type="date"
             name="start_date"
             disabled
-            className={style && styles[style]}
+       
             defaultValue={format(start_date, "yyyy-MM-dd")}
           />
         </FloatingLabel>
@@ -199,7 +199,7 @@ const Pending = ({ account, users }) => {
             type="date"
             name="end_date"
             disabled
-            className={style && styles[style]}
+      
             defaultValue={format(end_date, "yyyy-MM-dd")}
           />
         </FloatingLabel>
@@ -210,7 +210,7 @@ const Pending = ({ account, users }) => {
             name="volume"
             type="number"
             value={volume}
-            className={style && styles[style]}
+     
           />
         </FloatingLabel>
 
@@ -219,7 +219,7 @@ const Pending = ({ account, users }) => {
             disabled={!user || !edit}
             name="price"
             type="number"
-            className={style && styles[style]}
+    
             value={price}
           />
         </FloatingLabel>
@@ -229,14 +229,14 @@ const Pending = ({ account, users }) => {
             name="total_volume"
             type="number"
             disabled
-            className={style && styles[style]}
+           
             value={total_volume}
           />
         </FloatingLabel>
 
         <Form.Select
           name="action"
-          className="text-center text-info"
+          className={style && styles[style]}
           style={{ maxWidth: "120px" }}
           value={style ? style : ""}
           onChange={() => {}}
@@ -396,27 +396,30 @@ const Pending = ({ account, users }) => {
                       ))}
                     </Accordion.Body>
                   </Accordion.Item>
-                  <Accordion.Item>
-                    <Accordion.Header>Counterparty Offers</Accordion.Header>
-                    <Accordion.Body>
-                      {Object.entries(groupedCounterOffers).map(
-                        ([id, reqs], i) => (
-                          <Accordion key={i}>
-                            <Accordion.Item>
-                              <Accordion.Header>
-                                {users.find((user) => user.id == id).name}
-                              </Accordion.Header>
-                              <Accordion.Body>
-                                {reqs.map((req, i) =>
-                                  requestElement(req, false, i)
-                                )}
-                              </Accordion.Body>
-                            </Accordion.Item>
-                          </Accordion>
-                        )
-                      )}
-                    </Accordion.Body>
-                  </Accordion.Item>
+                  <Accordion className="inner">
+                    {" "}
+                    <Accordion.Item>
+                      <Accordion.Header>Counterparty Offers</Accordion.Header>
+                      <Accordion.Body>
+                        {Object.entries(groupedCounterOffers).map(
+                          ([id, reqs], i) => (
+                            <Accordion key={i}>
+                              <Accordion.Item>
+                                <Accordion.Header>
+                                  {users.find((user) => user.id == id).name}
+                                </Accordion.Header>
+                                <Accordion.Body>
+                                  {reqs.map((req, i) =>
+                                    requestElement(req, false, i)
+                                  )}
+                                </Accordion.Body>
+                              </Accordion.Item>
+                            </Accordion>
+                          )
+                        )}
+                      </Accordion.Body>
+                    </Accordion.Item>
+                  </Accordion>
                 </Accordion>
               </Accordion.Body>
             </Accordion.Item>
@@ -449,27 +452,30 @@ const Pending = ({ account, users }) => {
                       )}
                     </Accordion.Body>
                   </Accordion.Item>
-                  <Accordion.Item>
-                    <Accordion.Header>Counterparty Bids</Accordion.Header>
-                    <Accordion.Body>
-                      {Object.entries(groupedCounterBids).map(
-                        ([id, reqs], i) => (
-                          <Accordion key={i}>
-                            <Accordion.Item>
-                              <Accordion.Header>
-                                {users.find((user) => user.id == id).name}
-                              </Accordion.Header>
-                              <Accordion.Body>
-                                {reqs.map((req, i) =>
-                                  requestElement(req, false, i)
-                                )}
-                              </Accordion.Body>
-                            </Accordion.Item>
-                          </Accordion>
-                        )
-                      )}
-                    </Accordion.Body>
-                  </Accordion.Item>
+                  <Accordion className="inner">
+                    {" "}
+                    <Accordion.Item>
+                      <Accordion.Header>Counterparty Bids</Accordion.Header>
+                      <Accordion.Body>
+                        {Object.entries(groupedCounterBids).map(
+                          ([id, reqs], i) => (
+                            <Accordion key={i}>
+                              <Accordion.Item>
+                                <Accordion.Header>
+                                  {users.find((user) => user.id == id).name}
+                                </Accordion.Header>
+                                <Accordion.Body>
+                                  {reqs.map((req, i) =>
+                                    requestElement(req, false, i)
+                                  )}
+                                </Accordion.Body>
+                              </Accordion.Item>
+                            </Accordion>
+                          )
+                        )}
+                      </Accordion.Body>
+                    </Accordion.Item>
+                  </Accordion>
                 </Accordion>
               </Accordion.Body>
             </Accordion.Item>

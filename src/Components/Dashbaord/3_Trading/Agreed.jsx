@@ -183,8 +183,8 @@ const Agreed = ({ account, users }) => {
 
       <Container className="accordionContainer">
         {Object.entries(splits).map(([key, arr], j) => (
-          <div className={key == "Buys" ? "Inputs" : "Outputs"}>
-            <Accordion key={j} className="total">
+          <div key={j} className={key == "Buys" ? "Inputs" : "Outputs"}>
+            <Accordion  className="total">
               <Accordion.Item>
                 <Accordion.Header>{key}</Accordion.Header>
                 <Accordion.Body>
@@ -270,7 +270,7 @@ const Agreed = ({ account, users }) => {
             </Accordion>
           </div>
         ))}
-        )
+        
       </Container>
     </div>
   );

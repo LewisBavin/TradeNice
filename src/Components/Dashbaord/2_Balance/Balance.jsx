@@ -1,6 +1,6 @@
 import axios from "axios";
 import { addDays, format, startOfDay, toDate } from "date-fns";
-import React, { useEffect, useState } from "react";
+import React, { useEffect, useRef, useState } from "react";
 import {
   Accordion,
   Button,
@@ -10,6 +10,10 @@ import {
   Form,
   Row,
 } from "react-bootstrap";
+import DailyPrice from "../1_Market/DailyPrice";
+import { getStore } from "../../../Utilities/localStorage";
+import { numberWithCommas } from "../../../Utilities/usefulFuncs";
+import { number } from "joi";
 
 const Balance = ({ account, users }) => {
   const mainKeys = ["Inputs", "Outputs"];
@@ -27,7 +31,7 @@ const Balance = ({ account, users }) => {
         (t) => t.transput == (main == "Inputs" ? "I" : "O")
       );
     }
-    console.log(account.user.id);
+
     return trades
       .filter((t) =>
         main == "Inputs"
@@ -60,7 +64,7 @@ const Balance = ({ account, users }) => {
           },
         })
       ).data;
-      console.log(trades);
+
       setTrades(trades);
       setTransputs(transputs);
     })();
@@ -89,8 +93,6 @@ const Balance = ({ account, users }) => {
     setDate(format(addDays(toDate(date), left ? -1 : 1), "yyyy-MM-dd"));
   };
 
-  console.log(balance);
-
   let toggleShow = (e) => {
     e.currentTarget.classList.toggle("show");
   };
@@ -103,6 +105,8 @@ const Balance = ({ account, users }) => {
           : users.find((u) => u.id == id).name
         : ""
     );
+
+  let ref = useRef();
 
   return (
     <div className="balance flx col ai-c jc-c">
@@ -132,9 +136,14 @@ const Balance = ({ account, users }) => {
           <Col>
             <Container>
               <Row>
-                <Col xs={2}></Col>
+                <Col xs={2}>
+                  {" "}
+                  <DailyPrice dateStr={date} small={"EoD"} />
+                </Col>
                 {babyKeys.map((babyKey, i) => (
-                  <Col key={i}>{babyKey}</Col>
+                  <Col className="highlight" key={i}>
+                    {babyKey + " (therms)"}
+                  </Col>
                 ))}
               </Row>
             </Container>
@@ -154,8 +163,10 @@ const Balance = ({ account, users }) => {
                               <Col xs={2}>{"Total " + mainKey}</Col>
                               {babyKeys.map((babyKey, i) => (
                                 <Col key={i}>
-                                  {mainObj.Transputs[babyKey].total() +
-                                    mainObj.Trades[babyKey].total()}
+                                  {numberWithCommas(
+                                    mainObj.Transputs[babyKey].total() +
+                                      mainObj.Trades[babyKey].total()
+                                  )}
                                 </Col>
                               ))}
                             </Row>
@@ -171,7 +182,9 @@ const Balance = ({ account, users }) => {
                                       <Col xs={2}>{innerObj.name}</Col>
                                       {babyKeys.map((babyKey, i) => (
                                         <Col key={i}>
-                                          {innerObj[babyKey].total()}
+                                          {numberWithCommas(
+                                            innerObj[babyKey].total()
+                                          )}
                                         </Col>
                                       ))}
                                     </Row>
@@ -187,7 +200,7 @@ const Balance = ({ account, users }) => {
                                             {innerObj[babyKey].details.map(
                                               (t, i) => (
                                                 <div className="flx" key={i}>
-                                                  {t.volume}
+                                                  {numberWithCommas(t.volume)}
                                                   <div
                                                     onMouseEnter={toggleShow}
                                                     onMouseLeave={toggleShow}
@@ -196,90 +209,98 @@ const Balance = ({ account, users }) => {
                                                     <Button className="small flx jc-c ai-c">
                                                       i
                                                     </Button>
-                                                    <Form className="details"><div className="flx col details">
-                                                      <FloatingLabel label="ID">
-                                                        <Form.Control
-                                                          disabled
-                                                          value={t.id}
-                                                        />
-                                                      </FloatingLabel>
-                                                      <FloatingLabel label="Requested by">
-                                                        <Form.Control
-                                                          disabled
-                                                          value={userNames(
-                                                            t.user_id
-                                                          )}
-                                                        />
-                                                        <FloatingLabel label="Direction">
+                                                    <Form className="details">
+                                                      <div className="details">
+                                                        <FloatingLabel label="ID">
+                                                          <Form.Control
+                                                            disabled
+                                                            value={t.id}
+                                                          />
+                                                        </FloatingLabel>
+                                                        <FloatingLabel label="Requested by">
+                                                          <Form.Control
+                                                            disabled
+                                                            value={userNames(
+                                                              t.user_id
+                                                            )}
+                                                          />
+                                                          <FloatingLabel label="Direction">
+                                                            <Form.Control
+                                                              disabled
+                                                              value={
+                                                                t.direction ||
+                                                                t.transput
+                                                              }
+                                                            />
+                                                          </FloatingLabel>
+                                                        </FloatingLabel>
+                                                        <FloatingLabel
+                                                          label={
+                                                            babyKey ==
+                                                            "Nominations"
+                                                              ? "Counterparty"
+                                                              : "Accepted By"
+                                                          }
+                                                        >
                                                           <Form.Control
                                                             disabled
                                                             value={
-                                                              t.direction ||
-                                                              t.transput
+                                                              userNames(
+                                                                t.counter_id
+                                                              ) || "GRID"
                                                             }
                                                           />
                                                         </FloatingLabel>
-                                                      </FloatingLabel>
-                                                      <FloatingLabel
-                                                        label={
-                                                          babyKey ==
-                                                          "Nominations"
-                                                            ? "Counterparty"
-                                                            : "Accepted By"
-                                                        }
-                                                      >
-                                                        <Form.Control
-                                                          disabled
-                                                          value={
-                                                            userNames(
-                                                              t.counter_id
-                                                            ) || "GRID"
+                                                        <FloatingLabel label="Start">
+                                                          <Form.Control
+                                                            disabled
+                                                            value={format(
+                                                              toDate(
+                                                                t.start_date
+                                                              ),
+                                                              "yyyy-MM-dd"
+                                                            )}
+                                                          />
+                                                        </FloatingLabel>
+                                                        <FloatingLabel label="End">
+                                                          <Form.Control
+                                                            disabled
+                                                            value={format(
+                                                              toDate(
+                                                                t.end_date
+                                                              ),
+                                                              "yyyy-MM-dd"
+                                                            )}
+                                                          />
+                                                        </FloatingLabel>
+                                                        <FloatingLabel label="Daily Volume">
+                                                          <Form.Control
+                                                            disabled
+                                                            value={numberWithCommas(
+                                                              t.volume
+                                                            )}
+                                                          />
+                                                        </FloatingLabel>
+                                                        <FloatingLabel
+                                                          label={
+                                                            babyKey ==
+                                                            "Nominations"
+                                                              ? "Created"
+                                                              : "Accepted"
                                                           }
-                                                        />
-                                                      </FloatingLabel>
-                                                      <FloatingLabel label="Start">
-                                                        <Form.Control
-                                                          disabled
-                                                          value={format(
-                                                            toDate(
-                                                              t.start_date
-                                                            ),
-                                                            "yyyy-MM-dd"
-                                                          )}
-                                                        />
-                                                      </FloatingLabel>
-                                                      <FloatingLabel label="End">
-                                                        <Form.Control
-                                                          disabled
-                                                          value={format(
-                                                            toDate(t.end_date),
-                                                            "yyyy-MM-dd"
-                                                          )}
-                                                        />
-                                                      </FloatingLabel>
-                                                      <FloatingLabel label="Daily Volume">
-                                                        <Form.Control
-                                                          disabled
-                                                          value={t.volume}
-                                                        />
-                                                      </FloatingLabel>
-                                                      <FloatingLabel
-                                                        label={
-                                                          babyKey ==
-                                                          "Nominations"
-                                                            ? "Created"
-                                                            : "Accepted"
-                                                        }
-                                                      >
-                                                        <Form.Control
-                                                          disabled
-                                                          value={format(
-                                                            toDate(t.timestamp),
-                                                            "yyyy-MM-dd hh:MM:ss"
-                                                          )}
-                                                        />
-                                                      </FloatingLabel>
-                                                    </div></Form>
+                                                        >
+                                                          <Form.Control
+                                                            disabled
+                                                            value={format(
+                                                              toDate(
+                                                                t.timestamp
+                                                              ),
+                                                              "yyyy-MM-dd hh:MM:ss"
+                                                            )}
+                                                          />
+                                                        </FloatingLabel>
+                                                      </div>
+                                                    </Form>
                                                   </div>
                                                 </div>
                                               )
@@ -306,13 +327,15 @@ const Balance = ({ account, users }) => {
           <Col>
             <Container>
               <Row className="totals">
-                <Col xs={2}>Net Balance</Col>
+                <Col xs={2}>Net Balance (th)</Col>
                 {babyKeys.map((key, i) => (
                   <Col key={i}>
-                    {balance.Inputs.Trades[key].total() +
-                      balance.Inputs.Transputs[key].total() -
-                      balance.Outputs.Trades[key].total() -
-                      balance.Outputs.Transputs[key].total()}
+                    {numberWithCommas(
+                      balance.Inputs.Trades[key].total() +
+                        balance.Inputs.Transputs[key].total() -
+                        balance.Outputs.Trades[key].total() -
+                        balance.Outputs.Transputs[key].total()
+                    )}
                   </Col>
                 ))}
               </Row>
@@ -323,14 +346,19 @@ const Balance = ({ account, users }) => {
           <Col>
             <Container>
               <Row className="totals">
-                <Col xs={2}>Imabalancing</Col>
+                <Col xs={2}>Imabalancing (£)</Col>
                 {babyKeys.map((key, i) => (
                   <Col key={i}>
-                    {(balance.Inputs.Trades[key].total() +
-                      balance.Inputs.Transputs[key].total() -
-                      balance.Outputs.Trades[key].total() -
-                      balance.Outputs.Transputs[key].total()) *
-                      50}
+                    {"£" +
+                      numberWithCommas(
+                        Math.round(
+                          (balance.Inputs.Trades[key].total() +
+                            balance.Inputs.Transputs[key].total() -
+                            balance.Outputs.Trades[key].total() -
+                            balance.Outputs.Transputs[key].total()) *
+                            getStore("average")
+                        ) / 100
+                      )}
                   </Col>
                 ))}
               </Row>

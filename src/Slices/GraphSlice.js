@@ -12,9 +12,12 @@ export const graphSlice = createSlice({
       state.dateRange.start = start ? start : null;
       state.dateRange.end = end ? end : start;
     },
-    setAll: (state, {payload}) =>{
-      state.prices= payload
-      setStore("graph", state)
+    setWap: (state, { payload }) => {
+      state.wap = payload;
+    },
+    setAll: (state, { payload }) => {
+      state.prices = payload;
+      setStore("graph", state);
     },
   },
 });
